@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">coffeeshop</string>
+    <string name="choice_your_nfavorite_coffee">Choice your\nFavorite coffee</string>
+    <string name="the_best_grain_the_finest_roast_n_the_powerful_flavour">The best grain , the finest roast\n the powerful flavour</string>
+    <string name="get_started">Get Started</string>
+    <string name="search">Search</string>
+    <string name="search_anything">Search anything...</string>
+    <string name="category">Category</string>
+    <string name="popular_coffee">Popular Coffee</string>
+    <string name="see_all">See All</string>
+    <string name="popular_coffees">Popular Coffees</string>
+</resources>
