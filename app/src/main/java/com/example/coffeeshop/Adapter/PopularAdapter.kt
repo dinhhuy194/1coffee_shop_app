@@ -32,7 +32,9 @@ class PopularAdapter(val items:MutableList<ItemsModel>): RecyclerView.Adapter<Po
         holder.itemView.setOnClickListener {
             val intent = Intent(context, DetailActivity::class.java)
             intent.putExtra("object", items[position])
+            context.startActivity(intent)
         }
+
 
     }
 
