@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Coffeeshop"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.CartActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.ItemsListActivity"
             android:exported="false" />
         <activity

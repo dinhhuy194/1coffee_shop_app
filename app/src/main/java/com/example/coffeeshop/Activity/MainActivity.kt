@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
                 .into(binding.banner)
             binding.progressBarBanner.visibility= View.GONE
         }
-        viewModel.loadBanner()
 
     }
     private fun initCategory() {
@@ -52,7 +51,6 @@ class MainActivity : AppCompatActivity() {
             binding.recyclerViewCat.adapter= CategoryAdapter(it)
             binding.progressBarCategory.visibility= View.GONE
         }
-        viewModel.loadCategory()
     }
 
     private fun initPopular() {
@@ -62,8 +60,5 @@ class MainActivity : AppCompatActivity() {
             binding.recyclerViewPopular.adapter= PopularAdapter(it)
             binding.progressBarPopular.visibility= View.GONE
         }
-        viewModel.loadPopular()
-
-
     }
 }

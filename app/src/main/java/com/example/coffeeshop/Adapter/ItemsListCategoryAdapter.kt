@@ -18,14 +18,14 @@ class ItemsListCategoryAdapter(val items:MutableList<ItemsModel>): RecyclerView.
         const val TYPE_ITEM2 = 1
     }
 
-    lateinit var context : Context
+    private lateinit var context : Context
     override fun getItemViewType(position: Int): Int {
-    return if(position%2 == 0) TYPE_ITEM1
-    else TYPE_ITEM2
-
+        return if(position % 2 == 0) TYPE_ITEM1
+        else TYPE_ITEM2
     }
-    class ViewholderItem1(val binding: ViewholderItemPicRightBinding): RecyclerView.ViewHolder(binding.root){}
-    class ViewholderItem2(val binding: ViewholderItemPicLeftBinding): RecyclerView.ViewHolder(binding.root){}
+
+    class ViewholderItem1(val binding: ViewholderItemPicRightBinding): RecyclerView.ViewHolder(binding.root)
+    class ViewholderItem2(val binding: ViewholderItemPicLeftBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -37,14 +37,11 @@ class ItemsListCategoryAdapter(val items:MutableList<ItemsModel>): RecyclerView.
                 val binding = ViewholderItemPicRightBinding.inflate(LayoutInflater.from(context),parent,false)
                 ViewholderItem1(binding)
             }
-            TYPE_ITEM2 -> {
+            else -> {
                 val binding = ViewholderItemPicLeftBinding.inflate(LayoutInflater.from(context),parent,false)
                 ViewholderItem2(binding)
             }
-            else -> throw IllegalArgumentException("Invalid view type")
         }
-
-
     }
 
     override fun onBindViewHolder(
@@ -52,51 +49,39 @@ class ItemsListCategoryAdapter(val items:MutableList<ItemsModel>): RecyclerView.
         position: Int
     ) {
         val item = items[position]
-        fun bindCommonData(
-            titleTxt: String,
-            priceTxt: String,
-            rating: Float,
-            picUrl: String
-        ) {
-            when (holder) {
-                is ViewholderItem1 -> {
-                    holder.binding.titleTxt.text = titleTxt
-                    holder.binding.priceTxt.text = priceTxt
-                    holder.binding.ratingBar.rating = rating
+        when (holder) {
+            is ViewholderItem1 -> {
+                holder.binding.titleTxt.text = item.title
+                holder.binding.priceTxt.text = "$" + item.price.toString()
+                holder.binding.ratingBar.rating = item.rating.toFloat()
 
-                    Glide.with(context)
-                        .load(picUrl)
-                        .into(holder.binding.picMain)
+                Glide.with(context)
+                    .load(item.picUrl[0])
+                    .into(holder.binding.picMain)
 
-                    holder.itemView.setOnClickListener {
-                        val intent = Intent(context, DetailActivity::class.java)
-                        intent.putExtra("object", items[position])
-                        context.startActivity(intent)
-                    }
-                }
-                is ViewholderItem2 -> {
-                    holder.binding.titleTxt.text = titleTxt
-                    holder.binding.priceTxt.text = priceTxt
-                    holder.binding.ratingBar.rating = rating
-
-                    Glide.with(context)
-                        .load(picUrl)
-                        .into(holder.binding.picMain)
-
-                    holder.itemView.setOnClickListener {
-                        val intent = Intent(context, DetailActivity::class.java)
-                        intent.putExtra("object", items[position])
-                        context.startActivity(intent)
-                    }
+                holder.itemView.setOnClickListener {
+                    val intent = Intent(context, DetailActivity::class.java)
+                    intent.putExtra("object", item)
+                    context.startActivity(intent)
                 }
             }
-            bindCommonData(
-                item.title,
-                "$" + item.price.toString(),
-                item.rating.toFloat(),
-                item.picUrl[0]
-            )
+            is ViewholderItem2 -> {
+                holder.binding.titleTxt.text = item.title
+                holder.binding.priceTxt.text = "$" + item.price.toString()
+                holder.binding.ratingBar.rating = item.rating.toFloat()
+
+                Glide.with(context)
+                    .load(item.picUrl[0])
+                    .into(holder.binding.picMain)
+
+                holder.itemView.setOnClickListener {
+                    val intent = Intent(context, DetailActivity::class.java)
+                    intent.putExtra("object", item)
+                    context.startActivity(intent)
+                }
+            }
         }
     }
+
     override fun getItemCount(): Int = items.size
 }

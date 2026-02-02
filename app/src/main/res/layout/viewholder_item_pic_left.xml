@@ -23,6 +23,7 @@
         android:id="@+id/picMain"
         android:layout_width="145dp"
         android:layout_height="95dp"
+        android:scaleType="centerCrop"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -36,6 +37,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:text="title"
+
         android:textColor="@color/darkBrown"
         android:textSize="16sp"
         android:textStyle="bold"
