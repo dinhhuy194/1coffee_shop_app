@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightCream"
-    tools:context=".Activity.ItemsListActivity">
+    tools:context=".Activity.CartActivity"
+>
 
     <ScrollView
         android:id="@+id/scrollView2"
