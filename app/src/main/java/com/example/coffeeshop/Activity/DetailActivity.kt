@@ -169,6 +169,9 @@ class DetailActivity : AppCompatActivity() {
                 item.sugarOption = selectedSugar
                 
                 managementCart.insertItems(item)
+                
+                // Finish activity to return to previous screen
+                finish()
             }
             backBtn.setOnClickListener {
                 finish()

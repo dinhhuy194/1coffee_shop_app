@@ -51,6 +51,38 @@ class CartActivity : AppCompatActivity() {
         binding.backBtn.setOnClickListener {
             finish()
         }
+        
+        // Proceed to Checkout button
+        binding.button3.setOnClickListener {
+            val currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+            
+            if (currentUser == null) {
+                // Show login dialog
+                android.app.AlertDialog.Builder(this)
+                    .setTitle("Login Required")
+                    .setMessage("Please login to proceed with checkout")
+                    .setPositiveButton("Login") { _, _ ->
+                        startActivity(android.content.Intent(this, LoginActivity::class.java))
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+            } else {
+                // Get calculated values
+                val percentTax = 0.02
+                val deliveryFee = 15.0
+                val subtotal = Math.round(managmentCart.getTotalFee() * 100) / 100.0
+                val tax = Math.round(subtotal * percentTax * 100) / 100.0
+                val total = Math.round((subtotal + tax + deliveryFee) * 100) / 100.0
+                
+                // Go to checkout
+                val intent = android.content.Intent(this, CheckoutActivity::class.java)
+                intent.putExtra("subtotal", subtotal)
+                intent.putExtra("tax", tax)
+                intent.putExtra("delivery", deliveryFee)
+                intent.putExtra("total", total)
+                startActivity(intent)
+            }
+        }
     }
 
     private fun calculateCart() {

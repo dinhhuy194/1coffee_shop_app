@@ -26,6 +26,26 @@
         <activity
             android:name=".Activity.DetailActivity"
             android:exported="false" />
+        
+        <activity
+            android:name=".Activity.LoginActivity"
+            android:exported="false" />
+        
+        <activity
+            android:name=".Activity.RegisterActivity"
+            android:exported="false" />
+        
+        <activity
+            android:name=".Activity.CheckoutActivity"
+            android:exported="false" />
+        
+        <activity
+            android:name=".Activity.OrderHistoryActivity"
+            android:exported="false" />
+        
+        <activity
+            android:name=".Activity.ProfileActivity"
+            android:exported="false" />
 
         <activity
             android:name=".Activity.MainActivity"

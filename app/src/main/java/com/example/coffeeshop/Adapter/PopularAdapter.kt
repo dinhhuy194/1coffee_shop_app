@@ -29,13 +29,20 @@ class PopularAdapter(val items:MutableList<ItemsModel>): RecyclerView.Adapter<Po
         Glide.with(context)
             .load(items[position].picUrl[0])
             .into(holder.binding.pic)
+        
+        // Click whole item to view detail
         holder.itemView.setOnClickListener {
             val intent = Intent(context, DetailActivity::class.java)
             intent.putExtra("object", items[position])
             context.startActivity(intent)
         }
-
-
+        
+        // Click addToCartBtn to view detail
+        holder.binding.addToCartBtn.setOnClickListener {
+            val intent = Intent(context, DetailActivity::class.java)
+            intent.putExtra("object", items[position])
+            context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int = items.size

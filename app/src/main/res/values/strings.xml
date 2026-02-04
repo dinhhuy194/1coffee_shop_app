@@ -9,4 +9,8 @@
     <string name="popular_coffee">Popular Coffee</string>
     <string name="see_all">See All</string>
     <string name="popular_coffees">Popular Coffees</string>
+    
+    <!-- Placeholder for Google Sign-In web client ID -->
+    <!-- This will be auto-generated from google-services.json -->
+    <string name="default_web_client_id" translatable="false">YOUR_WEB_CLIENT_ID_HERE</string>
 </resources>
