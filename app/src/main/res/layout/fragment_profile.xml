@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightCream"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header with Avatar -->
+        <LinearLayout
+            android:id="@+id/profileHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/orange"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Back Button -->
+            <ImageView
+                android:id="@+id/backBtn"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:contentDescription="Back"
+                android:src="@drawable/back" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/avatarImg"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@android:drawable/sym_def_app_icon"
+                app:civ_border_color="@color/white"
+                app:civ_border_width="2dp" />
+
+            <TextView
+                android:id="@+id/nameTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Guest User"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/emailTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="guest@coffeeshop.com"
+                android:textSize="14sp"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <!-- Login/Logout Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/authBtn"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/orange_bg"
+            android:text="Login"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Menu Items -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- My Favorites -->
+            <LinearLayout
+                android:id="@+id/favoritesBtn"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/white_bg"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:text="❤️"
+                    android:textSize="20sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="My Favorites"
+                    android:textSize="16sp"
+                    android:textColor="@color/darkBrown" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textSize="24sp"
+                    android:textColor="@color/grey" />
+            </LinearLayout>
+
+            <!-- Payment Methods -->
+            <LinearLayout
+                android:id="@+id/paymentBtn"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/white_bg"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:text="💳"
+                    android:textSize="20sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="Payment Methods"
+                    android:textSize="16sp"
+                    android:textColor="@color/darkBrown" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textSize="24sp"
+                    android:textColor="@color/grey" />
+            </LinearLayout>
+
+            <!-- Settings -->
+            <LinearLayout
+                android:id="@+id/settingsBtn"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/white_bg"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:text="⚙️"
+                    android:textSize="20sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="Settings"
+                    android:textSize="16sp"
+                    android:textColor="@color/darkBrown" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textSize="24sp"
+                    android:textColor="@color/grey" />
+            </LinearLayout>
+
+            <!-- Language -->
+            <LinearLayout
+                android:id="@+id/languageBtn"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/white_bg"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:text="🌐"
+                    android:textSize="20sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="Language"
+                    android:textSize="16sp"
+                    android:textColor="@color/darkBrown" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textSize="24sp"
+                    android:textColor="@color/grey" />
+            </LinearLayout>
+
+            <!-- About Us -->
+            <LinearLayout
+                android:id="@+id/aboutBtn"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/white_bg"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:text="ℹ️"
+                    android:textSize="20sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="About Us"
+                    android:textSize="16sp"
+                    android:textColor="@color/darkBrown" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textSize="24sp"
+                    android:textColor="@color/grey" />
+            </LinearLayout>
+
+            <!-- Feedback -->
+            <LinearLayout
+                android:id="@+id/feedbackBtn"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/white_bg"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:text="📝"
+                    android:textSize="20sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="Feedback"
+                    android:textSize="16sp"
+                    android:textColor="@color/darkBrown" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textSize="24sp"
+                    android:textColor="@color/grey" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="24dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

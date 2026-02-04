@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/lightCream">
+
+    <!-- Header with Back Button -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/backBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:clickable="true"
+            android:contentDescription="Back"
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@drawable/back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:text="Order History"
+            android:textColor="@color/darkBrown"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- RecyclerView for orders -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ordersRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp" />
+
+    <!-- Empty state -->
+    <LinearLayout
+        android:id="@+id/emptyStateLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📦"
+            android:textSize="64sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="No orders yet"
+            android:textSize="18sp"
+            android:textColor="@color/darkBrown" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Place your first order to see it here"
+            android:textColor="@color/grey" />
+    </LinearLayout>
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <!-- Login prompt -->
+    <LinearLayout
+        android:id="@+id/loginPromptLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔒"
+            android:textSize="64sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Login Required"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/darkBrown" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Please login to view your order history"
+            android:textColor="@color/grey"
+            android:textAlignment="center" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/loginBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/orange_bg"
+            android:paddingHorizontal="32dp"
+            android:paddingVertical="12dp"
+            android:text="Login"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

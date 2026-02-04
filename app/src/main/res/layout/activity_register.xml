@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:text="Create Account"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/darkBrown" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="48dp"
+            android:text="Sign up to get started"
+            android:textSize="16sp"
+            android:textColor="@color/darkBrown" />
+
+        <!-- Name -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:boxBackgroundMode="outline"
+            android:hint="Name">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Email -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:boxBackgroundMode="outline"
+            android:hint="Email">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Password -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:boxBackgroundMode="outline"
+            app:passwordToggleEnabled="true"
+            android:hint="Password">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Confirm Password -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:boxBackgroundMode="outline"
+            app:passwordToggleEnabled="true"
+            android:hint="Confirm Password">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/confirmPasswordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Register Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/registerBtn"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/orange_bg"
+            android:text="Register"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Login Link -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Already have an account? "
+                android:textColor="@color/darkBrown" />
+
+            <TextView
+                android:id="@+id/loginLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:textColor="@color/darkBrown"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

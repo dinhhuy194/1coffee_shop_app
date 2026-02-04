@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center">
+
+        <!-- Logo/Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:text="Coffee Shop"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/darkBrown" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="48dp"
+            android:text="Welcome back!"
+            android:textSize="16sp"
+            android:textColor="@color/darkBrown" />
+
+        <!-- Email -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:boxBackgroundMode="outline"
+            android:hint="Email">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Password -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:boxBackgroundMode="outline"
+            app:passwordToggleEnabled="true"
+            android:hint="Password">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Login Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/loginBtn"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/orange_bg"
+            android:text="Login"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Or divider -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="24dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="@color/darkBrown" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="OR"
+                android:textColor="@color/darkBrown" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="@color/darkBrown" />
+        </LinearLayout>
+
+        <!-- Google Sign-In Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/googleSignInBtn"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/stroke_brown_bg"
+            android:text="Continue with Google"
+            android:textColor="@color/darkBrown"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Register Link -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Don't have an account? "
+                android:textColor="@color/darkBrown" />
+
+            <TextView
+                android:id="@+id/registerLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Register"
+                android:textColor="@color/darkBrown"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

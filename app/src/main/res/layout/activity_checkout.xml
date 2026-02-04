@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightCream"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Checkout"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/darkBrown"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Order Summary -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Order Summary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/darkBrown"
+            android:layout_marginBottom="16dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/white_bg"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Subtotal"
+                    android:textColor="@color/darkBrown" />
+
+                <TextView
+                    android:id="@+id/subtotalTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$0.00"
+                    android:textStyle="bold"
+                    android:textColor="@color/darkBrown" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tax"
+                    android:textColor="@color/darkBrown" />
+
+                <TextView
+                    android:id="@+id/taxTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$0.00"
+                    android:textStyle="bold"
+                    android:textColor="@color/darkBrown" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Delivery"
+                    android:textColor="@color/darkBrown" />
+
+                <TextView
+                    android:id="@+id/deliveryTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$0.00"
+                    android:textStyle="bold"
+                    android:textColor="@color/darkBrown" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey"
+                android:layout_marginVertical="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Total"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/darkBrown" />
+
+                <TextView
+                    android:id="@+id/totalTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$0.00"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/orange" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Payment Method -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Payment Method"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/darkBrown"
+            android:layout_marginBottom="16dp" />
+
+        <RadioGroup
+            android:id="@+id/paymentMethodGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/white_bg"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <RadioButton
+                android:id="@+id/cashRadio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="💵 Cash on Delivery"
+                android:textSize="16sp"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/cardRadio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="💳 Credit/Debit Card (Coming soon)"
+                android:textSize="16sp"
+                android:enabled="false"
+                android:layout_marginTop="8dp" />
+
+            <RadioButton
+                android:id="@+id/walletRadio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📱 E-Wallet (Coming soon)"
+                android:textSize="16sp"
+                android:enabled="false"
+                android:layout_marginTop="8dp" />
+        </RadioGroup>
+
+        <!-- Delivery Address -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Delivery Address (Optional)"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/darkBrown"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/addressEditText"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="@drawable/white_bg"
+            android:padding="16dp"
+            android:hint="Enter delivery address..."
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Place Order Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/placeOrderBtn"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/orange_bg"
+            android:text="Place Order"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>
