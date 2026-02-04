@@ -26,13 +26,16 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/editTextText"
+                    android:id="@+id/search_box"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:background="@drawable/white_bg"
                     android:drawableStart="@drawable/search_icon"
                     android:drawablePadding="8dp"
+                    android:imeOptions="actionSearch"
+                    android:singleLine="true"
+                    android:maxLines="1"
                     android:ems="10"
                     android:hint="@string/search_anything"
                     android:inputType="text"

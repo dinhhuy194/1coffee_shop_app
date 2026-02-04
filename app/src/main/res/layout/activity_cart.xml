@@ -238,7 +238,7 @@
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
             android:background="@drawable/brown_full_corner_bg"
-            android:text="Procced to Checkout"
+            android:text="Proceed to Checkout"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp" />

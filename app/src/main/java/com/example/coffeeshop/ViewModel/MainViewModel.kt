@@ -18,11 +18,19 @@ class MainViewModel:ViewModel (){
         return repository.loadCategory()
     }
 
+    fun loadAllItems(): MutableLiveData<MutableList<ItemsModel>> {
+        return repository.loadAllItems()
+    }
+
     fun loadPopular():MutableLiveData<MutableList<ItemsModel>>{
         return repository.loadPopular()
     }
 
     fun loadItemCategory(categoryId:String):MutableLiveData<MutableList<ItemsModel>>{
         return repository.loadItemCategory(categoryId)
+    }
+
+    fun searchItems(query: String): MutableLiveData<MutableList<ItemsModel>> {
+        return repository.searchItems(query)
     }
 }

@@ -8,7 +8,13 @@ class ItemsModel(var title : String = "",
                  var price:Double = 0.0,
     var rating:Double = 0.0,
     var numberInCart:Int = 0,
-    var extra:String = ""
+    var extra:String = "",
+    var categoryId:String = "",
+    var selectedSize:String = "Medium",
+    var iceOption:String = "Đá chung",
+    var sugarOption:String = "Bình thường"
 
 ): Serializable
+
+
 

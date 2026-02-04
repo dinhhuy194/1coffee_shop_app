@@ -36,7 +36,7 @@
         app:layout_constraintTop_toBottomOf="@+id/pic" />
 
     <ImageView
-        android:id="@+id/imageView5"
+        android:id="@+id/addToCartBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -54,6 +54,6 @@
         android:textColor="@color/darkBrown"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/imageView5"
+        app:layout_constraintBottom_toBottomOf="@id/addToCartBtn"
         app:layout_constraintStart_toStartOf="@id/titleTxt" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -54,16 +54,18 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun calculateCart() {
-        val percenTax = 0.02
-        val delivery = 15
-        tax = Math.round(managmentCart.getTotalFee() * percenTax * 100) / 100.0
-        val total = Math.round(managmentCart.getTotalFee() + tax + delivery * 100) / 100.0
-        val itemTotal = Math.round(managmentCart.getTotalFee() * 100) / 100.0
+        val percentTax = 0.02  // 2% tax
+        val deliveryFee = 15.0
+        
+        val subtotal = Math.round(managmentCart.getTotalFee() * 100) / 100.0
+        tax = Math.round(subtotal * percentTax * 100) / 100.0
+        val total = Math.round((subtotal + tax + deliveryFee) * 100) / 100.0
+        
         binding.apply {
-            totalFeeTxt.text = "$$itemTotal"
-            taxTxt.text = "$$tax"
-            deliveryTxt.text = "$$delivery"
-            totalFeeTxt.text = "$$total"
+            totalFeeTxt.text = "$${String.format("%.2f", subtotal)}"
+            taxTxt.text = "$${String.format("%.2f", tax)}"
+            deliveryTxt.text = "$${String.format("%.2f", deliveryFee)}"
+            totalTxt.text = "$${String.format("%.2f", total)}"
         }
 
     }
