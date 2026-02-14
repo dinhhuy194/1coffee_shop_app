@@ -78,4 +78,6 @@ dependencies {
     
     // CircleImageView for profile avatar
     implementation("de.hdodenhof:circleimageview:3.1.0")
+    //swiperefreshlayout
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 }

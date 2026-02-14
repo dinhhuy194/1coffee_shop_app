@@ -73,7 +73,7 @@ class ProfileFragment : Fragment() {
             
             // Menu items - show toast for now (UI only as requested)
             favoritesBtn.setOnClickListener {
-                Toast.makeText(requireContext(), "Favorites - Coming soon", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(requireContext(), com.example.coffeeshop.Activity.FavoriteActivity::class.java))
             }
             
             paymentBtn.setOnClickListener {

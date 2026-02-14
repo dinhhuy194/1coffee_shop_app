@@ -33,6 +33,7 @@ class OrderHistoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         
         setupRecyclerView()
+        setupSwipeRefresh()
         setupListeners()
         observeViewModel()
         checkAuthAndLoadOrders()
@@ -40,6 +41,18 @@ class OrderHistoryFragment : Fragment() {
     
     private fun setupRecyclerView() {
         binding.ordersRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+    }
+    
+    private fun setupSwipeRefresh() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            checkAuthAndLoadOrders()
+        }
+        // Set colors for refresh indicator
+        binding.swipeRefreshLayout.setColorSchemeResources(
+            android.R.color.holo_orange_dark,
+            android.R.color.holo_red_dark,
+            android.R.color.holo_blue_dark
+        )
     }
     
     private fun setupListeners() {
@@ -55,12 +68,14 @@ class OrderHistoryFragment : Fragment() {
     private fun observeViewModel() {
         // Observe orders
         viewModel.orders.observe(viewLifecycleOwner) { orders ->
+            binding.swipeRefreshLayout.isRefreshing = false
+            
             if (orders.isEmpty()) {
                 binding.emptyStateLayout.visibility = View.VISIBLE
-                binding.ordersRecyclerView.visibility = View.GONE
+                binding.swipeRefreshLayout.visibility = View.GONE
             } else {
                 binding.emptyStateLayout.visibility = View.GONE
-                binding.ordersRecyclerView.visibility = View.VISIBLE
+                binding.swipeRefreshLayout.visibility = View.VISIBLE
                 binding.ordersRecyclerView.adapter = OrderAdapter(orders)
             }
         }
@@ -69,17 +84,22 @@ class OrderHistoryFragment : Fragment() {
         viewModel.loadingState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is OrderViewModel.LoadingState.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
+                    if (!binding.swipeRefreshLayout.isRefreshing) {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
                 }
                 is OrderViewModel.LoadingState.Success -> {
                     binding.progressBar.visibility = View.GONE
+                    binding.swipeRefreshLayout.isRefreshing = false
                 }
                 is OrderViewModel.LoadingState.Error -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Error: ${state.message}", Toast.LENGTH_SHORT).show()
+                    binding.swipeRefreshLayout.isRefreshing = false
+                    Toast.makeText(requireContext(), "Lỗi: ${state.message}", Toast.LENGTH_SHORT).show()
                 }
                 else -> {
                     binding.progressBar.visibility = View.GONE
+                    binding.swipeRefreshLayout.isRefreshing = false
                 }
             }
         }
@@ -91,8 +111,9 @@ class OrderHistoryFragment : Fragment() {
         if (currentUser == null) {
             // Show login prompt
             binding.loginPromptLayout.visibility = View.VISIBLE
-            binding.ordersRecyclerView.visibility = View.GONE
+            binding.swipeRefreshLayout.visibility = View.GONE
             binding.emptyStateLayout.visibility = View.GONE
+            binding.progressBar.visibility = View.GONE
         } else {
             // Load orders
             binding.loginPromptLayout.visibility = View.GONE

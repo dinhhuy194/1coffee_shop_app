@@ -107,8 +107,8 @@
             android:id="@+id/googleSignInBtn"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@drawable/stroke_brown_bg"
-            android:text="Continue with Google"
+            android:background="@drawable/stroke_gg_bg"
+            android:text="Continue with Google "
             android:textColor="@color/darkBrown"
             android:textSize="16sp"
             android:textStyle="bold" />

@@ -30,6 +30,18 @@
         app:shapeAppearanceOverlay="@style/CircleImageView"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
+    <ImageView
+        android:id="@+id/favoriteIcon"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_margin="8dp"
+        android:padding="3dp"
+        android:background="@drawable/circle_bg_white"
+        android:src="@drawable/ic_favorite_outline"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="@id/picMain"
+        app:layout_constraintTop_toTopOf="@id/picMain" />
+
     <TextView
         android:id="@+id/titleTxt"
         android:layout_width="wrap_content"

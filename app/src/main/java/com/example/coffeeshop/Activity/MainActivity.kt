@@ -31,10 +31,20 @@ class MainActivity : AppCompatActivity() {
         initBottomMenu()
         initSearch()
     }
+    
+    override fun onResume() {
+        super.onResume()
+        // Refresh popular items to sync favorite status
+        binding.recyclerViewPopular.adapter?.notifyDataSetChanged()
+    }
 
     private fun initBottomMenu() {
         binding.cartBtn.setOnClickListener {
             startActivity(Intent(this@MainActivity, CartActivity::class.java))
+        }
+        
+        binding.favBtn.setOnClickListener {
+            startActivity(Intent(this@MainActivity, FavoriteActivity::class.java))
         }
         
         binding.myOrderBtn.setOnClickListener {

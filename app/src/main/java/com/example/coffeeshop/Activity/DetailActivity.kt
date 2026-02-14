@@ -2,6 +2,7 @@ package com.example.coffeeshop.Activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -10,13 +11,17 @@ import com.bumptech.glide.Glide
 import com.example.coffeeshop.Domain.ItemsModel
 import com.example.coffeeshop.Helper.PriceCalculator
 import com.example.coffeeshop.R
+import com.example.coffeeshop.Repository.FavoriteRepository
 import com.example.coffeeshop.databinding.ActivityDetailBinding
 import com.example.project1762.Helper.ManagmentCart
+import com.google.firebase.auth.FirebaseAuth
 
 class DetailActivity : AppCompatActivity() {
     lateinit var binding: ActivityDetailBinding
     private lateinit var item: ItemsModel
     private lateinit var managementCart: ManagmentCart
+    private val favoriteRepository = FavoriteRepository()
+    private val auth = FirebaseAuth.getInstance()
     
     // Variables for price calculation
     private var selectedSize = "Medium"
@@ -38,6 +43,45 @@ class DetailActivity : AppCompatActivity() {
         initSizeList()
         initIceOptions()
         initSugarOptions()
+        initFavoriteButton()
+    }
+    
+    private fun initFavoriteButton() {
+        // Check favorite status from Firebase
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            favoriteRepository.isFavorite(userId, item.title) { isFavorite ->
+                item.isFavorite = isFavorite
+                updateFavoriteIcon()
+            }
+        } else {
+            updateFavoriteIcon()
+        }
+        
+        // Set click listener
+        binding.favBtn.setOnClickListener {
+            val userId = auth.currentUser?.uid
+            if (userId != null) {
+                favoriteRepository.toggleFavorite(userId, item) { isFavorite ->
+                    item.isFavorite = isFavorite
+                    updateFavoriteIcon()
+                    
+                    val message = if (isFavorite) "Đã thêm vào yêu thích" else "Đã xóa khỏi yêu thích"
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Vui lòng đăng nhập để sử dụng tính năng này", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    
+    private fun updateFavoriteIcon() {
+        val iconRes = if (item.isFavorite) {
+            R.drawable.ic_favorite_filled
+        } else {
+            R.drawable.ic_favorite_outline
+        }
+        binding.favBtn.setImageResource(iconRes)
     }
 
     private fun initSizeList() {

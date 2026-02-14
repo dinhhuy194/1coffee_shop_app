@@ -76,216 +76,289 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp">
 
             <!-- My Favorites -->
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/favoritesBtn"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@drawable/white_bg"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="14dp"
+                app:cardBackgroundColor="@color/white">
 
-                <TextView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:text="❤️"
-                    android:textSize="20sp"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:text="My Favorites"
-                    android:textSize="16sp"
-                    android:textColor="@color/darkBrown" />
+                    android:orientation="horizontal"
+                    android:padding="18dp"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="›"
-                    android:textSize="24sp"
-                    android:textColor="@color/grey" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:text="❤️"
+                        android:textSize="22sp"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:text="My Favorites"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkBrown" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textSize="28sp"
+                        android:alpha="0.5"
+                        android:textColor="@color/grey" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Payment Methods -->
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/paymentBtn"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@drawable/white_bg"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="14dp"
+                app:cardBackgroundColor="@color/white">
 
-                <TextView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:text="💳"
-                    android:textSize="20sp"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:text="Payment Methods"
-                    android:textSize="16sp"
-                    android:textColor="@color/darkBrown" />
+                    android:orientation="horizontal"
+                    android:padding="18dp"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="›"
-                    android:textSize="24sp"
-                    android:textColor="@color/grey" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:text="💳"
+                        android:textSize="22sp"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:text="Payment Methods"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkBrown" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textSize="28sp"
+                        android:alpha="0.5"
+                        android:textColor="@color/grey" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Settings -->
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/settingsBtn"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@drawable/white_bg"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="14dp"
+                app:cardBackgroundColor="@color/white">
 
-                <TextView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:text="⚙️"
-                    android:textSize="20sp"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:text="Settings"
-                    android:textSize="16sp"
-                    android:textColor="@color/darkBrown" />
+                    android:orientation="horizontal"
+                    android:padding="18dp"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="›"
-                    android:textSize="24sp"
-                    android:textColor="@color/grey" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:text="⚙️"
+                        android:textSize="22sp"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:text="Settings"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkBrown" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textSize="28sp"
+                        android:alpha="0.5"
+                        android:textColor="@color/grey" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Language -->
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/languageBtn"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@drawable/white_bg"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="14dp"
+                app:cardBackgroundColor="@color/white">
 
-                <TextView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:text="🌐"
-                    android:textSize="20sp"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:text="Language"
-                    android:textSize="16sp"
-                    android:textColor="@color/darkBrown" />
+                    android:orientation="horizontal"
+                    android:padding="18dp"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="›"
-                    android:textSize="24sp"
-                    android:textColor="@color/grey" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:text="🌐"
+                        android:textSize="22sp"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:text="Language"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkBrown" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textSize="28sp"
+                        android:alpha="0.5"
+                        android:textColor="@color/grey" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- About Us -->
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/aboutBtn"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@drawable/white_bg"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="14dp"
+                app:cardBackgroundColor="@color/white">
 
-                <TextView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:text="ℹ️"
-                    android:textSize="20sp"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:text="About Us"
-                    android:textSize="16sp"
-                    android:textColor="@color/darkBrown" />
+                    android:orientation="horizontal"
+                    android:padding="18dp"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="›"
-                    android:textSize="24sp"
-                    android:textColor="@color/grey" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:text="ℹ️"
+                        android:textSize="22sp"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:text="About Us"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkBrown" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textSize="28sp"
+                        android:alpha="0.5"
+                        android:textColor="@color/grey" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Feedback -->
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/feedbackBtn"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@drawable/white_bg"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical">
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="14dp"
+                app:cardBackgroundColor="@color/white">
 
-                <TextView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:text="📝"
-                    android:textSize="20sp"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:text="Feedback"
-                    android:textSize="16sp"
-                    android:textColor="@color/darkBrown" />
+                    android:orientation="horizontal"
+                    android:padding="18dp"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="›"
-                    android:textSize="24sp"
-                    android:textColor="@color/grey" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:text="📝"
+                        android:textSize="22sp"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:text="Feedback"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkBrown" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textSize="28sp"
+                        android:alpha="0.5"
+                        android:textColor="@color/grey" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 

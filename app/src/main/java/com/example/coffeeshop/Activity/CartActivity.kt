@@ -1,6 +1,7 @@
 package com.example.coffeeshop.Activity
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -42,9 +43,19 @@ class CartActivity : AppCompatActivity() {
                 object : ChangeNumberItemsListener {
                     override fun onChanged() {
                         calculateCart()
+                        updateEmptyState()
                     }
                 })
         }
+        
+        // Initial empty state check
+        updateEmptyState()
+    }
+    
+    private fun updateEmptyState() {
+        val isEmpty = managmentCart.getListCart().isEmpty()
+        binding.emptyCartLayout.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.cartView.visibility = if (isEmpty) View.GONE else View.VISIBLE
     }
 
     private fun setVariable() {
