@@ -12,4 +12,19 @@
     <color name="darkBrown">#220C01</color>
     <color name="beige">#FCF0E2</color>
 
+    <!-- Rank Colors -->
+    <color name="rankNormal">#6B3A2A</color>
+    <color name="rankNormalEnd">#9C5A3C</color>
+    <color name="rankSilver">#546E7A</color>
+    <color name="rankSilverEnd">#90A4AE</color>
+    <color name="rankGold">#E65100</color>
+    <color name="rankGoldEnd">#F9A825</color>
+    <color name="rankDiamond">#0D47A1</color>
+    <color name="rankDiamondEnd">#1DE9B6</color>
+
+    <!-- Point History Colors -->
+    <color name="pointPositive">#2E7D32</color>
+    <color name="pointNegative">#C62828</color>
+    <color name="pointPositiveBg">#E8F5E9</color>
+    <color name="pointNegativeBg">#FFEBEE</color>
 </resources>

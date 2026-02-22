@@ -51,6 +51,15 @@
             android:exported="false"
             />
         <activity
+            android:name=".Activity.MembershipDetailActivity"
+            android:exported="false"
+            android:label="Thành viên BEAN" />
+        <activity
+            android:name=".Activity.MyVouchersActivity"
+            android:exported="false"
+            android:label="Voucher của tôi" />
+
+        <activity
             android:name=".Activity.MainActivity"
             android:exported="false" />
         <activity

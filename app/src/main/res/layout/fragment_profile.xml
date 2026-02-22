@@ -16,8 +16,8 @@
         <LinearLayout
             android:id="@+id/profileHeader"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/orange"
+            android:layout_height="270dp"
+            android:background="@drawable/cf_background"
             android:orientation="vertical"
             android:padding="24dp">
 
@@ -45,9 +45,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Guest User"
+                android:textColor="@color/white"
                 android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="@color/white" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/emailTxt"
@@ -55,8 +55,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="guest@coffeeshop.com"
-                android:textSize="14sp"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <!-- Login/Logout Button -->
@@ -71,6 +71,157 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
+        <!-- ===== MEMBERSHIP CARD ===== -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/membershipCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_membership_card_normal"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <!-- Row 1: Bean count + Rank name + Emoji icon -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <!-- Left: points info -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/membershipRankLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="☕ Normal"
+                            android:textColor="@color/white"
+                            android:textSize="13sp"
+                            android:alpha="0.85" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+
+                            <TextView
+                                android:id="@+id/membershipBeanCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textColor="@color/white"
+                                android:textSize="34sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:text="BEAN"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:alpha="0.8" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Right: big emoji -->
+                    <TextView
+                        android:id="@+id/membershipRankEmoji"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="☕"
+                        android:textSize="48sp" />
+                </LinearLayout>
+
+                <!-- Row 2: Progress bar -->
+                <LinearLayout
+                    android:id="@+id/membershipProgressSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="14dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="5dp">
+
+                        <TextView
+                            android:id="@+id/membershipProgressLabel"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Còn 500 BEAN nữa lên Silver"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:alpha="0.9" />
+
+                        <TextView
+                            android:id="@+id/membershipProgressPercent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0%"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/membershipProgressBar"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="6dp"
+                        android:max="100"
+                        android:progress="0"
+                        android:progressTint="@color/white"
+                        android:progressBackgroundTint="#40FFFFFF" />
+                </LinearLayout>
+
+                <!-- Diamond special message -->
+                <TextView
+                    android:id="@+id/membershipDiamondMsg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="👑 Bạn đã đạt cấp độ tối cao!"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <!-- Tap hint -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="end"
+                    android:text="Xem đặc quyền ›"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:alpha="0.7" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <!-- ===== END MEMBERSHIP CARD ===== -->
+
         <!-- Menu Items -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,6 +229,7 @@
             android:orientation="vertical"
             android:paddingHorizontal="16dp"
             android:paddingVertical="8dp">
+
 
             <!-- My Favorites -->
             <com.google.android.material.card.MaterialCardView
@@ -99,12 +251,12 @@
                     android:padding="18dp"
                     android:gravity="center_vertical">
 
-                    <TextView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:text="❤️"
-                        android:textSize="22sp"
-                        android:gravity="center" />
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_favorite"
+                        android:contentDescription="Favorites"
+                        app:tint="@color/brownLight" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -112,6 +264,53 @@
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
                         android:text="My Favorites"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkBrown" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textSize="28sp"
+                        android:alpha="0.5"
+                        android:textColor="@color/grey" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- My Vouchers -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/myVouchersBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="14dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="18dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:gravity="center"
+                        android:text="🎫"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:text="Voucher của tôi"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/darkBrown" />
@@ -146,12 +345,12 @@
                     android:padding="18dp"
                     android:gravity="center_vertical">
 
-                    <TextView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:text="💳"
-                        android:textSize="22sp"
-                        android:gravity="center" />
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_payment"
+                        android:contentDescription="Payment"
+                        app:tint="@color/brownLight" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -193,12 +392,12 @@
                     android:padding="18dp"
                     android:gravity="center_vertical">
 
-                    <TextView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:text="⚙️"
-                        android:textSize="22sp"
-                        android:gravity="center" />
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_settings"
+                        android:contentDescription="Settings"
+                        app:tint="@color/brownLight" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -240,12 +439,12 @@
                     android:padding="18dp"
                     android:gravity="center_vertical">
 
-                    <TextView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:text="🌐"
-                        android:textSize="22sp"
-                        android:gravity="center" />
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_language"
+                        android:contentDescription="Language"
+                        app:tint="@color/brownLight" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -287,12 +486,12 @@
                     android:padding="18dp"
                     android:gravity="center_vertical">
 
-                    <TextView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:text="ℹ️"
-                        android:textSize="22sp"
-                        android:gravity="center" />
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_info"
+                        android:contentDescription="About"
+                        app:tint="@color/brownLight" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -333,12 +532,12 @@
                     android:padding="18dp"
                     android:gravity="center_vertical">
 
-                    <TextView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:text="📝"
-                        android:textSize="22sp"
-                        android:gravity="center" />
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_feedback"
+                        android:contentDescription="Feedback"
+                        app:tint="@color/brownLight" />
 
                     <TextView
                         android:layout_width="0dp"
