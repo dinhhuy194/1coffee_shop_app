@@ -128,7 +128,8 @@
                                 android:text="0"
                                 android:textColor="@color/white"
                                 android:textSize="34sp"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -181,7 +182,8 @@
                             android:text="0%"
                             android:textColor="@color/white"
                             android:textSize="11sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium" />
                     </LinearLayout>
 
                     <ProgressBar

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/voucherCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Icon Emoji Voucher -->
+        <TextView
+            android:id="@+id/voucherIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:textSize="26sp"
+            android:background="#FFF3E0"
+            android:text="🎁" />
+
+        <!-- Thông tin voucher -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/voucherName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Giảm 10.000đ"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/darkBrown" />
+
+            <TextView
+                android:id="@+id/voucherDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Áp dụng cho đơn từ 50k"
+                android:textSize="13sp"
+                android:textColor="@color/grey" />
+
+            <!-- Chi phí BEAN -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="6dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🫘 "
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/voucherBeanCost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100 BEAN"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/orange" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Nút Đổi -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginStart="8dp">
+
+            <Button
+                android:id="@+id/btnRedeem"
+                android:layout_width="80dp"
+                android:layout_height="38dp"
+                android:text="Đổi"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/orange"
+                app:cornerRadius="8dp" />
+
+            <!-- Thông báo thiếu điểm (ẩn mặc định) -->
+            <TextView
+                android:id="@+id/txtNotEnough"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="Thiếu 50 BEAN"
+                android:textSize="10sp"
+                android:textColor="@color/grey"
+                android:visibility="gone" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

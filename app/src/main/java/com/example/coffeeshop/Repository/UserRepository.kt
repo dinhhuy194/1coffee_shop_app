@@ -19,12 +19,45 @@ class UserRepository {
                 .document(uid)
                 .get()
                 .await()
-            val user = document.toObject(User::class.java)
-            if (user != null) Result.success(user)
-            else Result.failure(Exception("User not found"))
+            var user = document.toObject(User::class.java)
+            if (user != null) {
+                // Auto-migration: nếu user cũ chưa có lifetimePoints
+                val migratedUser = migrateLifetimePointsIfNeeded(user)
+                Result.success(migratedUser)
+            } else {
+                Result.failure(Exception("User not found"))
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    /**
+     * Migration tự động cho user cũ: nếu lifetimePoints == 0 nhưng totalPoints > 0,
+     * nghĩa là user đã tích điểm trước khi có lifetimePoints.
+     * Set lifetimePoints = totalPoints và cập nhật rank dựa trên lifetimePoints.
+     * Chỉ chạy 1 lần — sau khi migration, lifetimePoints > 0 nên sẽ không chạy lại.
+     */
+    private suspend fun migrateLifetimePointsIfNeeded(user: User): User {
+        if (user.lifetimePoints == 0L && user.totalPoints > 0L) {
+            val newLifetime = user.totalPoints
+            val newRank = User.getRankFromLifetimePoints(newLifetime)
+            try {
+                firestore.collection("users")
+                    .document(user.uid)
+                    .update(
+                        mapOf(
+                            "lifetimePoints" to newLifetime,
+                            "rank" to newRank
+                        )
+                    ).await()
+                return user.copy(lifetimePoints = newLifetime, rank = newRank)
+            } catch (_: Exception) {
+                // Nếu migration thất bại, trả về user gốc — sẽ thử lại lần sau
+                return user
+            }
+        }
+        return user
     }
 
     /**
@@ -44,6 +77,9 @@ class UserRepository {
 
     /**
      * Xử lý tích điểm BEAN sau khi đặt hàng thành công.
+     * - totalPoints: số dư BEAN khả dụng (dùng để đổi quà)
+     * - lifetimePoints: tổng BEAN đã tích lũy (dùng để xác định rank, không bị trừ)
+     * - rank: dựa trên lifetimePoints
      */
     suspend fun processPointsEarned(
         userId: String,
@@ -61,16 +97,21 @@ class UserRepository {
                 val currentPoints = snapshot.getLong("totalPoints") ?: 0L
                 val currentRank = snapshot.getString("rank") ?: User.RANK_NORMAL
                 val currentSpent = snapshot.getLong("totalSpent") ?: 0L
+                val currentLifetime = snapshot.getLong("lifetimePoints") ?: 0L
 
-                beansEarned = orderAmount * User.getBeansPerUnit(currentRank)
+                // Tính BEAN dựa trên rank hiện tại: 1$ = 2/3/4/5 BEAN
+                beansEarned = orderAmount * User.getBeansPerDollar(currentRank)
 
                 val newTotalPoints = currentPoints + beansEarned
-                val newRank = User.getRankFromPoints(newTotalPoints)
+                val newLifetimePoints = currentLifetime + beansEarned
+                // Rank dựa trên lifetimePoints (tổng tích lũy), KHÔNG dựa trên số dư
+                val newRank = User.getRankFromLifetimePoints(newLifetimePoints)
 
                 val updateMap = mapOf(
-                    "totalPoints" to newTotalPoints,
-                    "rank"        to newRank,
-                    "totalSpent"  to (currentSpent + orderAmount)
+                    "totalPoints"    to newTotalPoints,
+                    "lifetimePoints" to newLifetimePoints,
+                    "rank"           to newRank,
+                    "totalSpent"     to (currentSpent + orderAmount)
                 )
                 transaction.update(userRef, updateMap)
 
@@ -93,6 +134,7 @@ class UserRepository {
 
     /**
      * Đổi voucher bằng BEAN + lưu voucher đã đổi vào subcollection.
+     * CHỈ trừ totalPoints (số dư), KHÔNG ảnh hưởng lifetimePoints và rank.
      */
     suspend fun redeemVoucher(
         userId: String,
@@ -117,7 +159,7 @@ class UserRepository {
 
                 remainingPoints = currentPoints - voucherBeanCost
 
-                // Cập nhật điểm
+                // Chỉ cập nhật totalPoints, KHÔNG thay đổi rank hay lifetimePoints
                 transaction.update(userRef, "totalPoints", remainingPoints)
 
                 // Ghi lịch sử điểm âm

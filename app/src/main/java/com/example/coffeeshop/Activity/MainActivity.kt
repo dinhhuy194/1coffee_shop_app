@@ -7,6 +7,10 @@ import android.view.inputmethod.EditorInfo
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -14,10 +18,16 @@ import com.example.coffeeshop.Adapter.CategoryAdapter
 import com.example.coffeeshop.Adapter.PopularAdapter
 import com.example.coffeeshop.ViewModel.MainViewModel
 import com.example.coffeeshop.databinding.ActivityMainBinding
+import com.example.coffeeshop.ui.compose.AddToCartBubble
+import com.example.coffeeshop.ui.compose.CartBubbleData
+import com.example.coffeeshop.ui.compose.CartBubbleState
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
+
+    // Compose state cho bong bóng
+    private var bubbleData by mutableStateOf<CartBubbleData?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupBubbleCompose()
         initBanner()
         initCategory()
         initPopular()
@@ -36,6 +47,32 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         // Refresh popular items to sync favorite status
         binding.recyclerViewPopular.adapter?.notifyDataSetChanged()
+
+        // Check nếu có pending bubble từ DetailActivity
+        val pending = CartBubbleState.consume()
+        if (pending != null) {
+            bubbleData = pending
+        }
+    }
+
+    /**
+     * Khởi tạo ComposeView cho bong bóng "Đã thêm vào giỏ"
+     */
+    private fun setupBubbleCompose() {
+        binding.bubbleComposeView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AddToCartBubble(
+                    data = bubbleData,
+                    onCartClicked = {
+                        startActivity(Intent(this@MainActivity, CartActivity::class.java))
+                    },
+                    onDismiss = {
+                        bubbleData = null
+                    }
+                )
+            }
+        }
     }
 
     private fun initBottomMenu() {

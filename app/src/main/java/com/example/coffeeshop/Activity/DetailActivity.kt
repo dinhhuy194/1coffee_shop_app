@@ -5,14 +5,14 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.example.coffeeshop.Domain.ItemsModel
 import com.example.coffeeshop.Helper.PriceCalculator
 import com.example.coffeeshop.R
 import com.example.coffeeshop.Repository.FavoriteRepository
 import com.example.coffeeshop.databinding.ActivityDetailBinding
+import com.example.coffeeshop.ui.compose.CartBubbleData
+import com.example.coffeeshop.ui.compose.CartBubbleState
 import com.example.project1762.Helper.ManagmentCart
 import com.google.firebase.auth.FirebaseAuth
 
@@ -29,12 +29,10 @@ class DetailActivity : AppCompatActivity() {
     private var selectedSugar = "Bình thường"
     private var basePrice = 0.0
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding=ActivityDetailBinding.inflate(layoutInflater)
+        binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         managementCart = ManagmentCart(this)
@@ -47,7 +45,6 @@ class DetailActivity : AppCompatActivity() {
     }
     
     private fun initFavoriteButton() {
-        // Check favorite status from Firebase
         val userId = auth.currentUser?.uid
         if (userId != null) {
             favoriteRepository.isFavorite(userId, item.title) { isFavorite ->
@@ -58,7 +55,6 @@ class DetailActivity : AppCompatActivity() {
             updateFavoriteIcon()
         }
         
-        // Set click listener
         binding.favBtn.setOnClickListener {
             val userId = auth.currentUser?.uid
             if (userId != null) {
@@ -182,9 +178,8 @@ class DetailActivity : AppCompatActivity() {
 
     private fun bundle() {
         binding.apply {
-            item=intent.getSerializableExtra("object") as ItemsModel
+            item = intent.getSerializableExtra("object") as ItemsModel
             
-            // Initialize base price and quantity
             basePrice = item.price
             item.numberInCart = 1
             numberItemTxt.text = "1"
@@ -193,28 +188,33 @@ class DetailActivity : AppCompatActivity() {
                 .load(item.picUrl[0])
                 .into(binding.picMain)
 
-            titleTxt.text=item.title
-            descriptionTxt.text=item.description
-            ratingTxt.text=item.rating.toString()
+            titleTxt.text = item.title
+            descriptionTxt.text = item.description
+            ratingTxt.text = item.rating.toString()
             
-            // Initialize UI selections
             updateSizeSelection()
             updateIceSelection()
             updateSugarSelection()
             updateTotalPrice()
 
             addToCartBtn.setOnClickListener {
-                item.numberInCart=Integer.valueOf(
+                item.numberInCart = Integer.valueOf(
                     numberItemTxt.text.toString()
                 )
-                // Save selected options to item
                 item.selectedSize = selectedSize
                 item.iceOption = selectedIce
                 item.sugarOption = selectedSugar
                 
                 managementCart.insertItems(item)
                 
-                // Finish activity to return to previous screen
+                // Set pending bubble → finish → trang trước sẽ hiện bong bóng
+                val thumbnailUrl = if (item.picUrl.isNotEmpty()) item.picUrl[0] else ""
+                CartBubbleState.setPending(
+                    CartBubbleData(
+                        drinkName = item.title,
+                        thumbnailUrl = thumbnailUrl
+                    )
+                )
                 finish()
             }
             backBtn.setOnClickListener {
@@ -226,7 +226,7 @@ class DetailActivity : AppCompatActivity() {
                 updateTotalPrice()
             }
             minusBtn.setOnClickListener {
-                if (item.numberInCart > 1){
+                if (item.numberInCart > 1) {
                     item.numberInCart--
                     numberItemTxt.text = item.numberInCart.toString()
                     updateTotalPrice()

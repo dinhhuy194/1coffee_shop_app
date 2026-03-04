@@ -8,7 +8,8 @@ data class User(
     val createdAt: Long = System.currentTimeMillis(),
     val totalPoints: Long = 0,
     val rank: String = "Normal",
-    val totalSpent: Long = 0
+    val totalSpent: Long = 0,
+    val lifetimePoints: Long = 0
 ) {
     companion object {
         const val RANK_NORMAL = "Normal"
@@ -16,32 +17,46 @@ data class User(
         const val RANK_GOLD = "Gold"
         const val RANK_DIAMOND = "Diamond"
 
-        fun getRankFromPoints(points: Long): String = when {
-            points >= 5000 -> RANK_DIAMOND
-            points >= 2000 -> RANK_GOLD
-            points >= 500  -> RANK_SILVER
-            else           -> RANK_NORMAL
+        /**
+         * Xác định hạng thành viên dựa trên lifetimePoints
+         * (tổng BEAN đã từng tích lũy, không bị trừ khi đổi quà).
+         */
+        fun getRankFromLifetimePoints(lifetimePoints: Long): String = when {
+            lifetimePoints >= 1500 -> RANK_DIAMOND
+            lifetimePoints >= 500  -> RANK_GOLD
+            lifetimePoints >= 100  -> RANK_SILVER
+            else                   -> RANK_NORMAL
         }
 
+        /**
+         * Ngưỡng lifetimePoints cần đạt để lên hạng tiếp theo.
+         */
         fun getNextRankThreshold(rank: String): Long = when (rank) {
-            RANK_NORMAL  -> 500L
-            RANK_SILVER  -> 2000L
-            RANK_GOLD    -> 5000L
-            else         -> -1L // Diamond — không có hạng tiếp theo
+            RANK_NORMAL  -> 100L
+            RANK_SILVER  -> 500L
+            RANK_GOLD    -> 1500L
+            else         -> -1L // Diamond — hạng cao nhất
         }
 
+        /**
+         * Điểm lifetimePoints tối thiểu của hạng hiện tại.
+         */
         fun getCurrentRankMinPoints(rank: String): Long = when (rank) {
-            RANK_SILVER  -> 500L
-            RANK_GOLD    -> 2000L
-            RANK_DIAMOND -> 5000L
+            RANK_SILVER  -> 100L
+            RANK_GOLD    -> 500L
+            RANK_DIAMOND -> 1500L
             else         -> 0L
         }
 
-        fun getBeansPerUnit(rank: String): Long = when (rank) {
-            RANK_SILVER  -> 7L
-            RANK_GOLD    -> 8L
-            RANK_DIAMOND -> 9L
-            else         -> 6L // Normal
+        /**
+         * Số BEAN nhận được trên mỗi $1 chi tiêu.
+         * Hạng cao hơn → tích nhiều BEAN hơn.
+         */
+        fun getBeansPerDollar(rank: String): Long = when (rank) {
+            RANK_SILVER  -> 3L
+            RANK_GOLD    -> 4L
+            RANK_DIAMOND -> 5L
+            else         -> 2L  // Normal: 1$ = 2 BEAN
         }
     }
 }

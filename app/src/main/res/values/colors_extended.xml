@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Extended Color Palette for UI/UX Improvements -->
+    
+    <!-- Orange Gradients -->
+    <color name="orangeGradientStart">#FFD89D</color>
+    <color name="orangeGradientEnd">#F0B45D</color>
+    <color name="orangeLight">#FFE4B5</color>
+    <color name="orangeDark">#D89A45</color>
+    
+    <!-- Cream Variants -->
+    <color name="creamLight">#FFF9F0</color>
+    <color name="creamDark">#E5D4B8</color>
+    
+    <!-- Brown Variants -->
+    <color name="brownLight">#8D6E63</color>
+    <color name="brownMedium">#5D4037</color>
+    
+    <!-- Semantic Colors -->
+    <color name="colorSuccess">#4CAF50</color>
+    <color name="colorError">#F44336</color>
+    <color name="colorWarning">#FF9800</color>
+    <color name="colorInfo">#2196F3</color>
+    
+    <!-- Surface Colors -->
+    <color name="surfaceBackground">#FCF0E2</color>
+    <color name="surfaceCard">#FFFFFF</color>
+    <color name="surfaceVariant">#F5E9DA</color>
+    
+    <!-- Opacity Variants -->
+    <color name="blackOverlay12">#1F000000</color>
+    <color name="blackOverlay24">#3D000000</color>
+    <color name="blackOverlay48">#7A000000</color>
+    <color name="whiteOverlay12">#1FFFFFFF</color>
+    <color name="whiteOverlay24">#3DFFFFFF</color>
+    <color name="whiteOverlay48">#7AFFFFFF</color>
+    
+    <!-- Text Colors -->
+    <color name="textPrimary">#220C01</color>
+    <color name="textSecondary">#4E4E4E</color>
+    <color name="textTertiary">#8D8D8D</color>
+    <color name="textOnPrimary">#FFFFFF</color>
+    
+    <!-- Border & Divider Colors -->
+    <color name="borderLight">#E0E0E0</color>
+    <color name="borderMedium">#BDBDBD</color>
+    <color name="divider">#1F000000</color>
+</resources>

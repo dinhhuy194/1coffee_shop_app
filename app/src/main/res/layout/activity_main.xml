@@ -332,4 +332,12 @@
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- Compose overlay for AddToCartBubble -->
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/bubbleComposeView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="10dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

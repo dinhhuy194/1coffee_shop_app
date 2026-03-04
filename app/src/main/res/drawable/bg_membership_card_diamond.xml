@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Base gradient: deep ocean blue to teal -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#0D47A1"
+                android:centerColor="#00695C"
+                android:endColor="#1DE9B6"
+                android:angle="135"
+                android:type="linear" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+    <!-- Diamond sparkle overlay -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#20B2EBF2"
+                android:centerColor="#00FFFFFF"
+                android:endColor="#18B2EBF2"
+                android:angle="45"
+                android:type="linear" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</layer-list>

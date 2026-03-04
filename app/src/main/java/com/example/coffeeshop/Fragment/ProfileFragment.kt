@@ -180,8 +180,8 @@ class ProfileFragment : Fragment() {
     /**
      * Cập nhật giao diện Membership Card theo thông tin user hiện tại.
      * - Đổi gradient background theo hạng
-     * - Hiển thị số BEAN, tên hạng, emoji
-     * - Tính progress bar % tiến trình lên hạng tiếp theo
+     * - Hiển thị số BEAN (totalPoints = số dư khả dụng)
+     * - Progress bar dựa trên lifetimePoints (tổng BEAN tích lũy, không bị trừ)
      * - Hạng Diamond: ẩn progress, hiện "cấp tối cao"
      */
     private fun updateMembershipCard(user: User) {
@@ -206,12 +206,13 @@ class ProfileFragment : Fragment() {
                 membershipProgressSection.visibility = View.VISIBLE
                 membershipDiamondMsg.visibility      = View.GONE
 
+                // Progress bar dựa trên lifetimePoints (tổng tích lũy)
                 val minPoints = User.getCurrentRankMinPoints(user.rank)
                 val maxPoints = User.getNextRankThreshold(user.rank)
                 val range     = maxPoints - minPoints
-                val current   = user.totalPoints - minPoints
+                val current   = user.lifetimePoints - minPoints
                 val progress  = if (range > 0) ((current * 100) / range).toInt() else 0
-                val remaining = (maxPoints - user.totalPoints).coerceAtLeast(0)
+                val remaining = (maxPoints - user.lifetimePoints).coerceAtLeast(0)
                 val nextRank  = when (user.rank) {
                     User.RANK_NORMAL -> "Silver"
                     User.RANK_SILVER -> "Gold"

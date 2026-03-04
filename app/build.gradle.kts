@@ -37,6 +37,10 @@ android {
     }
     buildFeatures{
         viewBinding=true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
 }
@@ -80,4 +84,15 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
     //swiperefreshlayout
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    // Jetpack Compose
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.animation)
+    implementation(libs.activity.compose)
+    implementation(libs.coil.compose)
+    debugImplementation(libs.compose.ui.tooling)
 }
