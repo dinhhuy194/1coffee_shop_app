@@ -9,7 +9,9 @@ data class User(
     val totalPoints: Long = 0,
     val rank: String = "Normal",
     val totalSpent: Long = 0,
-    val lifetimePoints: Long = 0
+    val lifetimePoints: Long = 0,
+    // Địa chỉ giao hàng - được cập nhật từ MapboxPickerActivity
+    val address: String? = null
 ) {
     companion object {
         const val RANK_NORMAL = "Normal"

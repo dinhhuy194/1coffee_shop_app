@@ -80,7 +80,7 @@ class CartActivity : AppCompatActivity() {
             } else {
                 // Get calculated values
                 val percentTax = 0.02
-                val deliveryFee = 15.0
+                val deliveryFee = 1.0
                 val subtotal = Math.round(managmentCart.getTotalFee() * 100) / 100.0
                 val tax = Math.round(subtotal * percentTax * 100) / 100.0
                 val total = Math.round((subtotal + tax + deliveryFee) * 100) / 100.0
@@ -98,7 +98,7 @@ class CartActivity : AppCompatActivity() {
 
     private fun calculateCart() {
         val percentTax = 0.02  // 2% tax
-        val deliveryFee = 15.0
+        val deliveryFee = 1.0
         
         val subtotal = Math.round(managmentCart.getTotalFee() * 100) / 100.0
         tax = Math.round(subtotal * percentTax * 100) / 100.0

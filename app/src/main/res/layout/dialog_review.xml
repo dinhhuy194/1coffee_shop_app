@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#FFFDF8F5">
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đánh giá món này"
+        android:textColor="#4A2C2A"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/dialogItemName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="#8B5E3C"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Hàng sao: 5 sao tap để chọn (mặc định xám, code sẽ đổi màu vàng) -->
+    <LinearLayout
+        android:id="@+id/starContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginBottom="4dp">
+
+        <ImageView
+            android:id="@+id/star1"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="4dp"
+            android:src="@drawable/star"
+            android:contentDescription="1 sao" />
+
+        <ImageView
+            android:id="@+id/star2"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="4dp"
+            android:src="@drawable/star"
+            android:contentDescription="2 sao" />
+
+        <ImageView
+            android:id="@+id/star3"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="4dp"
+            android:src="@drawable/star"
+            android:contentDescription="3 sao" />
+
+        <ImageView
+            android:id="@+id/star4"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="4dp"
+            android:src="@drawable/star"
+            android:contentDescription="4 sao" />
+
+        <ImageView
+            android:id="@+id/star5"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="4dp"
+            android:src="@drawable/star"
+            android:contentDescription="5 sao" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/ratingHintTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chạm để chọn số sao"
+        android:textColor="#B89080"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Ô nhận xét -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nhận xét (tuỳ chọn)"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_marginBottom="20dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/commentInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:maxLines="4"
+            android:minLines="2"
+            android:textColor="#4A2C2A" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Nút Gửi / Hủy -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/cancelReviewBtn"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Hủy"
+            android:textColor="#8B5E3C"
+            android:backgroundTint="#F5EBE0"
+            android:stateListAnimator="@null" />
+
+        <Button
+            android:id="@+id/submitReviewBtn"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Gửi đánh giá"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#6B3A2A"
+            android:stateListAnimator="@null" />
+
+    </LinearLayout>
+
+</LinearLayout>

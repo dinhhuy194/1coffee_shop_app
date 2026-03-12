@@ -355,6 +355,19 @@
                     android:text="TextView"
                     android:textColor="@color/darkBrown" />
 
+                <!-- Nút mở dialog đánh giá -->
+                <Button
+                    android:id="@+id/reviewBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="0dp"
+                    android:text="⭐  Đánh giá sản phẩm"
+                    android:textColor="#6B3A2A"
+                    android:backgroundTint="#F5EBE0"
+                    android:stateListAnimator="@null" />
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/addToCartBtn"
                     android:layout_width="match_parent"

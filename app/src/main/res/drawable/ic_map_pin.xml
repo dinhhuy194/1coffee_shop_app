@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Icon marker pin (ghim đỏ) - hiển thị cố định tại tâm bản đồ
+    để người dùng biết vị trí đang chọn.
+    Sử dụng Material Design location_on icon.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Bóng đổ phía dưới marker -->
+    <path
+        android:fillColor="#33000000"
+        android:pathData="M12,22c-2,0 -3.5,-0.5 -3.5,-1.5S10,19 12,19s3.5,0.5 3.5,1.5S14,22 12,22z" />
+    <!-- Thân marker (màu đỏ đậm) -->
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M12,2C8.13,2 5,5.13 5,9c0,5.25 7,13 7,13s7,-7.75 7,-13c0,-3.87 -3.13,-7 -7,-7z" />
+    <!-- Chấm tròn trắng ở tâm marker -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,11.5m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0" />
+</vector>

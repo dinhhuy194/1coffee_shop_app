@@ -17,6 +17,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Inject Mapbox public token vào R.string.mapbox_access_token
+        // Token được lấy từ gradle.properties (KHÔNG commit lên git)
+        resValue("string", "mapbox_access_token",
+            project.findProperty("MAPBOX_ACCESS_TOKEN")?.toString() ?: "")
     }
 
     buildTypes {
@@ -58,6 +63,10 @@ dependencies {
 
     implementation(libs.glide)
     implementation(libs.gson)
+
+    // Retrofit2 - Gọi API Backend (VNPAY Payment)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     
     // Firebase BOM - manages versions automatically
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
@@ -95,4 +104,7 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.coil.compose)
     debugImplementation(libs.compose.ui.tooling)
+
+    // Mapbox Maps SDK v11 - Hiển thị bản đồ chọn địa chỉ giao hàng
+    implementation("com.mapbox.maps:android:11.11.1")
 }

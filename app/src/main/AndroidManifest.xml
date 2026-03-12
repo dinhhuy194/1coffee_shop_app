@@ -3,9 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Quyền vị trí - dùng cho bản đồ chọn địa chỉ giao hàng (Mapbox) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -58,6 +62,16 @@
             android:name=".Activity.MyVouchersActivity"
             android:exported="false"
             android:label="Voucher của tôi" />
+
+        <activity
+            android:name=".Activity.MapboxPickerActivity"
+            android:exported="false"
+            android:label="Chọn địa chỉ giao hàng" />
+
+        <activity
+            android:name=".Activity.VnPayWebViewActivity"
+            android:exported="false"
+            android:label="Thanh toán VNPAY" />
 
         <activity
             android:name=".Activity.MainActivity"
