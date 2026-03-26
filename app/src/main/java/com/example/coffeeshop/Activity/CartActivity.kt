@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.coffeeshop.Adapter.CartAdapter
+import com.example.coffeeshop.Helper.BottomNavHelper
 import com.example.coffeeshop.R
 import com.example.coffeeshop.databinding.ActivityCartBinding
 import com.example.project1762.Helper.ManagmentCart
@@ -31,6 +32,7 @@ class CartActivity : AppCompatActivity() {
         calculateCart()
         setVariable()
         initCartList()
+        BottomNavHelper.setup(this, BottomNavHelper.Tab.CART)
     }
 
     private fun initCartList() {

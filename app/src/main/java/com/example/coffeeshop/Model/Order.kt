@@ -25,7 +25,7 @@ data class PaymentDetails(
  * @param tax            Thuế
  * @param shippingFee    Phí giao hàng
  * @param totalAmount    Tổng cộng (subtotal + tax + shippingFee)
- * @param orderStatus    Trạng thái đơn hàng: "pending", "completed", "cancelled"
+ * @param orderStatus    Trạng thái đơn hàng: "pending", "preparing", "ready", "completed", "cancelled"
  * @param paymentMethod  Phương thức thanh toán: "COD", "VNPAY"
  * @param paymentStatus  Trạng thái thanh toán: "unpaid", "paid", "failed"
  * @param paymentDetails Thông tin giao dịch chi tiết từ VNPAY

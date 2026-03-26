@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
+import com.example.coffeeshop.R
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
@@ -14,8 +16,14 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.coffeeshop.Adapter.BannerAdapter
 import com.example.coffeeshop.Adapter.CategoryAdapter
 import com.example.coffeeshop.Adapter.PopularAdapter
+import com.example.coffeeshop.Domain.CategoryModel
+import com.example.coffeeshop.Domain.FilterOptions
+import com.example.coffeeshop.Domain.ItemsModel
+import com.example.coffeeshop.Fragment.FilterBottomSheet
+import com.example.coffeeshop.Helper.BottomNavHelper
 import com.example.coffeeshop.ViewModel.MainViewModel
 import com.example.coffeeshop.databinding.ActivityMainBinding
 import com.example.coffeeshop.ui.compose.AddToCartBubble
@@ -29,6 +37,11 @@ class MainActivity : AppCompatActivity() {
     // Compose state cho bong bóng
     private var bubbleData by mutableStateOf<CartBubbleData?>(null)
 
+    // Cache toàn bộ items để filter in-memory
+    private var allItemsList: List<ItemsModel> = emptyList()
+    private var categoryList: List<CategoryModel> = emptyList()
+    private var currentFilter: FilterOptions = FilterOptions()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -41,23 +54,20 @@ class MainActivity : AppCompatActivity() {
         initPopular()
         initBottomMenu()
         initSearch()
+        initFilter()
     }
-    
+
     override fun onResume() {
         super.onResume()
-        // Refresh popular items to sync favorite status
         binding.recyclerViewPopular.adapter?.notifyDataSetChanged()
 
-        // Check nếu có pending bubble từ DetailActivity
         val pending = CartBubbleState.consume()
         if (pending != null) {
             bubbleData = pending
         }
     }
 
-    /**
-     * Khởi tạo ComposeView cho bong bóng "Đã thêm vào giỏ"
-     */
+    // ──────────────── Bubble ────────────────
     private fun setupBubbleCompose() {
         binding.bubbleComposeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -75,58 +85,181 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // ──────────────── Bottom Nav ────────────────
     private fun initBottomMenu() {
-        binding.cartBtn.setOnClickListener {
-            startActivity(Intent(this@MainActivity, CartActivity::class.java))
-        }
-        
-        binding.favBtn.setOnClickListener {
-            startActivity(Intent(this@MainActivity, FavoriteActivity::class.java))
-        }
-        
-        binding.myOrderBtn.setOnClickListener {
-            startActivity(Intent(this@MainActivity, OrderHistoryActivity::class.java))
-        }
-        
-        binding.profileBtn.setOnClickListener {
-            startActivity(Intent(this@MainActivity, ProfileActivity::class.java))
+        BottomNavHelper.setup(this, BottomNavHelper.Tab.EXPLORER)
+    }
+
+    // ──────────────── Banner Slider ────────────────
+    private val bannerHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val bannerRunnable = object : Runnable {
+        override fun run() {
+            val vp = binding.bannerViewPager
+            val count = vp.adapter?.itemCount ?: 0
+            if (count > 1) {
+                vp.currentItem = (vp.currentItem + 1) % count
+            }
+            bannerHandler.postDelayed(this, 3000)
         }
     }
 
     private fun initBanner() {
         binding.progressBarBanner.visibility = View.VISIBLE
-        viewModel.loadBanner().observe(this) {
-            Glide.with(this@MainActivity)
-                .load(it[0].url)
-                .into(binding.banner)
+        viewModel.loadBanner().observe(this) { banners ->
+            // Lọc banner ẩn
+            val visibleBanners = banners.filter { !it.isHidden }
+
+            if (visibleBanners.isEmpty()) {
+                binding.progressBarBanner.visibility = View.GONE
+                return@observe
+            }
+
+            // Set adapter
+            binding.bannerViewPager.adapter = BannerAdapter(visibleBanners)
             binding.progressBarBanner.visibility = View.GONE
+
+            // Setup dots indicator
+            setupBannerDots(visibleBanners.size)
+
+            // Theo dõi page change để cập nhật dots
+            binding.bannerViewPager.registerOnPageChangeCallback(
+                object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        updateBannerDots(position, visibleBanners.size)
+                    }
+                }
+            )
+
+            // Auto-scroll
+            bannerHandler.removeCallbacks(bannerRunnable)
+            if (visibleBanners.size > 1) {
+                bannerHandler.postDelayed(bannerRunnable, 3000)
+            }
         }
     }
 
+    private fun setupBannerDots(count: Int) {
+        val dotsLayout = binding.bannerDots
+        dotsLayout.removeAllViews()
+        if (count <= 1) return
+
+        for (i in 0 until count) {
+            val dot = View(this)
+            val size = if (i == 0) 10 else 8
+            val params = LinearLayout.LayoutParams(
+                (size * resources.displayMetrics.density).toInt(),
+                (size * resources.displayMetrics.density).toInt()
+            )
+            params.setMargins(
+                (4 * resources.displayMetrics.density).toInt(), 0,
+                (4 * resources.displayMetrics.density).toInt(), 0
+            )
+            dot.layoutParams = params
+            dot.background = android.graphics.drawable.GradientDrawable().apply {
+                shape = android.graphics.drawable.GradientDrawable.OVAL
+                setColor(if (i == 0) getColor(R.color.darkBrown) else getColor(R.color.grey))
+            }
+            dotsLayout.addView(dot)
+        }
+    }
+
+    private fun updateBannerDots(selected: Int, count: Int) {
+        val dotsLayout = binding.bannerDots
+        for (i in 0 until dotsLayout.childCount) {
+            val dot = dotsLayout.getChildAt(i)
+            val isActive = i == selected
+            val size = if (isActive) 10 else 8
+            val params = dot.layoutParams as LinearLayout.LayoutParams
+            params.width = (size * resources.displayMetrics.density).toInt()
+            params.height = (size * resources.displayMetrics.density).toInt()
+            dot.layoutParams = params
+            (dot.background as? android.graphics.drawable.GradientDrawable)?.setColor(
+                if (isActive) getColor(R.color.darkBrown) else getColor(R.color.grey)
+            )
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        bannerHandler.removeCallbacks(bannerRunnable)
+    }
+
+    // ──────────────── Category ────────────────
     private fun initCategory() {
         binding.progressBarCategory.visibility = View.VISIBLE
-        viewModel.loadCategory().observe(this) {
+        viewModel.loadCategory().observe(this) { cats ->
+            categoryList = cats
             binding.recyclerViewCat.layoutManager = LinearLayoutManager(
                 this@MainActivity,
                 LinearLayoutManager.HORIZONTAL,
                 false
             )
-            binding.recyclerViewCat.adapter = CategoryAdapter(it)
+            binding.recyclerViewCat.adapter = CategoryAdapter(cats)
             binding.progressBarCategory.visibility = View.GONE
         }
     }
 
+    // ──────────────── Popular / Filtered items ────────────────
     private fun initPopular() {
         binding.progressBarPopular.visibility = View.VISIBLE
-        viewModel.loadPopular().observe(this) { items ->
+        // Load allItems làm nguồn filter, lọc bỏ item có picUrl rỗng (phòng crash)
+        viewModel.loadAllItems().observe(this) { items ->
+            allItemsList = items.filter { it.picUrl.isNotEmpty() }
             binding.recyclerViewPopular.layoutManager = GridLayoutManager(this, 2)
-            binding.recyclerViewPopular.adapter = PopularAdapter(items)
+            applyAndRenderFilter()
             binding.progressBarPopular.visibility = View.GONE
         }
     }
 
+    // ──────────────── Filter ────────────────
+    private fun initFilter() {
+        binding.imgFilter.setOnClickListener {
+            FilterBottomSheet.newInstance(
+                current    = currentFilter,
+                categories = categoryList
+            ) { newOptions ->
+                currentFilter = newOptions
+                applyAndRenderFilter()
+                updateFilterIndicator()
+            }.show(supportFragmentManager, "filter")
+        }
+    }
+
+    /**
+     * Áp dụng filter hiện tại lên allItemsList và render vào RecyclerView.
+     */
+    private fun applyAndRenderFilter() {
+        val filtered = viewModel.applyFilter(allItemsList, currentFilter)
+
+        if (filtered.isEmpty()) {
+            binding.recyclerViewPopular.visibility = View.GONE
+            binding.emptyFilterLayout.visibility = View.VISIBLE
+        } else {
+            binding.emptyFilterLayout.visibility = View.GONE
+            binding.recyclerViewPopular.visibility = View.VISIBLE
+            if (binding.recyclerViewPopular.layoutManager == null) {
+                binding.recyclerViewPopular.layoutManager = GridLayoutManager(this, 2)
+            }
+            binding.recyclerViewPopular.adapter = PopularAdapter(filtered.toMutableList())
+        }
+    }
+
+    /**
+     * Highlight icon filter khi có bộ lọc đang active.
+     */
+    private fun updateFilterIndicator() {
+        binding.imgFilter.alpha = if (currentFilter.isDefault) 1.0f else 0.6f
+        // Nền icon đổi màu cam nếu filter đang active
+        val bgResId = if (currentFilter.isDefault)
+            com.example.coffeeshop.R.drawable.dark_brown_bg
+        else
+            com.example.coffeeshop.R.drawable.orange_bg
+        binding.imgFilter.setBackgroundResource(bgResId)
+    }
+
+    // ──────────────── Search ────────────────
     private fun initSearch() {
-        binding.searchBox.setOnEditorActionListener { v, actionId, event ->
+        binding.searchBox.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = binding.searchBox.text.toString()
                 if (query.isNotEmpty()) {

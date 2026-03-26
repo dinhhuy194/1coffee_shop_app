@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.coffeeshop.Adapter.PopularAdapter
 import com.example.coffeeshop.Repository.FavoriteRepository
 import com.example.coffeeshop.databinding.ActivityFavoriteBinding
+import com.example.coffeeshop.Helper.BottomNavHelper
 import com.google.firebase.auth.FirebaseAuth
 
 class FavoriteActivity : AppCompatActivity() {
@@ -25,6 +26,7 @@ class FavoriteActivity : AppCompatActivity() {
         setupUI()
         setupRecyclerView()
         loadFavorites()
+        BottomNavHelper.setup(this, BottomNavHelper.Tab.FAVOURITE)
     }
     
     override fun onResume() {

@@ -109,24 +109,31 @@ class OrderAdapter(
      * Xác định trạng thái hiển thị cho badge dựa trên orderStatus + paymentStatus.
      *
      * Logic:
-     * - pending + unpaid → "CHỜ THANH TOÁN" (vàng)
-     * - pending + paid → "ĐÃ THANH TOÁN" (xanh dương)
-     * - completed → "HOÀN THÀNH" (xanh lá)
-     * - cancelled → "ĐÃ HỦY" (đỏ)
+     * - completed               → "HOÀN THÀNH" (xanh lá)
+     * - cancelled               → "ĐÃ HỦY" (đỏ)
+     * - ready                   → "SẴN SÀNG GIAO" (tím) — pha xong, chờ giao
+     * - preparing               → "ĐANG PHA CHẾ" (cam) — nhân viên đã bắt đầu
+     * - pending + paid          → "ĐÃ THANH TOÁN" (xanh dương)
+     * - payment failed          → "THANH TOÁN LỖI" (đỏ)
+     * - pending + unpaid (else) → "CHỜ THANH TOÁN" (vàng)
      *
      * @return Pair<String, Int> (text hiển thị, drawable background resource)
      */
     private fun getDisplayStatus(order: Order): Pair<String, Int> {
         return when {
-            order.orderStatus == "completed" -> 
+            order.orderStatus == "completed" ->
                 "HOÀN THÀNH" to R.drawable.bg_status_completed
-            order.orderStatus == "cancelled" -> 
+            order.orderStatus == "cancelled" ->
                 "ĐÃ HỦY" to R.drawable.bg_status_cancelled
-            order.paymentStatus == "paid" -> 
+            order.orderStatus == "ready" ->
+                "SẴN SÀNG GIAO" to R.drawable.bg_status_ready
+            order.orderStatus == "preparing" ->
+                "ĐANG PHA CHẾ" to R.drawable.bg_status_preparing
+            order.paymentStatus == "paid" ->
                 "ĐÃ THANH TOÁN" to R.drawable.bg_status_paid
-            order.paymentStatus == "failed" -> 
+            order.paymentStatus == "failed" ->
                 "THANH TOÁN LỖI" to R.drawable.bg_status_cancelled
-            else -> 
+            else ->
                 "CHỜ THANH TOÁN" to R.drawable.bg_status_pending
         }
     }
@@ -161,7 +168,9 @@ class OrderAdapter(
                     paymentStatusTxt.setBackgroundResource(R.drawable.bg_status_pending)
                     
                     // Chỉ hiện nút "Thanh toán ngay" cho đơn VNPAY chưa thanh toán
-                    if (order.paymentMethod == "VNPAY" && order.orderStatus == "pending") {
+                    // và chưa được xử lý (pending hoặc preparing)
+                    val isActive = order.orderStatus == "pending" || order.orderStatus == "preparing"
+                    if (order.paymentMethod == "VNPAY" && isActive) {
                         payNowBtn.visibility = View.VISIBLE
                         payNowBtn.text = "Thanh toán ngay"
                         payNowBtn.setOnClickListener {

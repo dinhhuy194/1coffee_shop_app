@@ -36,7 +36,9 @@ class PopularAdapter(val items:MutableList<ItemsModel>): RecyclerView.Adapter<Po
         holder.binding.titleTxt.text = item.title
         holder.binding.priceTxt.text = "$" + item.price.toString()
         Glide.with(context)
-            .load(item.picUrl[0])
+            .load(item.picUrl.getOrNull(0))
+            .placeholder(R.drawable.cf_background)
+            .error(R.drawable.cf_background)
             .into(holder.binding.pic)
         
         // Load favorite status from Firebase

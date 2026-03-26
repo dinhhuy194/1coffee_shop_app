@@ -158,7 +158,7 @@ class OrderRepository {
      * Ví dụ: "pending" → "completed" sau khi thanh toán thành công.
      *
      * @param orderId     Mã đơn hàng
-     * @param orderStatus Trạng thái mới: "pending", "completed", "cancelled"
+     * @param orderStatus Trạng thái mới: "pending", "preparing", "completed", "cancelled"
      * @return Result<Unit>
      */
     suspend fun updateOrderStatus(
