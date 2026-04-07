@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel xử lý logic nghiệp vụ cho màn hình Checkout.
  * Hỗ trợ 2 phương thức thanh toán: COD (tiền mặt) và VNPAY (chuyển khoản online).
+ * Hỗ trợ voucher giảm giá: sau khi đặt hàng thành công sẽ đánh dấu voucher là đã dùng.
  */
 class CheckoutViewModel : ViewModel() {
     private val repository = OrderRepository()
@@ -28,7 +29,11 @@ class CheckoutViewModel : ViewModel() {
     
     /**
      * Đặt hàng với phương thức thanh toán COD (tiền mặt khi nhận hàng).
-     * Luồng: Tạo Order → Cộng điểm BEAN → Thông báo thành công
+     * Luồng: Tạo Order → Cộng điểm BEAN → Đánh dấu voucher đã dùng → Thông báo thành công
+     *
+     * @param voucherId      ID của redeemed_voucher người dùng chọn (rỗng nếu không dùng)
+     * @param discountAmount Số tiền được giảm (0 nếu không dùng voucher)
+     * @param discountType   Loại discount ("fixed", "percent", "free_ship")
      */
     fun placeOrder(
         userId: String,
@@ -36,7 +41,10 @@ class CheckoutViewModel : ViewModel() {
         subtotal: Double,
         tax: Double,
         delivery: Double,
-        totalAmount: Double
+        totalAmount: Double,
+        voucherId: String = "",
+        discountAmount: Double = 0.0,
+        discountType: String = ""
     ) {
         viewModelScope.launch {
             _checkoutState.value = CheckoutState.Loading
@@ -48,7 +56,10 @@ class CheckoutViewModel : ViewModel() {
                 tax = tax,
                 shippingFee = delivery,
                 totalAmount = totalAmount,
-                paymentMethod = "COD"
+                paymentMethod = "COD",
+                voucherId = voucherId,
+                discountAmount = discountAmount,
+                discountType = discountType
             )
             
             if (result.isSuccess) {
@@ -63,11 +74,22 @@ class CheckoutViewModel : ViewModel() {
                     .onFailure { e ->
                         Log.e("CheckoutVM", "Lỗi cộng BEAN: ${e.message}")
                     }
+
+                // Đánh dấu voucher đã sử dụng (nếu có)
+                if (voucherId.isNotEmpty()) {
+                    userRepository.markVoucherUsed(userId, voucherId)
+                        .onSuccess {
+                            Log.d("CheckoutVM", "✅ Voucher $voucherId đã được đánh dấu sử dụng")
+                        }
+                        .onFailure { e ->
+                            Log.e("CheckoutVM", "❌ Lỗi đánh dấu voucher: ${e.message}")
+                        }
+                }
                 
                 _checkoutState.value = CheckoutState.Success(orderId)
             } else {
                 _checkoutState.value = CheckoutState.Error(
-                    result.exceptionOrNull()?.message ?: "Order failed"
+                    result.exceptionOrNull()?.message ?: "Lỗi đặt hàng"
                 )
             }
         }
@@ -76,13 +98,6 @@ class CheckoutViewModel : ViewModel() {
     /**
      * Đặt hàng với phương thức thanh toán VNPAY.
      * Luồng: Tạo Order (paymentStatus=unpaid) → Gọi API lấy paymentUrl → Trả URL cho Activity
-     *
-     * @param userId      UID người dùng Firebase Auth
-     * @param items       Danh sách sản phẩm trong giỏ hàng
-     * @param subtotal    Tổng tiền hàng
-     * @param tax         Thuế
-     * @param delivery    Phí giao hàng
-     * @param totalAmount Tổng cộng thanh toán
      */
     fun placeOrderWithVnPay(
         userId: String,
@@ -90,13 +105,16 @@ class CheckoutViewModel : ViewModel() {
         subtotal: Double,
         tax: Double,
         delivery: Double,
-        totalAmount: Double
+        totalAmount: Double,
+        voucherId: String = "",
+        discountAmount: Double = 0.0,
+        discountType: String = ""
     ) {
         viewModelScope.launch {
             _checkoutState.value = CheckoutState.Loading
 
             try {
-                // Bước 1: Tạo đơn hàng trên Firestore với paymentMethod = "VNPAY", paymentStatus = "unpaid"
+                // Bước 1: Tạo đơn hàng trên Firestore
                 val orderResult = repository.createOrder(
                     userId = userId,
                     items = items,
@@ -104,7 +122,10 @@ class CheckoutViewModel : ViewModel() {
                     tax = tax,
                     shippingFee = delivery,
                     totalAmount = totalAmount,
-                    paymentMethod = "VNPAY"
+                    paymentMethod = "VNPAY",
+                    voucherId = voucherId,
+                    discountAmount = discountAmount,
+                    discountType = discountType
                 )
 
                 if (orderResult.isFailure) {
@@ -116,8 +137,14 @@ class CheckoutViewModel : ViewModel() {
 
                 val orderId = orderResult.getOrNull() ?: ""
 
-                // Bước 2: Lấy tỷ giá USD → VND thời gian thực từ API
-                // Có cache 1 giờ, fallback về 25,000 nếu API lỗi
+                // Đánh dấu voucher đã sử dụng ngay khi tạo order VNPAY
+                if (voucherId.isNotEmpty()) {
+                    userRepository.markVoucherUsed(userId, voucherId)
+                        .onSuccess { Log.d("CheckoutVM", "✅ Voucher $voucherId đánh dấu dùng (VNPAY)") }
+                        .onFailure { e -> Log.e("CheckoutVM", "❌ Lỗi voucher VNPAY: ${e.message}") }
+                }
+
+                // Bước 2: Lấy tỷ giá USD → VND thời gian thực
                 val exchangeRate = ExchangeRateService.getUsdToVndRate()
                 val amountInVnd = totalAmount * exchangeRate
                 Log.d("CheckoutVM", "Tỷ giá USD→VND: $exchangeRate | $totalAmount USD = $amountInVnd VND")
@@ -130,7 +157,6 @@ class CheckoutViewModel : ViewModel() {
 
                 val response = vnPayApiService.createPaymentUrl(paymentRequest)
 
-                // Bước 3: Trả URL thanh toán về cho Activity để mở WebView
                 if (response.paymentUrl.isNotEmpty()) {
                     // Cộng điểm BEAN cho đơn hàng VNPAY
                     val orderAmountLong = totalAmount.toLong()
@@ -162,19 +188,10 @@ class CheckoutViewModel : ViewModel() {
      * Sealed class định nghĩa các trạng thái của quá trình Checkout.
      */
     sealed class CheckoutState {
-        /** Trạng thái ban đầu, chưa có hành động */
         object Idle : CheckoutState()
-
-        /** Đang xử lý (tạo đơn hàng / gọi API) */
         object Loading : CheckoutState()
-
-        /** Đặt hàng COD thành công */
         data class Success(val orderId: String) : CheckoutState()
-
-        /** URL thanh toán VNPAY đã sẵn sàng, Activity cần mở WebView */
         data class PaymentUrlReady(val orderId: String, val paymentUrl: String) : CheckoutState()
-
-        /** Có lỗi xảy ra */
         data class Error(val message: String) : CheckoutState()
     }
 }

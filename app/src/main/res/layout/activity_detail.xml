@@ -71,7 +71,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Back"
+                        android:text="Quay lại"
                         android:textColor="@color/white" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -102,7 +102,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="Coffee Size"
+                    android:text="Kích thước"
                     android:textColor="@color/darkBrown"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -121,7 +121,7 @@
                         android:layout_height="40dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Small"
+                        android:text="Nhỏ"
 
                         android:textColor="@color/darkBrown"
                         android:textStyle="bold" />
@@ -132,7 +132,7 @@
                         android:layout_height="40dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Medium"
+                        android:text="Vừa"
 
                         android:textColor="@color/darkBrown"
                         android:textStyle="bold" />
@@ -143,7 +143,7 @@
                         android:layout_height="40dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Large"
+                        android:text="Lớn"
 
                         android:textColor="@color/darkBrown"
                         android:textStyle="bold" />
@@ -265,7 +265,7 @@
                         android:layout_height="wrap_content"
 
                         android:layout_gravity="center_vertical"
-                        android:text="Quantity."
+                        android:text="Số lượng"
                         android:textColor="@color/darkBrown"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -346,7 +346,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:layout_marginStart="16dp"
-                    android:text="Description"
+                    android:text="Mô tả"
                     android:textColor="@color/darkBrown"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -394,7 +394,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:text="Add to cart"
+            android:text="Thêm vào giỏ hàng"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"

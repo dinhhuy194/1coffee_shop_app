@@ -35,7 +35,10 @@ class OrderRepository {
         tax: Double,
         shippingFee: Double,
         totalAmount: Double,
-        paymentMethod: String = "COD"
+        paymentMethod: String = "COD",
+        voucherId: String = "",
+        discountAmount: Double = 0.0,
+        discountType: String = ""
     ): Result<String> {
         return try {
             // Tạo mã đơn hàng duy nhất: ORD_<timestamp>_<uuid_8_ký_tự>
@@ -53,12 +56,9 @@ class OrderRepository {
                 )
             }
 
-            // Xác định trạng thái thanh toán ban đầu dựa trên phương thức
-            // COD: "unpaid" (trả khi nhận hàng)
-            // VNPAY: "unpaid" (chờ IPN callback cập nhật)
             val initialPaymentStatus = "unpaid"
             
-            // Tạo object Order với đầy đủ thông tin
+            // Tạo object Order với đầy đủ thông tin, bao gồm voucher
             val order = Order(
                 orderId = orderId,
                 userId = userId,
@@ -66,7 +66,10 @@ class OrderRepository {
                 subtotal = subtotal,
                 tax = tax,
                 shippingFee = shippingFee,
+                discountAmount = discountAmount,
                 totalAmount = totalAmount,
+                voucherId = voucherId,
+                discountType = discountType,
                 orderStatus = "pending",
                 paymentMethod = paymentMethod,
                 paymentStatus = initialPaymentStatus,
@@ -75,7 +78,6 @@ class OrderRepository {
             )
             
             // Lưu đơn hàng vào Firestore collection "orders"
-            // Dùng orderId làm document ID để dễ truy vấn từ IPN callback
             firestore.collection("orders")
                 .document(orderId)
                 .set(order)

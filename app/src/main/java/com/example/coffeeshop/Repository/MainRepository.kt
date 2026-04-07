@@ -18,12 +18,13 @@ class MainRepository {
     fun loadBanner(): MutableLiveData<MutableList<BannerModel>> {
         val listData = MutableLiveData<MutableList<BannerModel>>()
         val ref = firebaseDatabase.getReference("Banner");
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<BannerModel>();
                 for (childSnapshot in snapshot.children) {
                     val item = childSnapshot.getValue(BannerModel::class.java)
-                    item?.let { list.add(it) }
+                    // Chỉ thêm banner không bị ẩn (isHidden = false hoặc null)
+                    item?.let { if (!it.isHidden) list.add(it) }
                 }
                 listData.value = list;
             }
@@ -39,7 +40,7 @@ class MainRepository {
     fun loadCategory(): MutableLiveData<MutableList<CategoryModel>> {
         val listData = MutableLiveData<MutableList<CategoryModel>>()
         val ref = firebaseDatabase.getReference("Category");
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<CategoryModel>();
                 for (childSnapshot in snapshot.children) {
@@ -60,7 +61,7 @@ class MainRepository {
     fun loadPopular(): MutableLiveData<MutableList<ItemsModel>> {
         val listData = MutableLiveData<MutableList<ItemsModel>>()
         val ref = firebaseDatabase.getReference("Popular");
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<ItemsModel>();
                 for (childSnapshot in snapshot.children) {
@@ -81,7 +82,7 @@ class MainRepository {
     fun loadAllItems(): MutableLiveData<MutableList<ItemsModel>> {
         val listData = MutableLiveData<MutableList<ItemsModel>>()
         val ref = firebaseDatabase.getReference("Items");
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<ItemsModel>();
                 for (childSnapshot in snapshot.children) {
@@ -103,7 +104,7 @@ class MainRepository {
         val ref = firebaseDatabase.getReference("Items")
         val query: Query = ref.orderByChild("categoryId").equalTo(categoryId)
 
-        query.addListenerForSingleValueEvent(object : ValueEventListener {
+        query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<ItemsModel>();
                 for (childSnapshot in snapshot.children) {

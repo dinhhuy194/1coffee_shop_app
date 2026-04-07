@@ -34,7 +34,7 @@
             android:layout_weight="1"
             android:gravity="center"
 
-            android:text="Search Results"
+            android:text="Kết quả tìm kiếm"
             android:textColor="@color/darkBrown"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -46,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="No results found"
+        android:text="Không tìm thấy kết quả"
         android:textColor="@color/darkBrown"
         android:textSize="16sp"
         android:visibility="gone"
@@ -59,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Popular Items"
+        android:text="Sản phẩm phổ biến"
         android:textColor="@color/darkBrown"
         android:textSize="18sp"
         android:textStyle="bold"

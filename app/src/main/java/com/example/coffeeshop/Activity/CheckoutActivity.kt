@@ -1,4 +1,4 @@
-package com.example.coffeeshop.Activity
+﻿package com.example.coffeeshop.Activity
 
 import android.app.Activity
 import android.content.Intent
@@ -31,15 +31,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 /**
- * Activity màn hình Checkout - Xác nhận đơn hàng và chọn phương thức thanh toán.
+ * Activity mÃ n hÃ¬nh Checkout - XÃ¡c nháº­n Ä‘Æ¡n hÃ ng vÃ  chá»n phÆ°Æ¡ng thá»©c thanh toÃ¡n.
  *
- * Luồng địa chỉ giao hàng (2 cách):
- * 1. Nhập và tìm kiếm trực tiếp: EditText → debounce → Forward Geocoding → chọn gợi ý → lưu Firestore
- * 2. Chọn trên bản đồ: mở MapboxPickerActivity → xác nhận → quay lại → reload địa chỉ
+ * Luá»“ng Ä‘á»‹a chá»‰ giao hÃ ng (2 cÃ¡ch):
+ * 1. Nháº­p vÃ  tÃ¬m kiáº¿m trá»±c tiáº¿p: EditText â†’ debounce â†’ Forward Geocoding â†’ chá»n gá»£i Ã½ â†’ lÆ°u Firestore
+ * 2. Chá»n trÃªn báº£n Ä‘á»“: má»Ÿ MapboxPickerActivity â†’ xÃ¡c nháº­n â†’ quay láº¡i â†’ reload Ä‘á»‹a chá»‰
  *
- * Luồng thanh toán:
- * - COD: tạo order → hoàn tất
- * - VNPAY: tạo order → mở WebView → nhận kết quả → cập nhật trạng thái
+ * Luá»“ng thanh toÃ¡n:
+ * - COD: táº¡o order â†’ hoÃ n táº¥t
+ * - VNPAY: táº¡o order â†’ má»Ÿ WebView â†’ nháº­n káº¿t quáº£ â†’ cáº­p nháº­t tráº¡ng thÃ¡i
  */
 class CheckoutActivity : AppCompatActivity() {
 
@@ -51,6 +51,10 @@ class CheckoutActivity : AppCompatActivity() {
     private var tax = 0.0
     private var delivery = 0.0
     private var total = 0.0
+    private var discountAmount = 0.0
+    private var voucherId = ""
+    private var discountType = ""
+    private var voucherName = ""
 
     private var currentOrderId: String = ""
     private val orderRepository = OrderRepository()
@@ -62,22 +66,22 @@ class CheckoutActivity : AppCompatActivity() {
     /** Mapbox public token (từ string resource) */
     private lateinit var mapboxToken: String
 
-    /** Danh sách kết quả search gợi ý địa chỉ trong checkout */
+    /** Danh sÃ¡ch káº¿t quáº£ search gá»£i Ã½ Ä‘á»‹a chá»‰ trong checkout */
     private var checkoutSearchResults: List<MapboxFeature> = emptyList()
     private lateinit var checkoutSuggestionsAdapter: ArrayAdapter<String>
 
     /** Job debounce cho search inline */
     private var checkoutSearchJob: Job? = null
 
-    /** Địa chỉ hiện đang được lưu (dùng để khôi phục khi người dùng thoát search mà không chọn) */
+    /** Äá»‹a chá»‰ hiá»‡n Ä‘ang Ä‘Æ°á»£c lÆ°u (dÃ¹ng Ä‘á»ƒ khÃ´i phá»¥c khi ngÆ°á»i dÃ¹ng thoÃ¡t search mÃ  khÃ´ng chá»n) */
     private var currentSavedAddress: String? = null
 
     /** Flag tránh TextWatcher trigger khi set text bằng code */
     private var isProgrammaticTextChange = false
 
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     //  LAUNCHERS
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Launcher nhận kết quả từ VnPayWebViewActivity.
@@ -102,40 +106,40 @@ class CheckoutActivity : AppCompatActivity() {
                         transactionNo = transactionNo,
                         bankCode = bankCode,
                         payDate = payDate
-                    ).onSuccess { Log.d(TAG, "✅ paymentStatus = paid: $currentOrderId") }
-                      .onFailure { e -> Log.e(TAG, "❌ Lỗi paymentStatus: ${e.message}") }
+                    ).onSuccess { Log.d(TAG, "âœ… paymentStatus = paid: $currentOrderId") }
+                      .onFailure { e -> Log.e(TAG, "âŒ Lá»—i paymentStatus: ${e.message}") }
 
                     orderRepository.updateOrderStatus(
                         orderId = currentOrderId,
                         orderStatus = "completed"
-                    ).onSuccess { Log.d(TAG, "✅ orderStatus = completed: $currentOrderId") }
-                      .onFailure { e -> Log.e(TAG, "❌ Lỗi orderStatus: ${e.message}") }
+                    ).onSuccess { Log.d(TAG, "âœ… orderStatus = completed: $currentOrderId") }
+                      .onFailure { e -> Log.e(TAG, "âŒ Lá»—i orderStatus: ${e.message}") }
                 }
                 showOrderSuccessDialog(currentOrderId, transactionNo)
             }
         } else {
-            Toast.makeText(this, "Thanh toán đã bị hủy hoặc thất bại", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Thanh toÃ¡n Ä‘Ã£ bá»‹ há»§y hoáº·c tháº¥t báº¡i", Toast.LENGTH_SHORT).show()
             binding.placeOrderBtn.isEnabled = true
         }
     }
 
     /**
      * Launcher nhận kết quả từ MapboxPickerActivity.
-     * Khi người dùng xác nhận địa chỉ trên bản đồ → reload từ Firestore.
+     * Khi ngÆ°á»i dÃ¹ng xÃ¡c nháº­n Ä‘á»‹a chá»‰ trÃªn báº£n Ä‘á»“ â†’ reload tá»« Firestore.
      */
     private val mapPickerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            Log.d(TAG, "📍 Địa chỉ mới từ bản đồ, đang reload Firestore...")
+            Log.d(TAG, "ðŸ“ Äá»‹a chá»‰ má»›i tá»« báº£n Ä‘á»“, Ä‘ang reload Firestore...")
             hideCheckoutSuggestions()
             loadAddressFromFirestore()
         }
     }
 
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     //  LIFECYCLE
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,15 +148,19 @@ class CheckoutActivity : AppCompatActivity() {
 
         managmentCart = ManagmentCart(this)
 
-        // Lấy token Mapbox cho inline search
+        // Láº¥y token Mapbox cho inline search
         mapboxToken = getString(R.string.mapbox_access_token)
 
         subtotal = intent.getDoubleExtra("subtotal", 0.0)
         tax = intent.getDoubleExtra("tax", 0.0)
         delivery = intent.getDoubleExtra("delivery", 0.0)
         total = intent.getDoubleExtra("total", 0.0)
+        discountAmount = intent.getDoubleExtra("discountAmount", 0.0)
+        voucherId = intent.getStringExtra("voucherId") ?: ""
+        discountType = intent.getStringExtra("discountType") ?: ""
+        voucherName = intent.getStringExtra("voucherName") ?: ""
 
-        // Khởi tạo adapter cho checkout suggestions
+        // Khá»Ÿi táº¡o adapter cho checkout suggestions
         checkoutSuggestionsAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, mutableListOf())
         binding.checkoutSuggestionsList.adapter = checkoutSuggestionsAdapter
 
@@ -169,28 +177,36 @@ class CheckoutActivity : AppCompatActivity() {
         checkoutSearchJob?.cancel()
     }
 
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     //  ORDER SUMMARY
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private fun displayOrderSummary() {
         binding.apply {
-            subtotalTxt.text = "$${String.format("%.2f", subtotal)}"
-            taxTxt.text = "$${String.format("%.2f", tax)}"
-            deliveryTxt.text = "$${String.format("%.2f", delivery)}"
-            totalTxt.text = "$${String.format("%.2f", total)}"
+            subtotalTxt.text = "${String.format("%,.0f", subtotal)}\u0111"
+            taxTxt.text = "${String.format("%,.0f", tax)}\u0111"
+            deliveryTxt.text = if (delivery == 0.0) "Miễn phí" else "${String.format("%,.0f", delivery)}đ"
+            // Hiển thị dòng discount nếu có voucher
+            if (discountAmount > 0 && voucherId.isNotEmpty()) {
+                discountRow.visibility = android.view.View.VISIBLE
+                discountValueTxt.text = "-${String.format("%,.0f", discountAmount)}\u0111"
+                voucherNameTxt.text = if (voucherName.isNotEmpty()) "\uD83C\uDFAB $voucherName" else "\uD83C\uDFAB Voucher giảm giá"
+            } else {
+                discountRow.visibility = android.view.View.GONE
+            }
+            totalTxt.text = "${String.format("%,.0f", total)}\u0111"
         }
     }
 
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     //  ADDRESS SECTION
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
-     * Thiết lập toàn bộ phần địa chỉ giao hàng:
+     * Thiáº¿t láº­p toÃ n bá»™ pháº§n Ä‘á»‹a chá»‰ giao hÃ ng:
      * - Load từ Firestore
-     * - Nút chọn/thay đổi bản đồ
-     * - Inline search bar với autocomplete
+     * - NÃºt chá»n/thay Ä‘á»•i báº£n Ä‘á»“
+     * - Inline search bar vá»›i autocomplete
      */
     private fun setupAddressSection() {
         binding.selectAddressBtn.setOnClickListener { openMapPicker() }
@@ -198,8 +214,8 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     /**
-     * Load địa chỉ từ Firestore users/{userId}.address.
-     * Toggle visibility: có địa chỉ → changeBtn; chưa có → selectBtn.
+     * Load Ä‘á»‹a chá»‰ tá»« Firestore users/{userId}.address.
+     * Toggle visibility: cÃ³ Ä‘á»‹a chá»‰ â†’ changeBtn; chÆ°a cÃ³ â†’ selectBtn.
      */
     private fun loadAddressFromFirestore() {
         val currentUser = FirebaseAuth.getInstance().currentUser ?: return
@@ -218,33 +234,33 @@ class CheckoutActivity : AppCompatActivity() {
                 if (!address.isNullOrBlank()) {
                     binding.checkoutAddressSearchEdit.setText(address)
                     binding.checkoutAddressSearchEdit.setTextColor(getColor(R.color.darkBrown))
-                    Log.d(TAG, "📍 Địa chỉ hiện tại: $address")
+                    Log.d(TAG, "ðŸ“ Äá»‹a chá»‰ hiá»‡n táº¡i: $address")
                 } else {
                     binding.checkoutAddressSearchEdit.setText("")
                 }
                 isProgrammaticTextChange = false
             } catch (e: Exception) {
-                Log.e(TAG, "❌ Lỗi load địa chỉ Firestore: ${e.message}")
+                Log.e(TAG, "âŒ Lá»—i load Ä‘á»‹a chá»‰ Firestore: ${e.message}")
             }
         }
     }
 
     /**
-     * Thiết lập inline search bar trong trang Checkout.
+     * Thiáº¿t láº­p inline search bar trong trang Checkout.
      *
-     * Luồng: Nhập text → debounce 500ms → forwardGeocode → hiển thị suggestions →
-     *         người dùng chọn → lưu thẳng vào Firestore → cập nhật addressTxt
+     * Luá»“ng: Nháº­p text â†’ debounce 500ms â†’ forwardGeocode â†’ hiá»ƒn thá»‹ suggestions â†’
+     *         ngÆ°á»i dÃ¹ng chá»n â†’ lÆ°u tháº³ng vÃ o Firestore â†’ cáº­p nháº­t addressTxt
      */
     private fun setupInlineSearch() {
-        // Khi người dùng focus vào field → xóa text để gõ tìm kiếm
+        // Khi ngÆ°á»i dÃ¹ng focus vÃ o field â†’ xÃ³a text Ä‘á»ƒ gÃµ tÃ¬m kiáº¿m
         binding.checkoutAddressSearchEdit.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 isProgrammaticTextChange = true
                 binding.checkoutAddressSearchEdit.setText("")
                 isProgrammaticTextChange = false
-                binding.checkoutAddressSearchEdit.hint = "Nhập địa chỉ để tìm kiếm..."
+                binding.checkoutAddressSearchEdit.hint = "Nháº­p Ä‘á»‹a chá»‰ Ä‘á»ƒ tÃ¬m kiáº¿m..."
             } else {
-                // Mất focus mà không chọn gợi ý → khôi phục địa chỉ đã lưu
+                // Máº¥t focus mÃ  khÃ´ng chá»n gá»£i Ã½ â†’ khÃ´i phá»¥c Ä‘á»‹a chá»‰ Ä‘Ã£ lÆ°u
                 checkoutSearchJob?.cancel()
                 hideCheckoutSuggestions()
                 binding.checkoutClearSearchBtn.visibility = View.GONE
@@ -255,13 +271,13 @@ class CheckoutActivity : AppCompatActivity() {
                     binding.checkoutAddressSearchEdit.setTextColor(getColor(R.color.darkBrown))
                 } else {
                     binding.checkoutAddressSearchEdit.setText("")
-                    binding.checkoutAddressSearchEdit.hint = "Vui lòng chọn địa chỉ giao hàng"
+                    binding.checkoutAddressSearchEdit.hint = "Vui lÃ²ng chá»n Ä‘á»‹a chá»‰ giao hÃ ng"
                 }
                 isProgrammaticTextChange = false
             }
         }
 
-        // TextWatcher với debounce cho inline search
+        // TextWatcher vá»›i debounce cho inline search
         binding.checkoutAddressSearchEdit.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -285,7 +301,7 @@ class CheckoutActivity : AppCompatActivity() {
             }
         })
 
-        // Bấm Enter/Search trên bàn phím → tìm ngay
+        // Báº¥m Enter/Search trÃªn bÃ n phÃ­m â†’ tÃ¬m ngay
         binding.checkoutAddressSearchEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = binding.checkoutAddressSearchEdit.text.toString().trim()
@@ -297,20 +313,20 @@ class CheckoutActivity : AppCompatActivity() {
             } else false
         }
 
-        // Nút xóa text (chỉ hiện khi đang gõ tìm kiếm)
+        // NÃºt xÃ³a text (chá»‰ hiá»‡n khi Ä‘ang gÃµ tÃ¬m kiáº¿m)
         binding.checkoutClearSearchBtn.setOnClickListener {
             binding.checkoutAddressSearchEdit.setText("")
             hideCheckoutSuggestions()
         }
 
-        // Chọn một gợi ý → lưu Firestore ngay → cập nhật field
+        // Chá»n má»™t gá»£i Ã½ â†’ lÆ°u Firestore ngay â†’ cáº­p nháº­t field
         binding.checkoutSuggestionsList.setOnItemClickListener { _, _, position, _ ->
             val selected = checkoutSearchResults.getOrNull(position) ?: return@setOnItemClickListener
             val address = selected.properties?.full_address
                 ?: selected.properties?.name
-                ?: "Địa chỉ không xác định"
+                ?: "Äá»‹a chá»‰ khÃ´ng xÃ¡c Ä‘á»‹nh"
 
-            Log.d(TAG, "✅ Chọn địa chỉ từ gợi ý: $address")
+            Log.d(TAG, "âœ… Chá»n Ä‘á»‹a chá»‰ tá»« gá»£i Ã½: $address")
 
             saveAddressFromSearch(address)
             hideCheckoutSuggestions()
@@ -320,11 +336,11 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     /**
-     * Gọi Forward Geocoding để tìm gợi ý địa chỉ inline trong Checkout.
+     * Gá»i Forward Geocoding Ä‘á»ƒ tÃ¬m gá»£i Ã½ Ä‘á»‹a chá»‰ inline trong Checkout.
      */
     private suspend fun checkoutForwardGeocode(query: String) {
         if (mapboxToken.isBlank()) {
-            Log.w(TAG, "⚠️ Mapbox token trống, bỏ qua inline search")
+            Log.w(TAG, "âš ï¸ Mapbox token trá»‘ng, bá» qua inline search")
             return
         }
 
@@ -344,7 +360,7 @@ class CheckoutActivity : AppCompatActivity() {
                 val labels = features.map { feature ->
                     feature.properties?.full_address
                         ?: feature.properties?.name
-                        ?: "Địa chỉ không xác định"
+                        ?: "Äá»‹a chá»‰ khÃ´ng xÃ¡c Ä‘á»‹nh"
                 }
 
                 runOnUiThread {
@@ -357,7 +373,7 @@ class CheckoutActivity : AppCompatActivity() {
                 runOnUiThread { hideCheckoutSuggestions() }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "❌ Lỗi checkout forward geocoding: ${e.message}")
+            Log.e(TAG, "âŒ Lá»—i checkout forward geocoding: ${e.message}")
             runOnUiThread { hideCheckoutSuggestions() }
         } finally {
             runOnUiThread { binding.checkoutSearchProgress.visibility = View.GONE }
@@ -365,10 +381,10 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     /**
-     * Lưu địa chỉ chọn từ inline search vào Firestore.
+     * LÆ°u Ä‘á»‹a chá»‰ chá»n tá»« inline search vÃ o Firestore.
      * Cập nhật UI addressTxt ngay sau khi lưu thành công.
      *
-     * @param address Chuỗi địa chỉ đầy đủ từ gợi ý
+     * @param address Chuá»—i Ä‘á»‹a chá»‰ Ä‘áº§y Ä‘á»§ tá»« gá»£i Ã½
      */
     private fun saveAddressFromSearch(address: String) {
         val currentUser = FirebaseAuth.getInstance().currentUser ?: return
@@ -380,7 +396,7 @@ class CheckoutActivity : AppCompatActivity() {
                     .update("address", address)
                     .await()
 
-                Log.d(TAG, "✅ Lưu địa chỉ inline search: $address")
+                Log.d(TAG, "âœ… LÆ°u Ä‘á»‹a chá»‰ inline search: $address")
 
                 // Cập nhật trạng thái và UI ngay lập tức
                 currentSavedAddress = address
@@ -389,15 +405,15 @@ class CheckoutActivity : AppCompatActivity() {
                 binding.checkoutAddressSearchEdit.setTextColor(getColor(R.color.darkBrown))
                 isProgrammaticTextChange = false
 
-                Toast.makeText(this@CheckoutActivity, "✅ Đã lưu địa chỉ!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CheckoutActivity, "âœ… ÄÃ£ lÆ°u Ä‘á»‹a chá»‰!", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                Log.e(TAG, "❌ Lỗi lưu địa chỉ từ search: ${e.message}")
-                Toast.makeText(this@CheckoutActivity, "Lỗi lưu địa chỉ. Thử lại.", Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "âŒ Lá»—i lÆ°u Ä‘á»‹a chá»‰ tá»« search: ${e.message}")
+                Toast.makeText(this@CheckoutActivity, "Lá»—i lÆ°u Ä‘á»‹a chá»‰. Thá»­ láº¡i.", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    /** Mở MapboxPickerActivity để chọn địa chỉ bằng bản đồ. */
+    /** Má»Ÿ MapboxPickerActivity Ä‘á»ƒ chá»n Ä‘á»‹a chá»‰ báº±ng báº£n Ä‘á»“. */
     private fun openMapPicker() {
         val intent = Intent(this, MapboxPickerActivity::class.java)
         mapPickerLauncher.launch(intent)
@@ -414,23 +430,23 @@ class CheckoutActivity : AppCompatActivity() {
         imm.hideSoftInputFromWindow(binding.checkoutAddressSearchEdit.windowToken, 0)
     }
 
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     //  PLACE ORDER BUTTON
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private fun setupPlaceOrderButton() {
         binding.placeOrderBtn.setOnClickListener {
             val currentUser = FirebaseAuth.getInstance().currentUser
 
             if (currentUser == null) {
-                Toast.makeText(this, "Bạn cần đăng nhập để đặt hàng", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Báº¡n cáº§n Ä‘Äƒng nháº­p Ä‘á»ƒ Ä‘áº·t hÃ ng", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             val cartItems = managmentCart.getListCart()
 
             if (cartItems.isEmpty()) {
-                Toast.makeText(this, "Giỏ hàng trống", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Giá» hÃ ng trá»‘ng", Toast.LENGTH_SHORT).show()
                 finish()
                 return@setOnClickListener
             }
@@ -443,7 +459,10 @@ class CheckoutActivity : AppCompatActivity() {
                         subtotal = subtotal,
                         tax = tax,
                         delivery = delivery,
-                        totalAmount = total
+                        totalAmount = total,
+                        voucherId = voucherId,
+                        discountAmount = discountAmount,
+                        discountType = discountType
                     )
                 }
                 else -> {
@@ -453,16 +472,19 @@ class CheckoutActivity : AppCompatActivity() {
                         subtotal = subtotal,
                         tax = tax,
                         delivery = delivery,
-                        totalAmount = total
+                        totalAmount = total,
+                        voucherId = voucherId,
+                        discountAmount = discountAmount,
+                        discountType = discountType
                     )
                 }
             }
         }
     }
 
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     //  CHECKOUT STATE OBSERVER
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private fun observeCheckoutState() {
         viewModel.checkoutState.observe(this) { state ->
@@ -496,24 +518,24 @@ class CheckoutActivity : AppCompatActivity() {
                 is CheckoutViewModel.CheckoutState.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.placeOrderBtn.isEnabled = true
-                    Toast.makeText(this, "Lỗi: ${state.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Lá»—i: ${state.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
 
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     //  SUCCESS DIALOG
-    // ─────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private fun showOrderSuccessDialog(orderId: String, transactionNo: String) {
         AlertDialog.Builder(this)
-            .setTitle("🎉 Đặt hàng thành công!")
+            .setTitle("ðŸŽ‰ Äáº·t hÃ ng thÃ nh cÃ´ng!")
             .setMessage(
-                "Đơn hàng của bạn đã được xác nhận.\n\n" +
-                "📋 Mã đơn hàng:\n$orderId\n\n" +
-                "💳 Mã giao dịch VNPAY:\n$transactionNo\n\n" +
-                "Cảm ơn bạn đã mua hàng! ☕"
+                "ÄÆ¡n hÃ ng cá»§a báº¡n Ä‘Ã£ Ä‘Æ°á»£c xÃ¡c nháº­n.\n\n" +
+                "ðŸ“‹ MÃ£ Ä‘Æ¡n hÃ ng:\n$orderId\n\n" +
+                "ðŸ’³ MÃ£ giao dá»‹ch VNPAY:\n$transactionNo\n\n" +
+                "Cáº£m Æ¡n báº¡n Ä‘Ã£ mua hÃ ng! â˜•"
             )
             .setCancelable(false)
             .setPositiveButton("Về trang chủ") { _, _ ->

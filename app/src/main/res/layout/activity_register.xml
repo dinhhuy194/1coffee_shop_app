@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
-            android:text="Create Account"
+            android:text="Tạo tài khoản"
             android:textSize="32sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown" />
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="48dp"
-            android:text="Sign up to get started"
+            android:text="Đăng ký để bắt đầu"
             android:textSize="16sp"
             android:textColor="@color/darkBrown" />
 
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             app:boxBackgroundMode="outline"
-            android:hint="Name">
+            android:hint="Họ và tên">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nameEditText"
@@ -68,7 +68,7 @@
             android:layout_marginBottom="16dp"
             app:boxBackgroundMode="outline"
             app:passwordToggleEnabled="true"
-            android:hint="Password">
+            android:hint="Mật khẩu">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/passwordEditText"
@@ -84,7 +84,7 @@
             android:layout_marginBottom="24dp"
             app:boxBackgroundMode="outline"
             app:passwordToggleEnabled="true"
-            android:hint="Confirm Password">
+            android:hint="Xác nhận mật khẩu">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/confirmPasswordEditText"
@@ -99,7 +99,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="@drawable/orange_bg"
-            android:text="Register"
+            android:text="Đăng ký"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -114,14 +114,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Already have an account? "
+                android:text="Đã có tài khoản? "
                 android:textColor="@color/darkBrown" />
 
             <TextView
                 android:id="@+id/loginLink"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Login"
+                android:text="Đăng nhập"
                 android:textColor="@color/darkBrown"
                 android:textStyle="bold" />
         </LinearLayout>

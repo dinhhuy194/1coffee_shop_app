@@ -38,7 +38,13 @@ class RedeemedVoucherAdapter(
 
         holder.voucherIcon.text = voucher.iconEmoji
         holder.voucherName.text = voucher.name
-        holder.voucherDescription.text = voucher.description
+        // Hiển thị giá trị giảm giá + mô tả
+        val discountLabel = voucher.discountLabel
+        holder.voucherDescription.text = if (discountLabel.isNotEmpty() && discountLabel != "Giảm 0đ") {
+            "$discountLabel · ${voucher.description}"
+        } else {
+            voucher.description
+        }
 
         // Format date
         val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())

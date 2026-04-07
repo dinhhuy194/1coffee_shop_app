@@ -38,7 +38,7 @@ class VoucherAdapter(
         fun bind(voucher: BeanVoucher, userPoints: Long) {
             binding.apply {
                 voucherIcon.text = voucher.iconEmoji
-                voucherName.text = voucher.name
+                voucherName.text = voucher.discountLabel   // VD: "Giảm 50.000đ" / "Giảm 10%"
                 voucherDescription.text = voucher.description
                 voucherBeanCost.text = "${voucher.beanCost} BEAN"
 

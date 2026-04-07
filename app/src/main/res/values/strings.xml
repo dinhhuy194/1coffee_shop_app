@@ -1,15 +1,15 @@
 <resources>
-    <string name="app_name">coffeeshop</string>
-    <string name="choice_your_nfavorite_coffee">Choice your\nFavorite coffee</string>
-    <string name="the_best_grain_the_finest_roast_n_the_powerful_flavour">The best grain , the finest roast\n the powerful flavour</string>
-    <string name="get_started">Get Started</string>
-    <string name="search">Search</string>
-    <string name="search_anything">Search anything...</string>
-    <string name="category">Category</string>
-    <string name="popular_coffee">Popular Coffee</string>
-    <string name="see_all">See All</string>
-    <string name="popular_coffees">Popular Coffees</string>
-    
+    <string name="app_name">Coffee Shop</string>
+    <string name="choice_your_nfavorite_coffee">Chọn ly cà phê\nyêu thích của bạn</string>
+    <string name="the_best_grain_the_finest_roast_n_the_powerful_flavour">Hạt tốt nhất, rang ngon nhất\nhương vị mạnh mẽ nhất</string>
+    <string name="get_started">Bắt đầu</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="search_anything">Tìm kiếm món...</string>
+    <string name="category">Danh mục</string>
+    <string name="popular_coffee">Đồ uống phổ biến</string>
+    <string name="see_all">Xem tất cả</string>
+    <string name="popular_coffees">Đồ uống phổ biến</string>
+
     <!-- Placeholder for Google Sign-In web client ID -->
     <!-- This will be auto-generated from google-services.json -->
     <string name="default_web_client_id" translatable="false">YOUR_WEB_CLIENT_ID_HERE</string>

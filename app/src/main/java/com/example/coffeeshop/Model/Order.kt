@@ -2,11 +2,6 @@ package com.example.coffeeshop.Model
 
 /**
  * Data class đại diện cho chi tiết thanh toán (lồng bên trong Order).
- * Chứa thông tin giao dịch từ cổng thanh toán VNPAY.
- *
- * @param transactionNo Mã giao dịch từ VNPAY (trả về sau khi thanh toán)
- * @param bankCode      Mã ngân hàng người dùng đã chọn để thanh toán
- * @param payDate        Ngày giờ thanh toán (định dạng: yyyyMMddHHmmss)
  */
 data class PaymentDetails(
     val transactionNo: String = "",
@@ -16,7 +11,6 @@ data class PaymentDetails(
 
 /**
  * Data class đại diện cho một đơn hàng trong hệ thống Coffee Shop.
- * Cấu trúc này khớp với JSON document trong Firestore collection "orders".
  *
  * @param orderId        Mã đơn hàng duy nhất (VD: "ORD_1772371164150_5c042a21")
  * @param userId         UID của người dùng Firebase Auth
@@ -24,7 +18,10 @@ data class PaymentDetails(
  * @param subtotal       Tổng tiền hàng (chưa tính thuế và phí ship)
  * @param tax            Thuế
  * @param shippingFee    Phí giao hàng
- * @param totalAmount    Tổng cộng (subtotal + tax + shippingFee)
+ * @param discountAmount Số tiền được giảm từ voucher (0 nếu không dùng)
+ * @param totalAmount    Tổng cộng (subtotal + tax + shippingFee - discountAmount)
+ * @param voucherId      ID của redeemed_voucher đã dùng (rỗng nếu không dùng)
+ * @param discountType   Loại discount: "fixed" / "percent" / "free_ship"
  * @param orderStatus    Trạng thái đơn hàng: "pending", "preparing", "ready", "completed", "cancelled"
  * @param paymentMethod  Phương thức thanh toán: "COD", "VNPAY"
  * @param paymentStatus  Trạng thái thanh toán: "unpaid", "paid", "failed"
@@ -38,7 +35,10 @@ data class Order(
     val subtotal: Double = 0.0,
     val tax: Double = 0.0,
     val shippingFee: Double = 0.0,
+    val discountAmount: Double = 0.0,
     val totalAmount: Double = 0.0,
+    val voucherId: String = "",
+    val discountType: String = "",
     val orderStatus: String = "pending",
     val paymentMethod: String = "COD",
     val paymentStatus: String = "unpaid",
@@ -48,13 +48,6 @@ data class Order(
 
 /**
  * Data class đại diện cho một mặt hàng trong đơn hàng.
- *
- * @param title        Tên sản phẩm
- * @param price        Giá của sản phẩm
- * @param quantity     Số lượng
- * @param selectedSize Kích thước đã chọn (Small, Medium, Large)
- * @param iceOption    Tùy chọn đá (Đá chung, Đá riêng, Không đá)
- * @param sugarOption  Tùy chọn đường (Bình thường, Ít đường, Không đường)
  */
 data class OrderItem(
     val title: String = "",

@@ -179,6 +179,7 @@ class UserRepository {
                         "name"          to voucher.name,
                         "description"   to voucher.description,
                         "discountValue" to voucher.discountValue,
+                        "discountType"  to voucher.discountType,
                         "iconEmoji"     to voucher.iconEmoji,
                         "redeemedAt"    to System.currentTimeMillis(),
                         "isUsed"        to false,
@@ -195,13 +196,32 @@ class UserRepository {
     }
 
     /**
-     * Lấy danh sách voucher đã đổi của user
+     * Lấy danh sách voucher đã đổi của user (tất cả)
      */
     suspend fun getRedeemedVouchers(userId: String): Result<List<RedeemedVoucher>> {
         return try {
             val snapshot = firestore.collection("users")
                 .document(userId)
                 .collection("redeemed_vouchers")
+                .orderBy("redeemedAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .get()
+                .await()
+            val vouchers = snapshot.documents.mapNotNull { it.toObject(RedeemedVoucher::class.java) }
+            Result.success(vouchers)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Lấy danh sách voucher chưa dùng của user (dùng để chọn trong Cart)
+     */
+    suspend fun getAvailableVouchers(userId: String): Result<List<RedeemedVoucher>> {
+        return try {
+            val snapshot = firestore.collection("users")
+                .document(userId)
+                .collection("redeemed_vouchers")
+                .whereEqualTo("isUsed", false)
                 .orderBy("redeemedAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .get()
                 .await()

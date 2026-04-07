@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="48dp"
-            android:text="Welcome back!"
+            android:text="Chào mừng trở lại!"
             android:textSize="16sp"
             android:textColor="@color/darkBrown" />
 
@@ -54,7 +54,7 @@
             android:layout_marginBottom="24dp"
             app:boxBackgroundMode="outline"
             app:passwordToggleEnabled="true"
-            android:hint="Password">
+            android:hint="Mật khẩu">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/passwordEditText"
@@ -69,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="@drawable/orange_bg"
-            android:text="Login"
+            android:text="Đăng nhập"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -92,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:text="OR"
+                android:text="hoặc"
                 android:textColor="@color/darkBrown" />
 
             <View
@@ -108,7 +108,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="@drawable/stroke_gg_bg"
-            android:text="Continue with Google "
+            android:text="Tiếp tục với Google "
             android:textColor="@color/darkBrown"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -123,14 +123,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Don't have an account? "
+                android:text="Chưa có tài khoản? "
                 android:textColor="@color/darkBrown" />
 
             <TextView
                 android:id="@+id/registerLink"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Register"
+                android:text="Đăng ký"
                 android:textColor="@color/darkBrown"
                 android:textStyle="bold" />
         </LinearLayout>

@@ -17,7 +17,7 @@
         <LinearLayout
             android:id="@+id/headerLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="254dp"
             android:background="@drawable/bg_membership_card_normal"
             android:orientation="vertical"
             android:padding="20dp"
@@ -27,23 +27,24 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="20dp">
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/btnBack"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:src="@drawable/back"
                     android:contentDescription="Quay lại"
+                    android:src="@drawable/back"
                     app:tint="@color/white" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginStart="12dp"
+                    android:layout_weight="1"
                     android:text="Thành viên BEAN"
                     android:textColor="@color/white"
                     android:textSize="20sp"
@@ -54,8 +55,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -67,28 +68,28 @@
                         android:id="@+id/headerRankName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:alpha="0.9"
                         android:text="☕ Normal"
                         android:textColor="@color/white"
-                        android:textSize="15sp"
-                        android:alpha="0.9" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/headerBeanCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
                         android:text="0"
                         android:textColor="@color/white"
                         android:textSize="40sp"
-                        android:textStyle="bold"
-                        android:fontFamily="sans-serif-medium" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:alpha="0.8"
                         android:text="BEAN"
                         android:textColor="@color/white"
-                        android:textSize="13sp"
-                        android:alpha="0.8" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <!-- Emoji hạng lớn -->
@@ -105,34 +106,34 @@
                 android:id="@+id/progressSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
+                    android:layout_marginBottom="6dp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/progressLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:alpha="0.9"
                         android:text="Còn 500 BEAN nữa để lên Silver"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
-                        android:alpha="0.9" />
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/progressPercent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
                         android:text="0%"
                         android:textColor="@color/white"
                         android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:fontFamily="sans-serif-medium" />
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <ProgressBar
@@ -142,8 +143,8 @@
                     android:layout_height="8dp"
                     android:max="100"
                     android:progress="0"
-                    android:progressTint="@color/white"
-                    android:progressBackgroundTint="#40FFFFFF" />
+                    android:progressBackgroundTint="#40FFFFFF"
+                    android:progressTint="@color/white" />
             </LinearLayout>
 
             <!-- Diamond special message (ẩn mặc định) -->
@@ -152,13 +153,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
+                android:background="#33FFFFFF"
                 android:gravity="center"
                 android:padding="10dp"
                 android:text="👑 Bạn đã đạt cấp độ tối cao!"
                 android:textColor="@color/white"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:background="#33FFFFFF"
                 android:visibility="gone" />
 
         </LinearLayout>
