@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/lightCream"
+    android:paddingBottom="32dp">
+
+    <!-- Drag handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:background="#CCBCB0"
+        android:backgroundTint="#CCBCB0" />
+
+    <!-- Title row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Lọc &amp; Sắp xếp"
+            android:textColor="@color/darkBrown"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btnReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đặt lại"
+            android:textColor="#8B5E3C"
+            android:textSize="14sp"
+            android:padding="4dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E8DDD5"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- ══ Sắp xếp theo ══ -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="8dp"
+        android:text="SẮP XẾP THEO"
+        android:textColor="#8B5E3C"
+        android:textSize="12sp"
+        android:letterSpacing="0.08"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rgSortBy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="8dp">
+
+        <RadioButton
+            android:id="@+id/rbDefault"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Mặc định"
+            android:textColor="@color/darkBrown"
+            android:buttonTint="@color/darkBrown"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/rbPriceAsc"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Giá: Thấp → Cao"
+            android:textColor="@color/darkBrown"
+            android:buttonTint="@color/darkBrown" />
+
+        <RadioButton
+            android:id="@+id/rbPriceDesc"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Giá: Cao → Thấp"
+            android:textColor="@color/darkBrown"
+            android:buttonTint="@color/darkBrown" />
+
+        <RadioButton
+            android:id="@+id/rbRatingDesc"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Đánh giá cao nhất ⭐"
+            android:textColor="@color/darkBrown"
+            android:buttonTint="@color/darkBrown" />
+
+    </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E8DDD5"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="8dp" />
+
+    <!-- ══ Lọc theo loại ══ -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="8dp"
+        android:text="LOẠI ĐỒ UỐNG"
+        android:textColor="#8B5E3C"
+        android:textSize="12sp"
+        android:letterSpacing="0.08"
+        android:textStyle="bold" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:paddingHorizontal="20dp"
+        android:layout_marginBottom="16dp"
+        android:clipToPadding="false">
+
+        <!-- Chip group – được generate từ code -->
+        <LinearLayout
+            android:id="@+id/categoryChipGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical" />
+
+    </HorizontalScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E8DDD5"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- ══ Khoảng giá ══ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="KHOẢNG GIÁ"
+            android:textColor="#8B5E3C"
+            android:textSize="12sp"
+            android:letterSpacing="0.08"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvPriceRange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$0 – $50"
+            android:textColor="@color/darkBrown"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <com.google.android.material.slider.RangeSlider
+        android:id="@+id/priceRangeSlider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="8dp"
+        android:valueFrom="0"
+        android:valueTo="50"
+        app:values="@array/price_slider_defaults"
+        app:thumbColor="@color/darkBrown"
+        app:trackColorActive="@color/darkBrown"
+        app:trackColorInactive="#E8DDD5"
+        app:haloColor="#336B3A2A" />
+
+    <!-- ══ Tương lai ══ -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E8DDD5"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="4dp"
+        android:text="SẮP XẾP THEO TAG / HOT TREND / NGÀY RA MẮT"
+        android:textColor="#CCBCB0"
+        android:textSize="11sp"
+        android:letterSpacing="0.06"
+        android:textStyle="italic" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="16dp"
+        android:text="🚧  Tính năng đang phát triển"
+        android:textColor="#CCBCB0"
+        android:textSize="12sp" />
+
+    <!-- ══ Nút Áp dụng ══ -->
+    <Button
+        android:id="@+id/btnApplyFilter"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginHorizontal="20dp"
+        android:text="Áp dụng"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/darkBrown"
+        android:stateListAnimator="@null"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

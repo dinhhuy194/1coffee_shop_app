@@ -6,22 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightCream"
-    tools:context=".Activity.CartActivity"
->
+    tools:context=".Activity.CartActivity">
 
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="400dp">
+            android:paddingBottom="300dp">
 
+            <!-- Header -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -50,7 +50,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
-                        android:text="Back"
+                        android:text="Quay lại"
                         android:textColor="@color/darkBrown" />
                 </LinearLayout>
 
@@ -58,7 +58,7 @@
                     android:id="@+id/categoryTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cart"
+                    android:text="Giỏ hàng"
                     android:textColor="@color/darkBrown"
                     android:textSize="22sp"
                     android:textStyle="bold"
@@ -67,53 +67,126 @@
                     app:layout_constraintStart_toStartOf="@+id/backBtn" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- RecyclerView sản phẩm -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/cartView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+
+            <!-- Empty State -->
+            <LinearLayout
+                android:id="@+id/emptyCartLayout"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🛒"
+                    android:textSize="80sp"
+                    android:alpha="0.5" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Giỏ hàng trống"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/darkBrown" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Hãy thêm sản phẩm vào giỏ hàng"
+                    android:textSize="15sp"
+                    android:textColor="@color/grey" />
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
+    <!-- === SECTION VOUCHER === -->
     <LinearLayout
+        android:id="@+id/voucherSection"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="32dp"
-        android:background="@drawable/orange_bg"
-        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/white_bg"
+        android:orientation="vertical"
+        android:padding="14dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <EditText
-            android:id="@+id/editTextText2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:background="#00000000"
-            android:ems="10"
-            android:hint="Enter your discount code"
-            android:inputType="text"
-            android:paddingStart="16dp"
-            android:textColor="@color/darkBrown"
-            android:textColorHint="@color/darkBrown"
-            android:textSize="14sp" />
+        <!-- Nút chọn voucher -->
+        <LinearLayout
+            android:id="@+id/selectVoucherBtn"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/stroke_brown_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button"
-            style="@style/Widget.AppCompat.Button"
-            android:layout_width="100dp"
-            android:layout_height="38dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="4dp"
-            android:layout_weight="1"
-            android:background="@drawable/brown_full_corner_bg"
-            android:text="Apply"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎫"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/selectVoucherText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="Chọn voucher giảm giá"
+                android:textColor="@color/darkBrown"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:alpha="0.5"
+                android:src="@drawable/ic_forward" />
+        </LinearLayout>
+
+        <!-- Row discount (ẩn khi chưa chọn voucher) -->
+        <LinearLayout
+            android:id="@+id/discountRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Giảm giá voucher"
+                android:textColor="@color/orange"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/discountAmountTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-0đ"
+                android:textColor="@color/orange"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 
+    <!-- Tổng tiền -->
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -121,7 +194,7 @@
         android:background="@drawable/white_top_corner_bg"
         android:orientation="vertical"
         android:paddingTop="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/scrollView2"
+        app:layout_constraintBottom_toTopOf="@+id/checkoutBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -130,92 +203,74 @@
             android:layout_height="match_parent"
             android:layout_margin="16dp">
 
+            <!-- Tạm tính (Subtotal) -->
             <TextView
-                android:id="@+id/totalTxt"
+                android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="$-"
-                android:textColor="@color/darkBrown"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view2" />
-
-            <TextView
-                android:id="@+id/textView17"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Total"
+                android:text="Tạm tính"
                 android:textColor="@color/darkBrown"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view2" />
-
-            <TextView
-                android:id="@+id/taxTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="$-"
-                android:textColor="@color/darkBrown"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/deliveryTxt" />
-
-            <TextView
-                android:id="@+id/deliveryTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="$-"
-                android:textColor="@color/darkBrown"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/totalFeeTxt" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/totalFeeTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="$-"
+                android:text="0đ"
                 android:textColor="@color/darkBrown"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/textView11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Total Tax"
-                android:textColor="@color/darkBrown"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView10" />
-
+            <!-- Giao hàng -->
             <TextView
                 android:id="@+id/textView10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Delivery"
+                android:text="Giao hàng"
                 android:textColor="@color/darkBrown"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
             <TextView
-                android:id="@+id/textView8"
+                android:id="@+id/deliveryTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Subtotal"
+                android:layout_marginTop="16dp"
+                android:text="Miễn phí"
+                android:textColor="@color/orange"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/totalFeeTxt" />
+
+            <!-- Thuế -->
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Thuế (2%)"
                 android:textColor="@color/darkBrown"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
+            <TextView
+                android:id="@+id/taxTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="0đ"
+                android:textColor="@color/darkBrown"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/deliveryTxt" />
+
+            <!-- Divider -->
             <View
                 android:id="@+id/view2"
                 android:layout_width="wrap_content"
@@ -226,23 +281,59 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
+            <!-- Tổng cộng -->
+            <TextView
+                android:id="@+id/textView17"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Tổng cộng"
+                android:textColor="@color/darkBrown"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+            <TextView
+                android:id="@+id/totalTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="0đ"
+                android:textColor="@color/darkBrown"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view2" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button3"
-            style="@style/Widget.AppCompat.Button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="16dp"
-            android:layout_marginEnd="4dp"
-            android:layout_weight="1"
-            android:background="@drawable/brown_full_corner_bg"
-            android:text="Procced to Checkout"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-
     </LinearLayout>
+
+    <!-- Nút Thanh Toán -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/checkoutBtn"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/orange_bg"
+        android:text="Tiến hành thanh toán"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:padding="14dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- BottomNavBar -->
+    <include
+        android:id="@+id/bottomNav"
+        layout="@layout/bottom_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

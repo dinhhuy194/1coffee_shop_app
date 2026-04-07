@@ -10,7 +10,11 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingBottom="90dp"
+        android:clipToPadding="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -67,7 +71,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Back"
+                        android:text="Quay lại"
                         android:textColor="@color/white" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -98,7 +102,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="Coffee Size"
+                    android:text="Kích thước"
                     android:textColor="@color/darkBrown"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -117,7 +121,7 @@
                         android:layout_height="40dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Small"
+                        android:text="Nhỏ"
 
                         android:textColor="@color/darkBrown"
                         android:textStyle="bold" />
@@ -128,7 +132,7 @@
                         android:layout_height="40dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Medium"
+                        android:text="Vừa"
 
                         android:textColor="@color/darkBrown"
                         android:textStyle="bold" />
@@ -139,8 +143,112 @@
                         android:layout_height="40dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Large"
+                        android:text="Lớn"
 
+                        android:textColor="@color/darkBrown"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/iceOptionLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Tùy Chọn Đá"
+                    android:textColor="@color/darkBrown"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginVertical="16dp"
+                    android:background="@drawable/orange_bg"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/hotBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Nóng"
+                        android:textColor="@color/darkBrown"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/iceSharedBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/stroke_brown_bg"
+                        android:gravity="center"
+                        android:text="Đá chung"
+                        android:textColor="@color/darkBrown"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/iceSeparateBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Đá riêng"
+                        android:textAlignment="center"
+                        android:textColor="@color/darkBrown"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/sugarOptionLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Tùy Chọn Đường"
+                    android:textColor="@color/darkBrown"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/orange_bg"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/noSugarBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Không"
+                        android:textColor="@color/darkBrown"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/lessSugarBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Ít"
+                        android:textColor="@color/darkBrown"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/normalSugarBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/stroke_brown_bg"
+                        android:gravity="center"
+                        android:text="Bình thường"
                         android:textColor="@color/darkBrown"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -157,7 +265,7 @@
                         android:layout_height="wrap_content"
 
                         android:layout_gravity="center_vertical"
-                        android:text="Quantity."
+                        android:text="Số lượng"
                         android:textColor="@color/darkBrown"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -238,7 +346,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:layout_marginStart="16dp"
-                    android:text="Description"
+                    android:text="Mô tả"
                     android:textColor="@color/darkBrown"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -251,56 +359,72 @@
                     android:text="TextView"
                     android:textColor="@color/darkBrown" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/addToCartBtn"
+                <!-- Nút mở dialog đánh giá -->
+                <Button
+                    android:id="@+id/reviewBtn"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="48dp"
                     android:layout_marginHorizontal="16dp"
-                    android:layout_marginVertical="32dp"
-                    android:background="@drawable/brown_full_corner_bg">
-
-                    <TextView
-                        android:id="@+id/textView21"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
-                        android:layout_marginStart="32dp"
-                        android:text="Add to cart"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/priceTxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="32dp"
-                        android:text="$0"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <View
-                        android:id="@+id/view"
-                        android:layout_width="1dp"
-                        android:layout_height="0dp"
-                        android:layout_marginHorizontal="32dp"
-                        android:layout_marginVertical="12dp"
-                        android:background="@color/white"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/priceTxt"
-
-
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="32dp"
+                    android:text="⭐  Đánh giá sản phẩm"
+                    android:textColor="#6B3A2A"
+                    android:backgroundTint="#F5EBE0"
+                    android:stateListAnimator="@null" />
 
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+    <!-- ═══ Add to Cart – ghim ở dưới cùng màn hình ═══ -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/addToCartBtn"
+        android:layout_width="0dp"
+        android:layout_height="58dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/brown_full_corner_bg"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/textView21"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:text="Thêm vào giỏ hàng"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/priceTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:text="$0"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="12dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/priceTxt"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

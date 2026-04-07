@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Base gradient: rich gold -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#BF360C"
+                android:centerColor="#E65100"
+                android:endColor="#F9A825"
+                android:angle="135"
+                android:type="linear" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+    <!-- Golden shimmer overlay -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#20FFD54F"
+                android:centerColor="#00FFFFFF"
+                android:endColor="#15FFD54F"
+                android:angle="45"
+                android:type="linear" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,70 +1,247 @@
 package com.example.coffeeshop.Activity
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.coffeeshop.Adapter.CartAdapter
+import com.example.coffeeshop.Adapter.SelectVoucherAdapter
+import com.example.coffeeshop.Helper.BottomNavHelper
+import com.example.coffeeshop.Model.RedeemedVoucher
 import com.example.coffeeshop.R
+import com.example.coffeeshop.Repository.UserRepository
 import com.example.coffeeshop.databinding.ActivityCartBinding
+import com.example.coffeeshop.databinding.DialogSelectVoucherBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.auth.FirebaseAuth
 import com.example.project1762.Helper.ManagmentCart
 import com.uilover.project195.Helper.ChangeNumberItemsListener
+import kotlinx.coroutines.launch
 
 class CartActivity : AppCompatActivity() {
-    lateinit var binding: ActivityCartBinding
-    lateinit var managmentCart: ManagmentCart
-    private var tax: Double = 0.0
-    private var delivery: Double = 0.0
+
+    private lateinit var binding: ActivityCartBinding
+    private lateinit var managmentCart: ManagmentCart
+    private val userRepository = UserRepository()
+
+    // Voucher state
+    private var selectedVoucher: RedeemedVoucher? = null
+    private var discountAmount: Double = 0.0
+    private var availableVouchers: List<RedeemedVoucher> = emptyList()
+
+    // Phí cố định
+    private val percentTax = 0.02
+    private val deliveryFee = 0.0       // Miễn phí giao hàng
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_cart)
-
         binding = ActivityCartBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         managmentCart = ManagmentCart(this)
 
         calculateCart()
         setVariable()
         initCartList()
+        loadAvailableVouchers()
+        BottomNavHelper.setup(this, BottomNavHelper.Tab.CART)
     }
+
+    // ─────────────────────────────────────────────────
+    //  CART LIST
+    // ─────────────────────────────────────────────────
 
     private fun initCartList() {
-        binding.apply {
-            cartView.layoutManager = LinearLayoutManager(
-                this@CartActivity,
-                LinearLayoutManager.VERTICAL, false
-            )
-            cartView.adapter = CartAdapter(managmentCart.getListCart(), this@CartActivity,
-                object : ChangeNumberItemsListener {
-                    override fun onChanged() {
-                        calculateCart()
-                    }
-                })
+        binding.cartView.layoutManager = LinearLayoutManager(
+            this, LinearLayoutManager.VERTICAL, false
+        )
+        binding.cartView.adapter = CartAdapter(
+            managmentCart.getListCart(),
+            this,
+            object : ChangeNumberItemsListener {
+                override fun onChanged() {
+                    calculateCart()
+                    updateEmptyState()
+                }
+            }
+        )
+        updateEmptyState()
+    }
+
+    private fun updateEmptyState() {
+        val isEmpty = managmentCart.getListCart().isEmpty()
+        binding.emptyCartLayout.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.cartView.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        binding.voucherSection.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        binding.checkoutBtn.isEnabled = !isEmpty
+    }
+
+    // ─────────────────────────────────────────────────
+    //  VOUCHER
+    // ─────────────────────────────────────────────────
+
+    /** Load danh sách voucher khả dụng từ Firestore */
+    private fun loadAvailableVouchers() {
+        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
+        lifecycleScope.launch {
+            userRepository.getAvailableVouchers(currentUser.uid)
+                .onSuccess { vouchers ->
+                    availableVouchers = vouchers
+                    Log.d("CartActivity", "Loaded ${vouchers.size} vouchers khả dụng")
+                }
+                .onFailure { e ->
+                    Log.e("CartActivity", "Lỗi load vouchers: ${e.message}")
+                }
         }
     }
 
-    private fun setVariable() {
-        binding.backBtn.setOnClickListener {
-            finish()
+    /** Mở bottom sheet chọn voucher */
+    private fun openVoucherDialog() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            AlertDialog.Builder(this)
+                .setTitle("Yêu cầu đăng nhập")
+                .setMessage("Vui lòng đăng nhập để sử dụng voucher")
+                .setPositiveButton("Đăng nhập") { _, _ ->
+                    startActivity(Intent(this, LoginActivity::class.java))
+                }
+                .setNegativeButton("Hủy", null)
+                .show()
+            return
         }
+
+        val dialog = BottomSheetDialog(this)
+        val sheetBinding = DialogSelectVoucherBinding.inflate(layoutInflater)
+        dialog.setContentView(sheetBinding.root)
+
+        // Đóng dialog
+        sheetBinding.closeVoucherDialog.setOnClickListener { dialog.dismiss() }
+
+        if (availableVouchers.isEmpty()) {
+            sheetBinding.emptyVoucherState.visibility = View.VISIBLE
+            sheetBinding.voucherRecyclerView.visibility = View.GONE
+            sheetBinding.removeVoucherBtn.visibility = View.GONE
+        } else {
+            sheetBinding.emptyVoucherState.visibility = View.GONE
+            sheetBinding.voucherRecyclerView.visibility = View.VISIBLE
+
+            val adapter = SelectVoucherAdapter(
+                vouchers = availableVouchers,
+                selectedVoucherId = selectedVoucher?.id ?: ""
+            ) { voucher ->
+                applyVoucher(voucher)
+                dialog.dismiss()
+            }
+
+            sheetBinding.voucherRecyclerView.apply {
+                layoutManager = LinearLayoutManager(this@CartActivity)
+                this.adapter = adapter
+            }
+
+            // Hiện nút bỏ chọn nếu đang có voucher được chọn
+            if (selectedVoucher != null) {
+                sheetBinding.removeVoucherBtn.visibility = View.VISIBLE
+                sheetBinding.removeVoucherBtn.setOnClickListener {
+                    removeVoucher()
+                    dialog.dismiss()
+                }
+            }
+        }
+
+        dialog.show()
     }
+
+    /** Áp dụng voucher đã chọn */
+    private fun applyVoucher(voucher: RedeemedVoucher) {
+        val subtotal = managmentCart.getTotalFee()
+        discountAmount = voucher.calculateDiscount(subtotal)
+
+        selectedVoucher = voucher
+        binding.selectVoucherText.text = "${voucher.name} — ${voucher.discountLabel}"
+        binding.discountRow.visibility = View.VISIBLE
+        binding.discountAmountTxt.text = "-${String.format("%,.0f", discountAmount)}đ"
+
+        calculateCart()
+    }
+
+    /** Bỏ chọn voucher */
+    private fun removeVoucher() {
+        selectedVoucher = null
+        discountAmount = 0.0
+        binding.selectVoucherText.text = "Chọn voucher giảm giá"
+        binding.discountRow.visibility = View.GONE
+        calculateCart()
+    }
+
+    // ─────────────────────────────────────────────────
+    //  CALCULATE & DISPLAY
+    // ─────────────────────────────────────────────────
 
     private fun calculateCart() {
-        val percenTax = 0.02
-        val delivery = 15
-        tax = Math.round(managmentCart.getTotalFee() * percenTax * 100) / 100.0
-        val total = Math.round(managmentCart.getTotalFee() + tax + delivery * 100) / 100.0
-        val itemTotal = Math.round(managmentCart.getTotalFee() * 100) / 100.0
-        binding.apply {
-            totalFeeTxt.text = "$$itemTotal"
-            taxTxt.text = "$$tax"
-            deliveryTxt.text = "$$delivery"
-            totalFeeTxt.text = "$$total"
+        val subtotal = managmentCart.getTotalFee()
+
+        // Tính lại discount nếu là percent (subtotal thay đổi)
+        if (selectedVoucher != null) {
+            discountAmount = selectedVoucher!!.calculateDiscount(subtotal)
+            binding.discountAmountTxt.text = "-${String.format("%,.0f", discountAmount)}đ"
         }
 
+        val tax = subtotal * percentTax
+        val totalBeforeDiscount = subtotal + tax + deliveryFee
+        val total = maxOf(0.0, totalBeforeDiscount - discountAmount)
+
+        binding.totalFeeTxt.text = "${String.format("%,.0f", subtotal)}đ"
+        binding.taxTxt.text = "${String.format("%,.0f", tax)}đ"
+        binding.deliveryTxt.text = "Miễn phí"
+        binding.totalTxt.text = "${String.format("%,.0f", total)}đ"
+    }
+
+    // ─────────────────────────────────────────────────
+    //  VARIABLE / CLICK LISTENERS
+    // ─────────────────────────────────────────────────
+
+    private fun setVariable() {
+        binding.backBtn.setOnClickListener { finish() }
+
+        // Nút chọn voucher
+        binding.selectVoucherBtn.setOnClickListener { openVoucherDialog() }
+
+        // Nút Thanh toán
+        binding.checkoutBtn.setOnClickListener {
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser == null) {
+                AlertDialog.Builder(this)
+                    .setTitle("Yêu cầu đăng nhập")
+                    .setMessage("Vui lòng đăng nhập để tiến hành thanh toán")
+                    .setPositiveButton("Đăng nhập") { _, _ ->
+                        startActivity(Intent(this, LoginActivity::class.java))
+                    }
+                    .setNegativeButton("Hủy", null)
+                    .show()
+            } else {
+                val subtotal = managmentCart.getTotalFee()
+                val tax = Math.round(subtotal * percentTax * 100) / 100.0
+                val totalBeforeDiscount = subtotal + tax + deliveryFee
+                val total = maxOf(0.0, totalBeforeDiscount - discountAmount)
+
+                val intent = Intent(this, CheckoutActivity::class.java).apply {
+                    putExtra("subtotal", subtotal)
+                    putExtra("tax", tax)
+                    putExtra("delivery", deliveryFee)
+                    putExtra("total", total)
+                    putExtra("discountAmount", discountAmount)
+                    putExtra("voucherId", selectedVoucher?.id ?: "")
+                    putExtra("discountType", selectedVoucher?.discountType ?: "")
+                    putExtra("voucherName", selectedVoucher?.name ?: "")
+                }
+                startActivity(intent)
+            }
+        }
     }
 }

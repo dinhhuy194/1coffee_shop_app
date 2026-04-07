@@ -26,6 +26,12 @@ class ItemsListActivity : AppCompatActivity() {
             initList()
 
     }
+    
+    override fun onResume() {
+        super.onResume()
+        // Refresh items to sync favorite status
+        binding.listView.adapter?.notifyDataSetChanged()
+    }
 
     private fun initList() {
         binding.apply {

@@ -22,7 +22,7 @@ class ManagmentCart(val context: Context) {
             listItem.add(item)
         }
         tinyDB.putListObject("CartList", listItem)
-        Toast.makeText(context, "Added to your Cart", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show()
     }
 
     fun getListCart(): ArrayList<ItemsModel> {
@@ -59,5 +59,9 @@ class ManagmentCart(val context: Context) {
             fee += item.price * item.numberInCart
         }
         return fee
+    }
+    
+    fun clearCart() {
+        tinyDB.putListObject("CartList", arrayListOf<ItemsModel>())
     }
 }

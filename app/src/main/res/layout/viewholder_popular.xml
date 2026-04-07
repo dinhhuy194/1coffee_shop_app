@@ -19,6 +19,18 @@
         app:shapeAppearanceOverlay="@style/CircleImageView"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
+    <ImageView
+        android:id="@+id/favoriteIcon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_margin="12dp"
+        android:padding="4dp"
+        android:background="@drawable/circle_bg_white"
+        android:src="@drawable/ic_favorite_outline"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="@id/pic"
+        app:layout_constraintTop_toTopOf="@id/pic" />
+
     <TextView
         android:id="@+id/titleTxt"
         android:layout_width="0dp"
@@ -36,7 +48,7 @@
         app:layout_constraintTop_toBottomOf="@+id/pic" />
 
     <ImageView
-        android:id="@+id/imageView5"
+        android:id="@+id/addToCartBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -54,6 +66,6 @@
         android:textColor="@color/darkBrown"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/imageView5"
+        app:layout_constraintBottom_toBottomOf="@id/addToCartBtn"
         app:layout_constraintStart_toStartOf="@id/titleTxt" />
 </androidx.constraintlayout.widget.ConstraintLayout>

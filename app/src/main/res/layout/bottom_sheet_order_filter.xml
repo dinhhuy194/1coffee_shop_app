@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:background="@color/white">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lọc đơn hàng"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/darkBrown"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrey"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Sort Section Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sắp xếp theo"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/darkBrown"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Sort Options -->
+        <RadioGroup
+            android:id="@+id/sortRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp">
+
+            <RadioButton
+                android:id="@+id/radioNewest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mới nhất"
+                android:textSize="15sp"
+                android:textColor="@color/darkBrown"
+                android:padding="10dp"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/radioOldest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cũ nhất"
+                android:textSize="15sp"
+                android:textColor="@color/darkBrown"
+                android:padding="10dp" />
+
+            <RadioButton
+                android:id="@+id/radioPriceHighLow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Giá cao → thấp"
+                android:textSize="15sp"
+                android:textColor="@color/darkBrown"
+                android:padding="10dp" />
+
+            <RadioButton
+                android:id="@+id/radioPriceLowHigh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Giá thấp → cao"
+                android:textSize="15sp"
+                android:textColor="@color/darkBrown"
+                android:padding="10dp" />
+        </RadioGroup>
+
+        <!-- Date Range Section Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lọc theo thời gian"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/darkBrown"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Date Range Options -->
+        <RadioGroup
+            android:id="@+id/dateRangeRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radioAllTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tất cả"
+                android:textSize="15sp"
+                android:textColor="@color/darkBrown"
+                android:padding="10dp"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/radioToday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hôm nay"
+                android:textSize="15sp"
+                android:textColor="@color/darkBrown"
+                android:padding="10dp" />
+
+            <RadioButton
+                android:id="@+id/radioLast7Days"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="7 ngày qua"
+                android:textSize="15sp"
+                android:textColor="@color/darkBrown"
+                android:padding="10dp" />
+
+            <RadioButton
+                android:id="@+id/radioLast30Days"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="30 ngày qua"
+                android:textSize="15sp"
+                android:textColor="@color/darkBrown"
+                android:padding="10dp" />
+        </RadioGroup>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="24dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/resetBtn"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/white_bg"
+                android:text="Reset"
+                android:textColor="@color/darkBrown"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/applyBtn"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/orange_bg"
+                android:text="Áp dụng"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

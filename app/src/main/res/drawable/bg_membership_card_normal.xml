@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Base gradient: warm coffee brown -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#5D3A1A"
+                android:centerColor="#7B4B2A"
+                android:endColor="#A0653C"
+                android:angle="135"
+                android:type="linear" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+    <!-- Subtle shimmer overlay -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#10FFFFFF"
+                android:centerColor="#00FFFFFF"
+                android:endColor="#08FFFFFF"
+                android:angle="45"
+                android:type="linear" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</layer-list>

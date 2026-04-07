@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Giá trị mặc định của RangeSlider: $0 – $50 -->
+    <array name="price_slider_defaults">
+        <item>0</item>
+        <item>50</item>
+    </array>
+</resources>
