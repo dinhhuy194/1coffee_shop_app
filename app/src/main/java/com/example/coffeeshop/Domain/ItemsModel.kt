@@ -13,7 +13,8 @@ class ItemsModel(var title : String = "",
     var selectedSize:String = "Medium",
     var iceOption:String = "Đá chung",
     var sugarOption:String = "Bình thường",
-    var isFavorite:Boolean = false
+    var isFavorite:Boolean = false,
+    var isHidden:Boolean = false
 
 ): Serializable
 

@@ -74,6 +74,16 @@
             android:label="Thanh toán VNPAY" />
 
         <activity
+            android:name=".Activity.AdminPanelActivity"
+            android:exported="false"
+            android:label="Quản trị viên" />
+
+        <activity
+            android:name=".Activity.MyReviewsActivity"
+            android:exported="false"
+            android:label="Đánh giá của tôi" />
+
+        <activity
             android:name=".Activity.MainActivity"
             android:exported="false" />
         <activity

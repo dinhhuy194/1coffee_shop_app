@@ -8,5 +8,7 @@ data class Review(
     val rating: Int = 0,         // 1-5 sao
     val comment: String = "",
     val createdAt: Long = 0L,
-    val isHidden: Boolean = false
+    val isHidden: Boolean = false,
+    val likes: Int = 0,
+    val likedBy: List<String> = emptyList()
 )

@@ -9,8 +9,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
+import com.example.coffeeshop.Activity.AdminPanelActivity
 import com.example.coffeeshop.Activity.LoginActivity
 import com.example.coffeeshop.Activity.MembershipDetailActivity
+import com.example.coffeeshop.Activity.MyReviewsActivity
 import com.example.coffeeshop.Activity.MyVouchersActivity
 import com.example.coffeeshop.Model.User
 import com.example.coffeeshop.R
@@ -92,6 +94,16 @@ class ProfileFragment : Fragment() {
                 )
             }
 
+            myReviewsBtn.setOnClickListener {
+                if (viewModel.isLoggedIn.value == true) {
+                    startActivity(
+                        Intent(requireContext(), MyReviewsActivity::class.java)
+                    )
+                } else {
+                    Toast.makeText(requireContext(), "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show()
+                }
+            }
+
             myVouchersBtn.setOnClickListener {
                 if (viewModel.isLoggedIn.value == true) {
                     startActivity(
@@ -121,6 +133,11 @@ class ProfileFragment : Fragment() {
             feedbackBtn.setOnClickListener {
                 Toast.makeText(requireContext(), "Feedback - Coming soon", Toast.LENGTH_SHORT).show()
             }
+
+            // ── Admin Panel → chỉ hiện cho admin/superadmin ──────────────
+            adminPanelBtn.setOnClickListener {
+                startActivity(Intent(requireContext(), AdminPanelActivity::class.java))
+            }
         }
     }
 
@@ -144,11 +161,15 @@ class ProfileFragment : Fragment() {
                     }
 
                     updateMembershipCard(user)
+
+                    // Hiển thị nút Admin nếu user là admin/superadmin
+                    adminPanelBtn.visibility = if (user.isAdmin()) View.VISIBLE else View.GONE
                 } else {
                     nameTxt.text  = "Guest User"
                     emailTxt.text = "Login to access more features"
                     avatarImg.setImageResource(android.R.drawable.sym_def_app_icon)
                     membershipCard.visibility = View.GONE
+                    adminPanelBtn.visibility = View.GONE
                 }
             }
         }

@@ -11,9 +11,26 @@ data class User(
     val totalSpent: Long = 0,
     val lifetimePoints: Long = 0,
     // Địa chỉ giao hàng - được cập nhật từ MapboxPickerActivity
-    val address: String? = null
+    val address: String? = null,
+    // RBAC role — đồng bộ với AuthContext.tsx trên admin dashboard
+    val role: String = ROLE_CUSTOMER
 ) {
+    /** Kiểm tra user có quyền admin (admin hoặc superadmin) */
+    fun isAdmin(): Boolean = role == ROLE_ADMIN || role == ROLE_SUPERADMIN
+
+    /** Kiểm tra user là superadmin */
+    fun isSuperAdmin(): Boolean = role == ROLE_SUPERADMIN
+
+    /** Kiểm tra user có quyền staff trở lên */
+    fun isStaffOrAbove(): Boolean = role == ROLE_STAFF || role == ROLE_ADMIN || role == ROLE_SUPERADMIN
+
     companion object {
+        // ── Role constants — khớp Firestore field "role" ──
+        const val ROLE_CUSTOMER = "customer"
+        const val ROLE_STAFF = "staff"
+        const val ROLE_ADMIN = "admin"
+        const val ROLE_SUPERADMIN = "superadmin"
+
         const val RANK_NORMAL = "Normal"
         const val RANK_SILVER = "Silver"
         const val RANK_GOLD = "Gold"

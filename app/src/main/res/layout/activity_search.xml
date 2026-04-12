@@ -7,15 +7,14 @@
     android:background="@color/lightCream"
     tools:context=".Activity.SearchActivity">
 
+    <!-- ──── Search Bar (giống MainActivity) ──── -->
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/searchBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="48dp"
         android:gravity="center_vertical"
-        android:layout_marginEnd="16dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,43 +24,72 @@
             android:id="@+id/backBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/back" />
 
-        <TextView
-            android:id="@+id/searchQueryTxt"
+        <EditText
+            android:id="@+id/searchBox"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_weight="1"
-            android:gravity="center"
-
-            android:text="Kết quả tìm kiếm"
+            android:background="@drawable/white_bg"
+            android:drawableStart="@drawable/search_icon"
+            android:drawablePadding="8dp"
+            android:imeOptions="actionSearch"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:hint="@string/search_anything"
+            android:inputType="text"
+            android:padding="8dp"
             android:textColor="@color/darkBrown"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textColorHint="@color/darkBrown" />
+
+        <ImageView
+            android:id="@+id/imgFilter"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/dark_brown_bg"
+            android:padding="12dp"
+            app:srcCompat="@drawable/settings" />
 
     </LinearLayout>
+
+    <!-- ──── Kết quả tìm kiếm tiêu đề ──── -->
+    <TextView
+        android:id="@+id/searchQueryTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:text="Kết quả tìm kiếm"
+        android:textColor="@color/darkBrown"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchBarLayout" />
 
     <TextView
         android:id="@+id/noResultsTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:text="Không tìm thấy kết quả"
-        android:textColor="@color/darkBrown"
-        android:textSize="16sp"
+        android:textColor="@color/grey"
+        android:textSize="14sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/searchQueryTxt" />
 
     <TextView
         android:id="@+id/popularSection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Sản phẩm phổ biến"
         android:textColor="@color/darkBrown"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,11 +100,11 @@
         android:id="@+id/searchResultsRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:clipToPadding="false"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/popularSection" />
@@ -86,10 +114,22 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:indeterminateTint="@color/orange"
+        android:indeterminateTintMode="src_in"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/searchBarLayout" />
+
+    <!-- ──── Bottom Navigation Bar ──── -->
+    <include
+        android:id="@+id/bottomNav"
+        layout="@layout/bottom_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

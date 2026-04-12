@@ -67,6 +67,9 @@ dependencies {
     // Retrofit2 - Gọi API Backend (VNPAY Payment)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // OkHttp - Cloudinary upload
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     
     // Firebase BOM - manages versions automatically
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))

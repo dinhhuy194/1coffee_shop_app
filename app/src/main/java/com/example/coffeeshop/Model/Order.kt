@@ -1,7 +1,7 @@
 package com.example.coffeeshop.Model
 
 /**
- * Data class đại diện cho chi tiết thanh toán (lồng bên trong Order).
+ * Data class đại diện cho chi tiết thanh toán (lưu bởi VNPAY callback).
  */
 data class PaymentDetails(
     val transactionNo: String = "",
@@ -10,22 +10,23 @@ data class PaymentDetails(
 )
 
 /**
- * Data class đại diện cho một đơn hàng trong hệ thống Coffee Shop.
+ * Data class đại diện cho đơn hàng.
+ * Khớp với OrderManagement.tsx trên admin dashboard + OrderRepository.kt
  *
- * @param orderId        Mã đơn hàng duy nhất (VD: "ORD_1772371164150_5c042a21")
- * @param userId         UID của người dùng Firebase Auth
- * @param items          Danh sách các món trong đơn hàng
- * @param subtotal       Tổng tiền hàng (chưa tính thuế và phí ship)
+ * @param orderId        Mã đơn hàng duy nhất
+ * @param userId         UID của người đặt
+ * @param items          Danh sách sản phẩm
+ * @param subtotal       Tổng tiền hàng
  * @param tax            Thuế
  * @param shippingFee    Phí giao hàng
- * @param discountAmount Số tiền được giảm từ voucher (0 nếu không dùng)
- * @param totalAmount    Tổng cộng (subtotal + tax + shippingFee - discountAmount)
- * @param voucherId      ID của redeemed_voucher đã dùng (rỗng nếu không dùng)
- * @param discountType   Loại discount: "fixed" / "percent" / "free_ship"
- * @param orderStatus    Trạng thái đơn hàng: "pending", "preparing", "ready", "completed", "cancelled"
+ * @param discountAmount Tiền giảm từ voucher
+ * @param totalAmount    Tổng cộng
+ * @param voucherId      ID voucher đã dùng
+ * @param discountType   Loại discount: "fixed", "percent", "shipping"
+ * @param orderStatus    Trạng thái: "pending", "preparing", "ready", "completed", "cancelled"
  * @param paymentMethod  Phương thức thanh toán: "COD", "VNPAY"
  * @param paymentStatus  Trạng thái thanh toán: "unpaid", "paid", "failed"
- * @param paymentDetails Thông tin giao dịch chi tiết từ VNPAY
+ * @param paymentDetails Chi tiết thanh toán VNPAY
  * @param timestamp      Thời gian tạo đơn (milliseconds)
  */
 data class Order(
@@ -39,15 +40,40 @@ data class Order(
     val totalAmount: Double = 0.0,
     val voucherId: String = "",
     val discountType: String = "",
-    val orderStatus: String = "pending",
-    val paymentMethod: String = "COD",
-    val paymentStatus: String = "unpaid",
+    val orderStatus: String = STATUS_PENDING,
+    val paymentMethod: String = "",
+    val paymentStatus: String = "",
     val paymentDetails: PaymentDetails = PaymentDetails(),
-    val timestamp: Long = System.currentTimeMillis()
-)
+    val timestamp: Long = System.currentTimeMillis(),
+    val address: String = "",
+    val userName: String = "",
+    val userPhone: String = ""
+) {
+    companion object {
+        const val STATUS_PENDING = "pending"
+        const val STATUS_PREPARING = "preparing"
+        const val STATUS_READY = "ready"
+        const val STATUS_COMPLETED = "completed"
+        const val STATUS_CANCELLED = "cancelled"
+
+        val ALL_STATUSES = listOf(
+            STATUS_PENDING, STATUS_PREPARING, STATUS_READY,
+            STATUS_COMPLETED, STATUS_CANCELLED
+        )
+
+        fun getStatusLabel(status: String): String = when (status) {
+            STATUS_PENDING -> "Chờ xử lý"
+            STATUS_PREPARING -> "Đang pha chế"
+            STATUS_READY -> "Sẵn sàng giao"
+            STATUS_COMPLETED -> "Đã giao"
+            STATUS_CANCELLED -> "Đã hủy"
+            else -> status
+        }
+    }
+}
 
 /**
- * Data class đại diện cho một mặt hàng trong đơn hàng.
+ * Một mặt hàng trong đơn hàng.
  */
 data class OrderItem(
     val title: String = "",

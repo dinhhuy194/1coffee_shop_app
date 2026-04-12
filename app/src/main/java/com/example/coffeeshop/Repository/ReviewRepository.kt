@@ -5,7 +5,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
@@ -16,15 +18,13 @@ class ReviewRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val rtdb = FirebaseDatabase.getInstance()
 
+    // ───────────────────────────────────────────────────────────────────────────
+    //  SUBMIT
+    // ───────────────────────────────────────────────────────────────────────────
+
     /**
      * Ghi review mới lên Firestore, sau đó tính lại rating trung bình
      * và cập nhật rating + reviewCount trên Realtime Database.
-     *
-     * @param itemId   Key của món trong RTDB node "Items" (thường = item.title)
-     * @param userId   UID người dùng hiện tại
-     * @param userName Tên hiển thị
-     * @param rating   Số sao (1–5)
-     * @param comment  Nhận xét văn bản
      */
     suspend fun submitReviewAndUpdateRating(
         itemId: String,
@@ -33,7 +33,7 @@ class ReviewRepository {
         rating: Int,
         comment: String
     ) {
-        // ─── BƯỚC 1: Ghi review lên Firestore ────────────────────────────────
+        // BƯỚC 1: Ghi review lên Firestore
         val reviewRef = firestore.collection("reviews").document()
         val review = Review(
             reviewId  = reviewRef.id,
@@ -43,22 +43,24 @@ class ReviewRepository {
             rating    = rating,
             comment   = comment,
             createdAt = System.currentTimeMillis(),
-            isHidden  = false
+            isHidden  = false,
+            likes     = 0,
+            likedBy   = emptyList()
         )
         reviewRef.set(review).await()
 
-        // ─── BƯỚC 2: Đọc rating + reviewCount hiện tại từ RTDB ───────────────
+        // BƯỚC 2: Đọc rating + reviewCount hiện tại từ RTDB
         val itemRef = rtdb.getReference("Items").child(itemId)
         val snapshot = itemRef.getSuspend()
 
         val oldRating      = snapshot.child("rating").getValue(Double::class.java) ?: 0.0
         val oldReviewCount = snapshot.child("reviewCount").getValue(Long::class.java) ?: 0L
 
-        // ─── BƯỚC 3: Tính rating mới theo công thức trung bình cộng ──────────
+        // BƯỚC 3: Tính rating mới theo công thức trung bình cộng
         val newReviewCount = oldReviewCount + 1
         val newAvgRating   = ((oldRating * oldReviewCount) + rating) / newReviewCount
 
-        // ─── BƯỚC 4: Cập nhật lại RTDB ───────────────────────────────────────
+        // BƯỚC 4: Cập nhật lại RTDB
         val updates = mapOf<String, Any>(
             "rating"      to newAvgRating,
             "reviewCount" to newReviewCount
@@ -77,6 +79,102 @@ class ReviewRepository {
             .get()
             .await()
         return !result.isEmpty
+    }
+
+    // ───────────────────────────────────────────────────────────────────────────
+    //  QUERY
+    // ───────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Load tất cả reviews của 1 sản phẩm, sắp xếp theo likes giảm dần.
+     */
+    suspend fun getReviewsForItem(itemId: String): List<Review> {
+        val result = firestore.collection("reviews")
+            .whereEqualTo("itemId", itemId)
+            .whereEqualTo("isHidden", false)
+            .orderBy("likes", Query.Direction.DESCENDING)
+            .get()
+            .await()
+        return result.toObjects(Review::class.java)
+    }
+
+    /**
+     * Load tất cả reviews của user hiện tại, mới nhất trước.
+     */
+    suspend fun getReviewsByUser(userId: String): List<Review> {
+        val result = firestore.collection("reviews")
+            .whereEqualTo("userId", userId)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .get()
+            .await()
+        return result.toObjects(Review::class.java)
+    }
+
+    // ───────────────────────────────────────────────────────────────────────────
+    //  LIKE / UNLIKE
+    // ───────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Toggle like: nếu user chưa like → thêm, đã like → bỏ.
+     * Sử dụng FieldValue.arrayUnion/arrayRemove + increment để atomic update.
+     *
+     * @return true nếu sau toggle user đã like, false nếu đã unlike
+     */
+    suspend fun toggleLikeReview(reviewId: String, userId: String): Boolean {
+        val docRef = firestore.collection("reviews").document(reviewId)
+        val doc = docRef.get().await()
+        val likedBy = doc.get("likedBy") as? List<*> ?: emptyList<String>()
+        val alreadyLiked = likedBy.contains(userId)
+
+        if (alreadyLiked) {
+            // Unlike
+            docRef.update(
+                "likedBy", FieldValue.arrayRemove(userId),
+                "likes", FieldValue.increment(-1)
+            ).await()
+            return false
+        } else {
+            // Like
+            docRef.update(
+                "likedBy", FieldValue.arrayUnion(userId),
+                "likes", FieldValue.increment(1)
+            ).await()
+            return true
+        }
+    }
+
+    // ───────────────────────────────────────────────────────────────────────────
+    //  DELETE
+    // ───────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Xóa review và cập nhật lại rating trung bình trên RTDB.
+     */
+    suspend fun deleteReview(review: Review) {
+        // BƯỚC 1: Xóa review khỏi Firestore
+        firestore.collection("reviews").document(review.reviewId).delete().await()
+
+        // BƯỚC 2: Đọc rating + reviewCount hiện tại từ RTDB
+        val itemRef = rtdb.getReference("Items").child(review.itemId)
+        val snapshot = itemRef.getSuspend()
+
+        val oldRating      = snapshot.child("rating").getValue(Double::class.java) ?: 0.0
+        val oldReviewCount = snapshot.child("reviewCount").getValue(Long::class.java) ?: 0L
+
+        // BƯỚC 3: Tính lại rating
+        val newReviewCount = (oldReviewCount - 1).coerceAtLeast(0)
+        val newAvgRating = if (newReviewCount > 0) {
+            ((oldRating * oldReviewCount) - review.rating) / newReviewCount
+        } else {
+            0.0
+        }
+
+        // BƯỚC 4: Cập nhật lại RTDB
+        val updates = mapOf<String, Any>(
+            "rating"      to newAvgRating.coerceAtLeast(0.0),
+            "reviewCount" to newReviewCount
+        )
+        itemRef.updateChildren(updates).await()
     }
 }
 

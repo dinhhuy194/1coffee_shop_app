@@ -3,6 +3,7 @@ package com.example.coffeeshop.Helper
 import android.app.Activity
 import android.content.Intent
 import android.view.View
+import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.coffeeshop.Activity.CartActivity
@@ -11,6 +12,7 @@ import com.example.coffeeshop.Activity.MainActivity
 import com.example.coffeeshop.Activity.OrderHistoryActivity
 import com.example.coffeeshop.Activity.ProfileActivity
 import com.example.coffeeshop.R
+import com.example.project1762.Helper.ManagmentCart
 
 /**
  * BottomNavHelper – Setup click listeners cho BottomNavBar được share qua các Activity.
@@ -48,6 +50,9 @@ object BottomNavHelper {
             view.alpha = if (index == activeIndex) 1.0f else 0.55f
         }
 
+        // Cập nhật cart badge
+        updateCartBadge(activity, root)
+
         // Tự động thêm padding bottom = chiều cao system navigation bar
         // để tránh bị gesture bar / button navbar che mất bottom nav của app
         val bottomNavContainer = root.findViewById<View>(R.id.bottomNav)
@@ -70,6 +75,24 @@ object BottomNavHelper {
         navFavourite.setOnClickListener { navigate(FavoriteActivity::class.java) }
         navOrder.setOnClickListener     { navigate(OrderHistoryActivity::class.java) }
         navProfile.setOnClickListener   { navigate(ProfileActivity::class.java) }
+    }
+
+    /**
+     * Cập nhật badge đếm số lượng item trong giỏ hàng trên tab Cart.
+     */
+    fun updateCartBadge(activity: Activity, rootView: View? = null) {
+        val root = rootView ?: activity.window.decorView
+        val cartBadge = root.findViewById<TextView>(R.id.cartBadge) ?: return
+
+        val managmentCart = ManagmentCart(activity)
+        val itemCount = managmentCart.getListCart().size
+
+        if (itemCount > 0) {
+            cartBadge.visibility = View.VISIBLE
+            cartBadge.text = if (itemCount > 99) "99+" else itemCount.toString()
+        } else {
+            cartBadge.visibility = View.GONE
+        }
     }
 
     /**

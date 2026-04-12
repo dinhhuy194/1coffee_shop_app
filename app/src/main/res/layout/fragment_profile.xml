@@ -224,6 +224,70 @@
         </com.google.android.material.card.MaterialCardView>
         <!-- ===== END MEMBERSHIP CARD ===== -->
 
+        <!-- ===== ADMIN PANEL BUTTON (chỉ hiện cho admin/superadmin) ===== -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/adminPanelBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:visibility="gone"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#2D1B0E">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="18dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:gravity="center"
+                    android:text="🛠️"
+                    android:textSize="22sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Quản trị viên"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Quản lý sản phẩm, đơn hàng, banner"
+                        android:textSize="12sp"
+                        android:textColor="@color/white"
+                        android:alpha="0.7" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textSize="28sp"
+                    android:textColor="@color/white"
+                    android:alpha="0.5" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <!-- ===== END ADMIN PANEL BUTTON ===== -->
+
         <!-- Menu Items -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -266,6 +330,53 @@
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
                         android:text="My Favorites"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkBrown" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textSize="28sp"
+                        android:alpha="0.5"
+                        android:textColor="@color/grey" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- My Reviews -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/myReviewsBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="14dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="18dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:gravity="center"
+                        android:text="⭐"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:text="Đánh giá của tôi"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/darkBrown" />

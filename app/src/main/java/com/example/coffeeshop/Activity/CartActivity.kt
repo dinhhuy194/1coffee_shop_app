@@ -53,6 +53,12 @@ class CartActivity : AppCompatActivity() {
         BottomNavHelper.setup(this, BottomNavHelper.Tab.CART)
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Cập nhật cart badge khi quay lại
+        BottomNavHelper.updateCartBadge(this)
+    }
+
     // ─────────────────────────────────────────────────
     //  CART LIST
     // ─────────────────────────────────────────────────
@@ -88,15 +94,29 @@ class CartActivity : AppCompatActivity() {
 
     /** Load danh sách voucher khả dụng từ Firestore */
     private fun loadAvailableVouchers() {
-        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
+        val currentUser = FirebaseAuth.getInstance().currentUser ?: run {
+            Log.w("CartActivity", "Chưa đăng nhập, bỏ qua load vouchers")
+            return
+        }
         lifecycleScope.launch {
+            // Thử query có composite index trước
             userRepository.getAvailableVouchers(currentUser.uid)
                 .onSuccess { vouchers ->
                     availableVouchers = vouchers
-                    Log.d("CartActivity", "Loaded ${vouchers.size} vouchers khả dụng")
+                    Log.d("CartActivity", "✅ Loaded ${vouchers.size} vouchers khả dụng")
                 }
                 .onFailure { e ->
-                    Log.e("CartActivity", "Lỗi load vouchers: ${e.message}")
+                    Log.e("CartActivity", "⚠️ Query getAvailableVouchers thất bại: ${e.message}")
+                    Log.d("CartActivity", "→ Thử fallback: load tất cả vouchers rồi filter...")
+                    // Fallback: load tất cả rồi filter trong bộ nhớ
+                    userRepository.getRedeemedVouchers(currentUser.uid)
+                        .onSuccess { allVouchers ->
+                            availableVouchers = allVouchers.filter { !it.isUsed }
+                            Log.d("CartActivity", "✅ Fallback: Loaded ${availableVouchers.size} vouchers khả dụng từ ${allVouchers.size} tổng")
+                        }
+                        .onFailure { e2 ->
+                            Log.e("CartActivity", "❌ Fallback cũng thất bại: ${e2.message}")
+                        }
                 }
         }
     }

@@ -2,6 +2,7 @@ package com.example.coffeeshop.Activity
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -9,7 +10,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.coffeeshop.Adapter.ReviewAdapter
 import com.example.coffeeshop.Domain.ItemsModel
 import com.example.coffeeshop.Helper.PriceCalculator
 import com.example.coffeeshop.R
@@ -37,6 +40,8 @@ class DetailActivity : AppCompatActivity() {
     private var selectedSugar = "Bình thường"
     private var basePrice = 0.0
 
+    private var reviewAdapter: ReviewAdapter? = null
+
     // ─────────────────────────────────────────────────────────────────────────
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,9 +58,80 @@ class DetailActivity : AppCompatActivity() {
         initFavoriteButton()
         initReviewButton()
         observeReviewState()
+        initReviewsList()
     }
 
-    // ─── Review ──────────────────────────────────────────────────────────────
+    // ─── Reviews List ────────────────────────────────────────────────────────
+
+    private fun initReviewsList() {
+        val userId = auth.currentUser?.uid
+
+        reviewAdapter = ReviewAdapter(
+            reviews       = emptyList(),
+            currentUserId = userId,
+            showItemName  = false,
+            onLikeClick   = { review ->
+                if (userId != null) {
+                    reviewViewModel.toggleLike(review, userId)
+                } else {
+                    Toast.makeText(this, "Vui lòng đăng nhập để thích đánh giá", Toast.LENGTH_SHORT).show()
+                }
+            },
+            onDeleteClick = { review ->
+                AlertDialog.Builder(this)
+                    .setTitle("Xóa đánh giá")
+                    .setMessage("Bạn có chắc chắn muốn xóa đánh giá này?")
+                    .setPositiveButton("Xóa") { _, _ ->
+                        reviewViewModel.deleteReview(review)
+                    }
+                    .setNegativeButton("Hủy", null)
+                    .show()
+            }
+        )
+
+        binding.recyclerViewReviews.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewReviews.adapter = reviewAdapter
+        binding.recyclerViewReviews.isNestedScrollingEnabled = false
+
+        // Load reviews
+        reviewViewModel.loadReviewsForItem(item.title)
+
+        // Observe loading state
+        reviewViewModel.loadingItemReviews.observe(this) { isLoading ->
+            binding.progressBarReviews.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        // Observe reviews list
+        reviewViewModel.itemReviews.observe(this) { reviews ->
+            reviewAdapter?.updateList(reviews)
+            binding.reviewCountTxt.text = "(${reviews.size})"
+
+            if (reviews.isEmpty() && reviewViewModel.loadingItemReviews.value != true) {
+                binding.emptyReviewsLayout.visibility = View.VISIBLE
+                binding.recyclerViewReviews.visibility = View.GONE
+            } else {
+                binding.emptyReviewsLayout.visibility = View.GONE
+                binding.recyclerViewReviews.visibility = View.VISIBLE
+            }
+        }
+
+        // Observe delete state
+        reviewViewModel.deleteState.observe(this) { state ->
+            when (state) {
+                is ReviewUiState.Success -> {
+                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
+                    reviewViewModel.resetDeleteState()
+                }
+                is ReviewUiState.Error -> {
+                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
+                    reviewViewModel.resetDeleteState()
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    // ─── Review Dialog ───────────────────────────────────────────────────────
 
     private fun initReviewButton() {
         binding.reviewBtn.setOnClickListener {

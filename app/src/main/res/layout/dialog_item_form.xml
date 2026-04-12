@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/editTitle"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Tên sản phẩm *"
+            android:inputType="text"
+            android:layout_marginBottom="10dp" />
+
+        <EditText
+            android:id="@+id/editPrice"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Giá ($)"
+            android:inputType="numberDecimal"
+            android:layout_marginBottom="10dp" />
+
+        <EditText
+            android:id="@+id/editRating"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Đánh giá (0-5)"
+            android:inputType="numberDecimal"
+            android:layout_marginBottom="10dp" />
+
+        <EditText
+            android:id="@+id/editDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Mô tả"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:layout_marginBottom="10dp" />
+
+        <EditText
+            android:id="@+id/editExtra"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Ghi chú thêm"
+            android:inputType="text"
+            android:layout_marginBottom="10dp" />
+
+        <EditText
+            android:id="@+id/editCategoryId"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Category ID"
+            android:inputType="text"
+            android:layout_marginBottom="10dp" />
+
+        <EditText
+            android:id="@+id/editPicUrl"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="URL ảnh (hoặc chọn ảnh bên dưới)"
+            android:inputType="textUri"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btnPickImage"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:text="📷 Chọn ảnh từ thiết bị"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+</ScrollView>

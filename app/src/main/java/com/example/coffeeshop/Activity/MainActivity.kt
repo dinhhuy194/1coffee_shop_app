@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import com.example.coffeeshop.R
 import androidx.activity.viewModels
@@ -29,6 +30,7 @@ import com.example.coffeeshop.databinding.ActivityMainBinding
 import com.example.coffeeshop.ui.compose.AddToCartBubble
 import com.example.coffeeshop.ui.compose.CartBubbleData
 import com.example.coffeeshop.ui.compose.CartBubbleState
+import com.example.project1762.Helper.ManagmentCart
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         initBanner()
         initCategory()
         initPopular()
+        initAllItems()
         initBottomMenu()
         initSearch()
         initFilter()
@@ -60,10 +63,35 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         binding.recyclerViewPopular.adapter?.notifyDataSetChanged()
+        binding.recyclerViewAllItems.adapter?.notifyDataSetChanged()
 
         val pending = CartBubbleState.consume()
         if (pending != null) {
             bubbleData = pending
+        }
+
+        // Cập nhật cart badge mỗi khi quay lại màn hình
+        updateCartBadge()
+
+        // Xóa text search khi quay lại trang chủ
+        binding.searchBox.text.clear()
+    }
+
+    // ──────────────── Cart Badge ────────────────
+    /**
+     * Cập nhật badge hiển thị số lượng sản phẩm trong giỏ hàng
+     * trên bottom navigation bar.
+     */
+    private fun updateCartBadge() {
+        val cartBadge = findViewById<TextView>(R.id.cartBadge) ?: return
+        val managmentCart = ManagmentCart(this)
+        val itemCount = managmentCart.getListCart().size
+
+        if (itemCount > 0) {
+            cartBadge.visibility = View.VISIBLE
+            cartBadge.text = if (itemCount > 99) "99+" else itemCount.toString()
+        } else {
+            cartBadge.visibility = View.GONE
         }
     }
 
@@ -199,15 +227,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ──────────────── Popular / Filtered items ────────────────
+    // ──────────────── Popular items (từ node "Popular") ────────────────
     private fun initPopular() {
         binding.progressBarPopular.visibility = View.VISIBLE
-        // Load allItems làm nguồn filter, lọc bỏ item có picUrl rỗng (phòng crash)
+        viewModel.loadPopular().observe(this) { items ->
+            val popularItems = items.filter { it.picUrl.isNotEmpty() }
+            binding.recyclerViewPopular.layoutManager = GridLayoutManager(this, 2)
+            binding.recyclerViewPopular.adapter = PopularAdapter(popularItems.toMutableList())
+            binding.progressBarPopular.visibility = View.GONE
+        }
+    }
+
+    // ──────────────── All items (từ node "Items") với filter ────────────────
+    private fun initAllItems() {
+        binding.progressBarAllItems.visibility = View.VISIBLE
         viewModel.loadAllItems().observe(this) { items ->
             allItemsList = items.filter { it.picUrl.isNotEmpty() }
-            binding.recyclerViewPopular.layoutManager = GridLayoutManager(this, 2)
+            binding.recyclerViewAllItems.layoutManager = GridLayoutManager(this, 2)
             applyAndRenderFilter()
-            binding.progressBarPopular.visibility = View.GONE
+            binding.progressBarAllItems.visibility = View.GONE
         }
     }
 
@@ -232,15 +270,15 @@ class MainActivity : AppCompatActivity() {
         val filtered = viewModel.applyFilter(allItemsList, currentFilter)
 
         if (filtered.isEmpty()) {
-            binding.recyclerViewPopular.visibility = View.GONE
+            binding.recyclerViewAllItems.visibility = View.GONE
             binding.emptyFilterLayout.visibility = View.VISIBLE
         } else {
             binding.emptyFilterLayout.visibility = View.GONE
-            binding.recyclerViewPopular.visibility = View.VISIBLE
-            if (binding.recyclerViewPopular.layoutManager == null) {
-                binding.recyclerViewPopular.layoutManager = GridLayoutManager(this, 2)
+            binding.recyclerViewAllItems.visibility = View.VISIBLE
+            if (binding.recyclerViewAllItems.layoutManager == null) {
+                binding.recyclerViewAllItems.layoutManager = GridLayoutManager(this, 2)
             }
-            binding.recyclerViewPopular.adapter = PopularAdapter(filtered.toMutableList())
+            binding.recyclerViewAllItems.adapter = PopularAdapter(filtered.toMutableList())
         }
     }
 
@@ -261,11 +299,13 @@ class MainActivity : AppCompatActivity() {
     private fun initSearch() {
         binding.searchBox.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                val query = binding.searchBox.text.toString()
+                val query = binding.searchBox.text.toString().trim()
                 if (query.isNotEmpty()) {
                     val intent = Intent(this@MainActivity, SearchActivity::class.java)
                     intent.putExtra("search_query", query)
                     startActivity(intent)
+                    // Xóa text sau khi chuyển sang SearchActivity
+                    binding.searchBox.text.clear()
                 }
                 return@setOnEditorActionListener true
             }
