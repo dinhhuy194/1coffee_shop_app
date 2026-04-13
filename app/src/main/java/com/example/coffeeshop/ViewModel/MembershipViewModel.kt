@@ -108,7 +108,7 @@ class MembershipViewModel : ViewModel() {
         // Normal
         Privilege(
             title = "Tích BEAN mỗi đơn hàng",
-            description = "Nhận 2 BEAN cho mỗi $1 chi tiêu",
+            description = "Nhận 2 BEAN cho mỗi 10.000₫ chi tiêu",
             iconEmoji = "🫘",
             requiredRank = User.RANK_NORMAL
         ),
@@ -121,7 +121,7 @@ class MembershipViewModel : ViewModel() {
         // Silver
         Privilege(
             title = "Tích BEAN nâng cao",
-            description = "Nhận 3 BEAN cho mỗi $1 chi tiêu",
+            description = "Nhận 3 BEAN cho mỗi 10.000₫ chi tiêu",
             iconEmoji = "⭐",
             requiredRank = User.RANK_SILVER
         ),
@@ -140,7 +140,7 @@ class MembershipViewModel : ViewModel() {
         // Gold
         Privilege(
             title = "Tích BEAN vàng",
-            description = "Nhận 4 BEAN cho mỗi $1 chi tiêu",
+            description = "Nhận 4 BEAN cho mỗi 10.000₫ chi tiêu",
             iconEmoji = "🥇",
             requiredRank = User.RANK_GOLD
         ),
@@ -159,7 +159,7 @@ class MembershipViewModel : ViewModel() {
         // Diamond
         Privilege(
             title = "Tích BEAN kim cương",
-            description = "Nhận 5 BEAN cho mỗi $1 chi tiêu",
+            description = "Nhận 5 BEAN cho mỗi 10.000₫ chi tiêu",
             iconEmoji = "💎",
             requiredRank = User.RANK_DIAMOND
         ),

@@ -31,7 +31,7 @@ interface VnPayApiService {
          * - Thiết bị thật: thay bằng IP local của máy tính (VD: 192.168.1.xxx)
          * - Port 5000 là port mặc định của ASP.NET Core (HTTP)
          */
-        private const val BASE_URL = "http://zlj8s197-5282.asse.devtunnels.ms/"
+        private const val BASE_URL = "http://192.168.18.2:5282/"
 
         /**
          * Tạo instance Retrofit (Singleton-like pattern).

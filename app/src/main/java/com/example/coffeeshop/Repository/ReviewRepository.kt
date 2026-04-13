@@ -87,27 +87,45 @@ class ReviewRepository {
 
     /**
      * Load tất cả reviews của 1 sản phẩm, sắp xếp theo likes giảm dần.
+     * Chỉ dùng 1 whereEqualTo để tránh yêu cầu composite index.
+     * Filter isHidden + sort được thực hiện client-side.
      */
     suspend fun getReviewsForItem(itemId: String): List<Review> {
-        val result = firestore.collection("reviews")
-            .whereEqualTo("itemId", itemId)
-            .whereEqualTo("isHidden", false)
-            .orderBy("likes", Query.Direction.DESCENDING)
-            .get()
-            .await()
-        return result.toObjects(Review::class.java)
+        return try {
+            android.util.Log.d("ReviewRepo", "Querying reviews for itemId='$itemId'")
+            val result = firestore.collection("reviews")
+                .whereEqualTo("itemId", itemId)
+                .get()
+                .await()
+            android.util.Log.d("ReviewRepo", "Found ${result.size()} raw docs for '$itemId'")
+            val reviews = result.toObjects(Review::class.java)
+                .filter { !it.isHidden }
+                .sortedByDescending { it.likes }
+            android.util.Log.d("ReviewRepo", "After filter: ${reviews.size} visible reviews")
+            reviews
+        } catch (e: Exception) {
+            android.util.Log.e("ReviewRepo", "Error loading reviews for '$itemId': ${e.message}", e)
+            emptyList()
+        }
     }
 
     /**
      * Load tất cả reviews của user hiện tại, mới nhất trước.
+     * Không dùng orderBy để tránh cần composite index, sort client-side.
      */
     suspend fun getReviewsByUser(userId: String): List<Review> {
-        val result = firestore.collection("reviews")
-            .whereEqualTo("userId", userId)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
-            .get()
-            .await()
-        return result.toObjects(Review::class.java)
+        return try {
+            android.util.Log.d("ReviewRepo", "Querying reviews for userId='$userId'")
+            val result = firestore.collection("reviews")
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+            android.util.Log.d("ReviewRepo", "Found ${result.size()} user reviews")
+            result.toObjects(Review::class.java).sortedByDescending { it.createdAt }
+        } catch (e: Exception) {
+            android.util.Log.e("ReviewRepo", "Error loading user reviews: ${e.message}", e)
+            emptyList()
+        }
     }
 
     // ───────────────────────────────────────────────────────────────────────────

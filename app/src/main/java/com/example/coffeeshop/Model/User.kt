@@ -68,14 +68,14 @@ data class User(
         }
 
         /**
-         * Số BEAN nhận được trên mỗi $1 chi tiêu.
+         * Số BEAN nhận được trên mỗi 10.000₫ chi tiêu.
          * Hạng cao hơn → tích nhiều BEAN hơn.
          */
         fun getBeansPerDollar(rank: String): Long = when (rank) {
             RANK_SILVER  -> 3L
             RANK_GOLD    -> 4L
             RANK_DIAMOND -> 5L
-            else         -> 2L  // Normal: 1$ = 2 BEAN
+            else         -> 2L  // Normal: 10.000₫ = 2 BEAN
         }
     }
 }

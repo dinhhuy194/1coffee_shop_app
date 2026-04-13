@@ -81,5 +81,6 @@ data class OrderItem(
     val quantity: Int = 0,
     val selectedSize: String = "",
     val iceOption: String = "",
-    val sugarOption: String = ""
+    val sugarOption: String = "",
+    val imageUrl: String = ""
 )

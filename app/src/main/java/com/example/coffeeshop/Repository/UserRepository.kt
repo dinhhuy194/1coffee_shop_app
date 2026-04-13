@@ -99,8 +99,9 @@ class UserRepository {
                 val currentSpent = snapshot.getLong("totalSpent") ?: 0L
                 val currentLifetime = snapshot.getLong("lifetimePoints") ?: 0L
 
-                // Tính BEAN dựa trên rank hiện tại: 1$ = 2/3/4/5 BEAN
-                beansEarned = orderAmount * User.getBeansPerDollar(currentRank)
+                // Tính BEAN: mỗi 10.000₫ chi tiêu = 2/3/4/5 BEAN tùy rank
+                val units = orderAmount / 10_000L  // Số đơn vị 10.000₫
+                beansEarned = units * User.getBeansPerDollar(currentRank)
 
                 val newTotalPoints = currentPoints + beansEarned
                 val newLifetimePoints = currentLifetime + beansEarned

@@ -93,9 +93,12 @@ class ReviewViewModel : ViewModel() {
         viewModelScope.launch {
             _loadingItemReviews.value = true
             try {
+                android.util.Log.d("ReviewVM", "Loading reviews for itemId='$itemId'")
                 val reviews = repository.getReviewsForItem(itemId)
+                android.util.Log.d("ReviewVM", "Loaded ${reviews.size} reviews for '$itemId'")
                 _itemReviews.value = reviews
             } catch (e: Exception) {
+                android.util.Log.e("ReviewVM", "Failed to load reviews: ${e.message}", e)
                 _itemReviews.value = emptyList()
             } finally {
                 _loadingItemReviews.value = false
