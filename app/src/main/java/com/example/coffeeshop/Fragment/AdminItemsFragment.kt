@@ -31,7 +31,8 @@ class AdminItemsFragment : Fragment() {
     private lateinit var adapter: AdminItemAdapter
 
     private var showHiddenTab = false
-    private var allItemsRaw = listOf<Pair<Int, ItemsModel>>()
+    private var allItemsRaw = listOf<Pair<String, ItemsModel>>()
+    private var hiddenCategoryIds = emptySet<String>()
     private var pendingImageUri: Uri? = null
 
     // Image picker launcher
@@ -59,10 +60,41 @@ class AdminItemsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adapter = AdminItemAdapter(
-            onEdit = { index, item -> showEditDialog(index, item) },
-            onToggle = { index, hide ->
-                if (hide) viewModel.softDeleteItem(index)
-                else viewModel.restoreItem(index)
+            onEdit = { itemKey, item -> showEditDialog(itemKey, item) },
+            onToggle = { itemKey, hide ->
+                val item = allItemsRaw.firstOrNull { it.first == itemKey }?.second
+                val categoryHidden = item?.categoryId?.let { hiddenCategoryIds.contains(it) } == true
+                if (!hide && categoryHidden) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Danh mục của sản phẩm đang bị ẩn, hãy hiện danh mục trước",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    // Cập nhật local state ngay lập tức để UI phản hồi nhanh
+                    allItemsRaw = allItemsRaw.map { (key, it) ->
+                        if (key == itemKey) key to ItemsModel(
+                            title = it.title,
+                            description = it.description,
+                            picUrl = it.picUrl,
+                            price = it.price,
+                            rating = it.rating,
+                            numberInCart = it.numberInCart,
+                            extra = it.extra,
+                            categoryId = it.categoryId,
+                            selectedSize = it.selectedSize,
+                            iceOption = it.iceOption,
+                            sugarOption = it.sugarOption,
+                            isFavorite = it.isFavorite,
+                            isHidden = hide
+                        )
+                        else key to it
+                    }
+                    filterAndDisplay()
+
+                    if (hide) viewModel.softDeleteItem(itemKey)
+                    else viewModel.restoreItem(itemKey)
+                }
             }
         )
 
@@ -95,28 +127,45 @@ class AdminItemsFragment : Fragment() {
 
     private fun loadItems() {
         binding.progressBar.visibility = View.VISIBLE
-        FirebaseDatabase.getInstance().getReference("Items").get()
-            .addOnSuccessListener { snapshot ->
-                val list = mutableListOf<Pair<Int, ItemsModel>>()
-                snapshot.children.forEachIndexed { index, child ->
-                    child.getValue(ItemsModel::class.java)?.let { item ->
-                        list.add(index to item)
+        FirebaseDatabase.getInstance().getReference("Category").get()
+            .addOnSuccessListener { categorySnapshot ->
+                hiddenCategoryIds = categorySnapshot.children
+                    .mapNotNull { child ->
+                        val isHidden = child.child("isHidden").getValue(Boolean::class.java) ?: false
+                        val id = child.child("id").getValue(Long::class.java)?.toInt()
+                        if (isHidden && id != null) id.toString() else null
                     }
-                }
-                allItemsRaw = list
-                filterAndDisplay()
-                binding.progressBar.visibility = View.GONE
+                    .toSet()
+
+                FirebaseDatabase.getInstance().getReference("Items").get()
+                    .addOnSuccessListener { snapshot ->
+                        val list = mutableListOf<Pair<String, ItemsModel>>()
+                        snapshot.children.forEach { child ->
+                            val key = child.key ?: return@forEach
+                            child.getValue(ItemsModel::class.java)?.let { item ->
+                                list.add(key to item)
+                            }
+                        }
+                        allItemsRaw = list
+                        filterAndDisplay()
+                        binding.progressBar.visibility = View.GONE
+                    }
+                    .addOnFailureListener {
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(requireContext(), "Lỗi tải dữ liệu sản phẩm", Toast.LENGTH_SHORT).show()
+                    }
             }
             .addOnFailureListener {
                 binding.progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Lỗi tải dữ liệu danh mục", Toast.LENGTH_SHORT).show()
             }
     }
 
     private fun filterAndDisplay() {
         val query = binding.searchEdit.text.toString().lowercase()
         val filtered = allItemsRaw.filter { (_, item) ->
-            val matchHidden = item.isHidden == showHiddenTab
+            val effectiveHidden = item.isHidden || hiddenCategoryIds.contains(item.categoryId)
+            val matchHidden = effectiveHidden == showHiddenTab
             val matchSearch = query.isEmpty() || item.title.lowercase().contains(query)
             matchHidden && matchSearch
         }
@@ -191,7 +240,7 @@ class AdminItemsFragment : Fragment() {
             .show()
     }
 
-    private fun showEditDialog(index: Int, item: ItemsModel) {
+    private fun showEditDialog(itemKey: String, item: ItemsModel) {
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_item_form, null)
 
@@ -233,7 +282,7 @@ class AdminItemsFragment : Fragment() {
                         removeAll { it.isEmpty() }
                     }
                 )
-                viewModel.updateItem(index, updatedItem)
+                viewModel.updateItem(itemKey, updatedItem)
             }
             .setNegativeButton("Hủy", null)
             .show()

@@ -151,27 +151,24 @@ class AdminRepository {
         }
     }
 
-    suspend fun updateItem(index: Int, item: ItemsModel): Result<Unit> {
+    suspend fun updateItem(itemKey: String, item: ItemsModel): Result<Unit> {
         return try {
-            val snapshot = rtdb.getReference("Items").get().await()
-            val rawData = snapshot.value
+            val itemRef = rtdb.getReference("Items").child(itemKey)
+            val currentSnapshot = itemRef.get().await()
+            val currentHidden = currentSnapshot.child("isHidden").getValue(Boolean::class.java) ?: false
 
-            if (rawData is List<*>) {
-                val list = rawData.toMutableList()
-                if (index < 0 || index >= list.size) return Result.failure(Exception("Index out of bounds"))
+            val payload = mapOf(
+                "title" to item.title,
+                "price" to item.price,
+                "rating" to item.rating,
+                "description" to item.description,
+                "extra" to item.extra,
+                "categoryId" to item.categoryId,
+                "picUrl" to item.picUrl,
+                "isHidden" to currentHidden
+            )
 
-                list[index] = mapOf(
-                    "title" to item.title,
-                    "price" to item.price,
-                    "rating" to item.rating,
-                    "description" to item.description,
-                    "extra" to item.extra,
-                    "categoryId" to item.categoryId,
-                    "picUrl" to item.picUrl,
-                    "isHidden" to false
-                )
-                rtdb.getReference("Items").setValue(list).await()
-            }
+            itemRef.setValue(payload).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e(TAG, "updateItem error: ${e.message}")
@@ -179,29 +176,121 @@ class AdminRepository {
         }
     }
 
-    suspend fun softDeleteItem(index: Int): Result<Unit> = setItemHidden(index, true)
-    suspend fun restoreItem(index: Int): Result<Unit> = setItemHidden(index, false)
+    suspend fun softDeleteItem(itemKey: String): Result<Unit> = setItemHidden(itemKey, true)
+    suspend fun restoreItem(itemKey: String): Result<Unit> = setItemHidden(itemKey, false)
 
-    private suspend fun setItemHidden(index: Int, hidden: Boolean): Result<Unit> {
+    private suspend fun setItemHidden(itemKey: String, hidden: Boolean): Result<Unit> {
         return try {
-            val snapshot = rtdb.getReference("Items").get().await()
+            val itemsRef = rtdb.getReference("Items")
+            val snapshot = itemsRef.get().await()
             val rawData = snapshot.value
+            var updated = false
 
-            if (rawData is List<*>) {
+            Log.d(TAG, "setItemHidden: key=$itemKey, hidden=$hidden, dataType=${rawData?.javaClass?.simpleName}")
+
+            // Nếu dữ liệu là List (array), cập nhật toàn bộ list để tránh lỗi partial update
+            val index = itemKey.toIntOrNull()
+            if (index != null && rawData is List<*>) {
                 val list = rawData.toMutableList()
-                if (index < 0 || index >= list.size) return Result.failure(Exception("Index out of bounds"))
-                val current = list[index]
-                if (current is Map<*, *>) {
-                    val mutable = current.toMutableMap()
-                    mutable["isHidden"] = hidden
-                    list[index] = mutable
-                    rtdb.getReference("Items").setValue(list).await()
+                if (index in list.indices) {
+                    val current = list[index]
+                    if (current is Map<*, *>) {
+                        val mutable = current.toMutableMap()
+                        mutable["isHidden"] = hidden
+                        list[index] = mutable
+                        itemsRef.setValue(list).await()
+                        updated = true
+                        Log.d(TAG, "setItemHidden: Updated via list setValue at index=$index")
+                    }
                 }
             }
+
+            // Fallback: dữ liệu dạng object (push keys)
+            if (!updated) {
+                for (child in snapshot.children) {
+                    if (child.key == itemKey) {
+                        child.ref.child("isHidden").setValue(hidden).await()
+                        updated = true
+                        Log.d(TAG, "setItemHidden: Updated via child ref, key=${child.key}")
+                        break
+                    }
+                }
+            }
+
+            if (!updated) {
+                Log.e(TAG, "setItemHidden: NOT FOUND key=$itemKey")
+                return Result.failure(Exception("Không tìm thấy sản phẩm để cập nhật (key=$itemKey)"))
+            }
+
+            syncPopularHiddenFromItem(itemKey, hidden)
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e(TAG, "setItemHidden error: ${e.message}")
             Result.failure(e)
+        }
+    }
+
+    private suspend fun syncPopularHiddenFromItem(itemKey: String, hidden: Boolean) {
+        try {
+            val itemSnapshot = rtdb.getReference("Items").child(itemKey).get().await()
+            if (!itemSnapshot.exists()) return
+
+            val title = itemSnapshot.child("title").getValue(String::class.java) ?: return
+            val categoryId = itemSnapshot.child("categoryId").value?.toString() ?: ""
+            val firstPic = itemSnapshot.child("picUrl").children.firstOrNull()?.getValue(String::class.java)
+
+            val popularRef = rtdb.getReference("Popular")
+            val popularSnapshot = popularRef.get().await()
+            val rawPopular = popularSnapshot.value
+
+            // Nếu Popular là array, phải update toàn bộ list
+            if (rawPopular is List<*>) {
+                val list = rawPopular.toMutableList()
+                var changed = false
+                for (i in list.indices) {
+                    val item = list[i]
+                    if (item is Map<*, *>) {
+                        val pTitle = item["title"]?.toString() ?: ""
+                        val pCategoryId = item["categoryId"]?.toString() ?: ""
+                        val pPicUrls = item["picUrl"]
+                        val pFirstPic = when (pPicUrls) {
+                            is List<*> -> pPicUrls.firstOrNull()?.toString()
+                            else -> null
+                        }
+
+                        val sameIdentity = pTitle == title &&
+                            pCategoryId == categoryId &&
+                            (firstPic == null || firstPic == pFirstPic)
+
+                        if (sameIdentity) {
+                            val mutable = item.toMutableMap()
+                            mutable["isHidden"] = hidden
+                            list[i] = mutable
+                            changed = true
+                        }
+                    }
+                }
+                if (changed) {
+                    popularRef.setValue(list).await()
+                }
+            } else {
+                // Dữ liệu dạng object (push keys)
+                for (child in popularSnapshot.children) {
+                    val pTitle = child.child("title").getValue(String::class.java) ?: ""
+                    val pCategoryId = child.child("categoryId").value?.toString() ?: ""
+                    val pFirstPic = child.child("picUrl").children.firstOrNull()?.getValue(String::class.java)
+
+                    val sameIdentity = pTitle == title &&
+                        pCategoryId == categoryId &&
+                        (firstPic == null || firstPic == pFirstPic)
+
+                    if (sameIdentity) {
+                        child.ref.child("isHidden").setValue(hidden).await()
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "syncPopularHiddenFromItem warning: ${e.message}")
         }
     }
 

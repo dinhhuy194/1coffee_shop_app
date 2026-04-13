@@ -117,10 +117,10 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateItem(index: Int, item: ItemsModel) {
+    fun updateItem(itemKey: String, item: ItemsModel) {
         viewModelScope.launch {
             _loading.value = true
-            val result = adminRepo.updateItem(index, item)
+            val result = adminRepo.updateItem(itemKey, item)
             if (result.isSuccess) {
                 _toastMessage.value = "✅ Cập nhật sản phẩm thành công!"
                 loadItems()
@@ -131,26 +131,26 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun softDeleteItem(index: Int) {
+    fun softDeleteItem(itemKey: String) {
         viewModelScope.launch {
-            val result = adminRepo.softDeleteItem(index)
+            val result = adminRepo.softDeleteItem(itemKey)
             if (result.isSuccess) {
                 _toastMessage.value = "Đã ẩn sản phẩm"
                 loadItems()
             } else {
-                _toastMessage.value = "❌ Ẩn thất bại"
+                _toastMessage.value = "❌ Ẩn thất bại: ${result.exceptionOrNull()?.message ?: "Unknown error"}"
             }
         }
     }
 
-    fun restoreItem(index: Int) {
+    fun restoreItem(itemKey: String) {
         viewModelScope.launch {
-            val result = adminRepo.restoreItem(index)
+            val result = adminRepo.restoreItem(itemKey)
             if (result.isSuccess) {
                 _toastMessage.value = "Đã khôi phục sản phẩm"
                 loadItems()
             } else {
-                _toastMessage.value = "❌ Khôi phục thất bại"
+                _toastMessage.value = "❌ Khôi phục thất bại: ${result.exceptionOrNull()?.message ?: "Unknown error"}"
             }
         }
     }

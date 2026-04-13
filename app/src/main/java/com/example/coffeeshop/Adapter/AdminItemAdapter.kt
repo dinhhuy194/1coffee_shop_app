@@ -11,12 +11,12 @@ import com.example.coffeeshop.Domain.ItemsModel
 import com.example.coffeeshop.R
 
 class AdminItemAdapter(
-    private var items: List<Pair<Int, ItemsModel>> = emptyList(), // (index, item)
-    private val onEdit: (Int, ItemsModel) -> Unit,
-    private val onToggle: (Int, Boolean) -> Unit
+    private var items: List<Pair<String, ItemsModel>> = emptyList(), // (firebaseKey, item)
+    private val onEdit: (String, ItemsModel) -> Unit,
+    private val onToggle: (String, Boolean) -> Unit
 ) : RecyclerView.Adapter<AdminItemAdapter.ViewHolder>() {
 
-    fun updateData(newItems: List<Pair<Int, ItemsModel>>) {
+    fun updateData(newItems: List<Pair<String, ItemsModel>>) {
         this.items = newItems
         notifyDataSetChanged()
     }
@@ -30,11 +30,11 @@ class AdminItemAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val (index, item) = items[position]
+        val (itemKey, item) = items[position]
         val isHidden = item.isHidden
 
         holder.titleTxt.text = item.title
-        holder.priceTxt.text = "$${item.price}"
+        holder.priceTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(item.price)
         holder.ratingTxt.text = "⭐ ${item.rating}"
         holder.categoryTxt.text = "Category: ${item.categoryId}"
 
@@ -54,8 +54,8 @@ class AdminItemAdapter(
             else android.R.drawable.ic_menu_close_clear_cancel
         )
 
-        holder.btnEdit.setOnClickListener { onEdit(index, item) }
-        holder.btnToggle.setOnClickListener { onToggle(index, !isHidden) }
+        holder.btnEdit.setOnClickListener { onEdit(itemKey, item) }
+        holder.btnToggle.setOnClickListener { onToggle(itemKey, !isHidden) }
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
