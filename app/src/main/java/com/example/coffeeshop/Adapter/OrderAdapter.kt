@@ -24,7 +24,8 @@ import java.util.Locale
  */
 class OrderAdapter(
     private val orders: List<Order>,
-    private val onPayNowClick: ((Order) -> Unit)? = null
+    private val onPayNowClick: ((Order) -> Unit)? = null,
+    private val onReorderClick: ((Order) -> Unit)? = null
 ) : RecyclerView.Adapter<OrderAdapter.ViewHolder>() {
     
     // Theo dõi trạng thái expand/collapse cho mỗi đơn hàng
@@ -44,7 +45,7 @@ class OrderAdapter(
         holder.binding.apply {
             // ===== HEADER: Thông tin cơ bản =====
             orderIdTxt.text = order.orderId
-            totalAmountTxt.text = "$${String.format("%.2f", order.totalAmount)}"
+            totalAmountTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(order.totalAmount)
             
             // Định dạng ngày giờ
             val date = Date(order.timestamp)
@@ -91,6 +92,16 @@ class OrderAdapter(
                 
                 // Hiển thị trạng thái thanh toán (paymentStatus)
                 setupPaymentStatus(this, order)
+
+                // ===== NÚT MUA LẠI =====
+                if (order.orderStatus != "cancelled" && order.items.isNotEmpty()) {
+                    reorderBtn.visibility = View.VISIBLE
+                    reorderBtn.setOnClickListener {
+                        onReorderClick?.invoke(order)
+                    }
+                } else {
+                    reorderBtn.visibility = View.GONE
+                }
             } else {
                 divider.visibility = View.GONE
                 itemsRecyclerView.visibility = View.GONE

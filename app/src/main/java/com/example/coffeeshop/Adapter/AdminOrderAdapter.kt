@@ -37,7 +37,7 @@ class AdminOrderAdapter(
 
         holder.orderIdTxt.text = "#${order.orderId.takeLast(6).uppercase()}"
         holder.customerTxt.text = "👤 ${order.userName.ifBlank { order.userId.take(8) }}"
-        holder.amountTxt.text = "$${order.totalAmount}"
+        holder.amountTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(order.totalAmount)
 
         // Format timestamp
         val dateFormat = SimpleDateFormat("dd/MM HH:mm", Locale.getDefault())

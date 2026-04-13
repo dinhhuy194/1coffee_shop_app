@@ -55,7 +55,9 @@ class CartActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Cập nhật cart badge khi quay lại
+        // Refresh giỏ hàng mỗi khi quay lại (fix: navbar navigate không gọi onCreate)
+        initCartList()
+        calculateCart()
         BottomNavHelper.updateCartBadge(this)
     }
 
@@ -74,6 +76,7 @@ class CartActivity : AppCompatActivity() {
                 override fun onChanged() {
                     calculateCart()
                     updateEmptyState()
+                    BottomNavHelper.updateCartBadge(this@CartActivity)
                 }
             }
         )
@@ -185,7 +188,7 @@ class CartActivity : AppCompatActivity() {
         selectedVoucher = voucher
         binding.selectVoucherText.text = "${voucher.name} — ${voucher.discountLabel}"
         binding.discountRow.visibility = View.VISIBLE
-        binding.discountAmountTxt.text = "-${String.format("%,.0f", discountAmount)}đ"
+        binding.discountAmountTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.formatDiscount(discountAmount)
 
         calculateCart()
     }
@@ -209,17 +212,17 @@ class CartActivity : AppCompatActivity() {
         // Tính lại discount nếu là percent (subtotal thay đổi)
         if (selectedVoucher != null) {
             discountAmount = selectedVoucher!!.calculateDiscount(subtotal)
-            binding.discountAmountTxt.text = "-${String.format("%,.0f", discountAmount)}đ"
+            binding.discountAmountTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.formatDiscount(discountAmount)
         }
 
         val tax = subtotal * percentTax
         val totalBeforeDiscount = subtotal + tax + deliveryFee
         val total = maxOf(0.0, totalBeforeDiscount - discountAmount)
 
-        binding.totalFeeTxt.text = "${String.format("%,.0f", subtotal)}đ"
-        binding.taxTxt.text = "${String.format("%,.0f", tax)}đ"
+        binding.totalFeeTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(subtotal)
+        binding.taxTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(tax)
         binding.deliveryTxt.text = "Miễn phí"
-        binding.totalTxt.text = "${String.format("%,.0f", total)}đ"
+        binding.totalTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(total)
     }
 
     // ─────────────────────────────────────────────────

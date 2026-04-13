@@ -34,14 +34,16 @@ class CartAdapter(
     override fun onBindViewHolder(holder: CartAdapter.Viewholder, position: Int) {
         val item = listItemSelected[position]
         holder.binding.titleTxt.text = item.title
-        holder.binding.feeEachItem.text = "$${item.price}"
-        holder.binding.numberItemTxt.text ="$${Math.round(item.numberInCart*item.price)}"
+        holder.binding.feeEachItem.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(item.price)
+        holder.binding.numberItemTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(item.numberInCart * item.price)
         holder.binding.totalEachItem.text = item.numberInCart.toString()
 
-        Glide.with(holder.itemView)
-            .load(item.picUrl[0])
-            .apply(RequestOptions().transform(CenterCrop()))
-            .into(holder.binding.picCart)
+        if (item.picUrl.isNotEmpty()) {
+            Glide.with(holder.itemView)
+                .load(item.picUrl[0])
+                .apply(RequestOptions().transform(CenterCrop()))
+                .into(holder.binding.picCart)
+        }
 
         holder.binding.plusEachItem.setOnClickListener{
             managmentCart.plusItem(listItemSelected,position,object :ChangeNumberItemsListener {
@@ -62,12 +64,25 @@ class CartAdapter(
         }
 
         holder.binding.removeItemBtn.setOnClickListener {
-            managmentCart.romveItem(listItemSelected,position,object : ChangeNumberItemsListener{
-                override fun onChanged() {
-                    notifyDataSetChanged()
-                    changeNumberItemsListener?.onChanged()
+            val itemName = listItemSelected[position].title
+            android.app.AlertDialog.Builder(holder.itemView.context)
+                .setTitle("Xóa sản phẩm")
+                .setMessage("Bạn có muốn xóa \"$itemName\" khỏi giỏ hàng?")
+                .setPositiveButton("Xóa") { _, _ ->
+                    managmentCart.romveItem(listItemSelected, position, object : ChangeNumberItemsListener {
+                        override fun onChanged() {
+                            notifyDataSetChanged()
+                            changeNumberItemsListener?.onChanged()
+                        }
+                    })
+                    com.google.android.material.snackbar.Snackbar.make(
+                        holder.itemView,
+                        "Đã xóa \"$itemName\" khỏi giỏ hàng",
+                        com.google.android.material.snackbar.Snackbar.LENGTH_SHORT
+                    ).show()
                 }
-            })
+                .setNegativeButton("Hủy", null)
+                .show()
         }
 
     }

@@ -3,8 +3,8 @@ package com.example.coffeeshop.Helper
 object PriceCalculator {
     private val SIZE_PRICES = mapOf(
         "Small" to 0.0,
-        "Medium" to 1.0,
-        "Large" to 2.0
+        "Medium" to 10_000.0,
+        "Large" to 15_000.0
     )
     
     private val ICE_PRICES = mapOf(

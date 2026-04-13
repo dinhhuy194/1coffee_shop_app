@@ -312,7 +312,7 @@ class DetailActivity : AppCompatActivity() {
         val total = PriceCalculator.calculateTotalPrice(
             basePrice, selectedSize, selectedIce, selectedSugar, item.numberInCart
         )
-        binding.priceTxt.text = "$${String.format("%.2f", total)}"
+        binding.priceTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(total)
     }
 
     // ─── Bundle ──────────────────────────────────────────────────────────────

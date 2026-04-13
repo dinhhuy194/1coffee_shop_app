@@ -30,7 +30,7 @@ class OrderDetailAdapter(private val items: List<OrderItem>) : RecyclerView.Adap
             
             itemDetailsTxt.text = details
             itemQuantityTxt.text = "x${item.quantity}"
-            itemPriceTxt.text = "$${String.format("%.2f", item.price * item.quantity)}"
+            itemPriceTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(item.price * item.quantity)
         }
     }
     

@@ -48,7 +48,7 @@ class VnPayWebViewActivity : AppCompatActivity() {
          * Khi VNPAY redirect về URL có chứa chuỗi này, ta biết giao dịch đã hoàn tất.
          * Phải khớp với ReturnUrl trong appsettings.json (phần đầu URL).
          */
-        private const val RETURN_URL_PATTERN = "localhost:5282/api/payment/vnpay-return"
+        private const val RETURN_URL_PATTERN = "192.168.18.2:5282/api/payment/vnpay-return"
     }
 
     @SuppressLint("SetJavaScriptEnabled")

@@ -41,7 +41,7 @@ class OrderItemAdapter(private val items: List<OrderItem>) : RecyclerView.Adapte
             
             // Price (total for this item)
             val itemTotal = item.price * item.quantity
-            itemPriceTxt.text = "$${String.format("%.2f", itemTotal)}"
+            itemPriceTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(itemTotal)
         }
     }
     

@@ -25,6 +25,9 @@ class ItemsListCategoryAdapter(val items:MutableList<ItemsModel>): RecyclerView.
     private lateinit var context : Context
     private val favoriteRepository = FavoriteRepository()
     private val auth = FirebaseAuth.getInstance()
+    private val favoriteTitles = mutableSetOf<String>()
+    private var loadedFavoritesUserId: String? = null
+    private var isLoadingFavorites = false
     
     override fun getItemViewType(position: Int): Int {
         return if(position % 2 == 0) TYPE_ITEM1
@@ -56,28 +59,22 @@ class ItemsListCategoryAdapter(val items:MutableList<ItemsModel>): RecyclerView.
         position: Int
     ) {
         val item = items[position]
+        ensureFavoritesLoaded()
+        val userId = auth.currentUser?.uid
+        item.isFavorite = userId != null && favoriteTitles.contains(item.title)
+
         when (holder) {
             is ViewholderItem1 -> {
                 holder.binding.titleTxt.text = item.title
-                holder.binding.priceTxt.text = "$" + item.price.toString()
+                holder.binding.priceTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(item.price)
                 holder.binding.ratingBar.rating = item.rating.toFloat()
 
                 Glide.with(context)
-                    .load(item.picUrl[0])
+                    .load(item.picUrl.getOrNull(0))
+                    .placeholder(R.drawable.cf_background)
+                    .error(R.drawable.cf_background)
                     .into(holder.binding.picMain)
-
-                // Load favorite status from Firebase
-                val userId = auth.currentUser?.uid
-                if (userId != null) {
-                    favoriteRepository.isFavorite(userId, item.title) { isFavorite ->
-                        item.isFavorite = isFavorite
-                        updateFavoriteIcon1(holder.binding, item)
-                    }
-                } else {
-                    // No user logged in - reset to unfavorited
-                    item.isFavorite = false
-                    updateFavoriteIcon1(holder.binding, item)
-                }
+                updateFavoriteIcon1(holder.binding, item)
                 
                 // Click favorite icon to toggle
                 holder.binding.favoriteIcon.setOnClickListener {
@@ -95,25 +92,15 @@ class ItemsListCategoryAdapter(val items:MutableList<ItemsModel>): RecyclerView.
             }
             is ViewholderItem2 -> {
                 holder.binding.titleTxt.text = item.title
-                holder.binding.priceTxt.text = "$" + item.price.toString()
+                holder.binding.priceTxt.text = com.example.coffeeshop.Helper.CurrencyFormatter.format(item.price)
                 holder.binding.ratingBar.rating = item.rating.toFloat()
 
                 Glide.with(context)
-                    .load(item.picUrl[0])
+                    .load(item.picUrl.getOrNull(0))
+                    .placeholder(R.drawable.cf_background)
+                    .error(R.drawable.cf_background)
                     .into(holder.binding.picMain)
-
-                // Load favorite status from Firebase
-                val userId = auth.currentUser?.uid
-                if (userId != null) {
-                    favoriteRepository.isFavorite(userId, item.title) { isFavorite ->
-                        item.isFavorite = isFavorite
-                        updateFavoriteIcon2(holder.binding, item)
-                    }
-                } else {
-                    // No user logged in - reset to unfavorited
-                    item.isFavorite = false
-                    updateFavoriteIcon2(holder.binding, item)
-                }
+                updateFavoriteIcon2(holder.binding, item)
                 
                 // Click favorite icon to toggle
                 holder.binding.favoriteIcon.setOnClickListener {
@@ -136,12 +123,32 @@ class ItemsListCategoryAdapter(val items:MutableList<ItemsModel>): RecyclerView.
         val userId = auth.currentUser?.uid
         if (userId != null) {
             favoriteRepository.toggleFavorite(userId, item) { isFavorite ->
+                if (isFavorite) favoriteTitles.add(item.title) else favoriteTitles.remove(item.title)
                 callback(isFavorite)
                 val message = if (isFavorite) "Đã thêm vào yêu thích" else "Đã xóa khỏi yêu thích"
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
         } else {
             Toast.makeText(context, "Vui lòng đăng nhập để sử dụng tính năng này", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun ensureFavoritesLoaded() {
+        val userId = auth.currentUser?.uid
+        if (userId.isNullOrEmpty()) {
+            favoriteTitles.clear()
+            loadedFavoritesUserId = null
+            return
+        }
+        if (loadedFavoritesUserId == userId || isLoadingFavorites) return
+
+        isLoadingFavorites = true
+        favoriteRepository.getFavorites(userId) { favorites ->
+            favoriteTitles.clear()
+            favoriteTitles.addAll(favorites.map { it.title })
+            loadedFavoritesUserId = userId
+            isLoadingFavorites = false
+            notifyDataSetChanged()
         }
     }
     
