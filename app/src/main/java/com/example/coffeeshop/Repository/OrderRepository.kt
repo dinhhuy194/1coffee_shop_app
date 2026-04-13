@@ -52,7 +52,8 @@ class OrderRepository {
                     quantity = item.numberInCart,
                     selectedSize = item.selectedSize,
                     iceOption = item.iceOption,
-                    sugarOption = item.sugarOption
+                    sugarOption = item.sugarOption,
+                    imageUrl = if (item.picUrl.isNotEmpty()) item.picUrl[0] else ""
                 )
             }
 

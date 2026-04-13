@@ -11,7 +11,6 @@ import com.example.coffeeshop.Model.PaymentRequest
 import com.example.coffeeshop.Repository.OrderRepository
 import com.example.coffeeshop.Repository.UserRepository
 import com.example.coffeeshop.Repository.VnPayApiService
-import com.example.coffeeshop.Repository.ExchangeRateService
 import kotlinx.coroutines.launch
 
 /**
@@ -144,15 +143,10 @@ class CheckoutViewModel : ViewModel() {
                         .onFailure { e -> Log.e("CheckoutVM", "❌ Lỗi voucher VNPAY: ${e.message}") }
                 }
 
-                // Bước 2: Lấy tỷ giá USD → VND thời gian thực
-                val exchangeRate = ExchangeRateService.getUsdToVndRate()
-                val amountInVnd = totalAmount * exchangeRate
-                Log.d("CheckoutVM", "Tỷ giá USD→VND: $exchangeRate | $totalAmount USD = $amountInVnd VND")
-
-                // Bước 3: Gọi API Backend để tạo URL thanh toán VNPAY
+                // Bước 2: Tạo request thanh toán (giá đã là VND, không cần quy đổi)
                 val paymentRequest = PaymentRequest(
                     orderId = orderId,
-                    amount = amountInVnd
+                    amount = totalAmount
                 )
 
                 val response = vnPayApiService.createPaymentUrl(paymentRequest)

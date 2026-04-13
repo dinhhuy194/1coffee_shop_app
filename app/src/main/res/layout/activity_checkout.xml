@@ -12,21 +12,21 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Tiêu đề -->
+        <!-- Title -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Thanh toán"
+            android:text="Checkout"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown"
             android:layout_marginBottom="24dp" />
 
-        <!-- Tóm tắt đơn hàng -->
+        <!-- Order Summary -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tóm tắt đơn hàng"
+            android:text="Order Summary"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown"
@@ -40,7 +40,6 @@
             android:padding="16dp"
             android:layout_marginBottom="24dp">
 
-            <!-- Tạm tính -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,19 +49,18 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Tạm tính"
+                    android:text="Subtotal"
                     android:textColor="@color/darkBrown" />
 
                 <TextView
                     android:id="@+id/subtotalTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0đ"
+                    android:text="$0.00"
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />
             </LinearLayout>
 
-            <!-- Thuế -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,19 +71,18 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Thuế (2%)"
+                    android:text="Tax"
                     android:textColor="@color/darkBrown" />
 
                 <TextView
                     android:id="@+id/taxTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0đ"
+                    android:text="$0.00"
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />
             </LinearLayout>
 
-            <!-- Phí giao hàng -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,80 +93,24 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Giao hàng"
+                    android:text="Delivery"
                     android:textColor="@color/darkBrown" />
 
                 <TextView
                     android:id="@+id/deliveryTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Miễn phí"
+                    android:text="$0.00"
                     android:textStyle="bold"
-                    android:textColor="@color/orange" />
+                    android:textColor="@color/darkBrown" />
             </LinearLayout>
 
-            <!-- Dòng discount voucher (ẩn khi không có) -->
-            <LinearLayout
-                android:id="@+id/discountRow"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="8dp"
-                android:visibility="gone">
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/grey"
-                    android:alpha="0.3"
-                    android:layout_marginBottom="8dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Voucher giảm giá"
-                            android:textColor="@color/orange"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:id="@+id/voucherNameTxt"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=""
-                            android:textSize="11sp"
-                            android:textColor="@color/grey" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/discountValueTxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="-0đ"
-                        android:textStyle="bold"
-                        android:textColor="@color/orange" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Divider -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/grey"
                 android:layout_marginVertical="12dp" />
 
-            <!-- Tổng cộng -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -179,7 +120,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Tổng cộng"
+                    android:text="Total"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />
@@ -188,18 +129,18 @@
                     android:id="@+id/totalTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0đ"
+                    android:text="$0.00"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/orange" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Phương thức thanh toán -->
+        <!-- Payment Method -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Phương thức thanh toán"
+            android:text="Payment Method"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown"
@@ -217,7 +158,7 @@
                 android:id="@+id/cashRadio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="💵 Tiền mặt khi nhận hàng (COD)"
+                android:text="💵 Cash on Delivery"
                 android:textSize="16sp"
                 android:checked="true" />
 
@@ -228,7 +169,6 @@
                 android:text="🏦 Thanh toán qua VNPAY"
                 android:textSize="16sp"
                 android:layout_marginTop="8dp" />
-
             <RadioButton
                 android:id="@+id/momoRadio"
                 android:layout_width="match_parent"
@@ -242,23 +182,23 @@
                 android:id="@+id/cardRadio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="💳 Thẻ tín dụng/ghi nợ (Sắp ra mắt)"
+                android:text="💳 Credit/Debit Card (Coming soon)"
                 android:textSize="16sp"
                 android:enabled="false"
                 android:layout_marginTop="8dp" />
         </RadioGroup>
 
-        <!-- Địa chỉ giao hàng -->
+        <!-- Delivery Address - Chọn từ bản đồ hoặc tìm kiếm trực tiếp -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Địa chỉ giao hàng"
+            android:text="Delivery Address"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown"
             android:layout_marginBottom="12dp" />
 
-        <!-- Trường kết hợp: hiển thị địa chỉ + tìm kiếm -->
+        <!-- Trường kết hợp: hiển thị địa chỉ hiện tại + tìm kiếm khi nhấn vào -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -276,6 +216,7 @@
                 android:textSize="18sp"
                 android:layout_marginEnd="8dp" />
 
+            <!-- Hiển thị địa chỉ đã lưu; khi nhấn vào cho phép tìm kiếm -->
             <EditText
                 android:id="@+id/checkoutAddressSearchEdit"
                 android:layout_width="0dp"
@@ -290,6 +231,7 @@
                 android:singleLine="true"
                 android:maxLines="1" />
 
+            <!-- Nút xóa text (chỉ hiện khi đang gõ tìm kiếm) -->
             <TextView
                 android:id="@+id/checkoutClearSearchBtn"
                 android:layout_width="wrap_content"
@@ -301,7 +243,7 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <!-- ProgressBar tìm kiếm -->
+        <!-- ProgressBar khi đang tìm kiếm -->
         <ProgressBar
             android:id="@+id/checkoutSearchProgress"
             style="?android:attr/progressBarStyleHorizontal"
@@ -311,7 +253,7 @@
             android:visibility="gone"
             android:layout_marginBottom="2dp" />
 
-        <!-- Gợi ý địa chỉ -->
+        <!-- Danh sách gợi ý địa chỉ (hiện khi có kết quả) -->
         <ListView
             android:id="@+id/checkoutSuggestionsList"
             android:layout_width="match_parent"
@@ -323,7 +265,7 @@
             android:visibility="gone"
             android:layout_marginBottom="10dp" />
 
-        <!-- Nút chọn địa chỉ trên bản đồ -->
+        <!-- Nút chọn địa chỉ trực tiếp trên bản đồ -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/selectAddressBtn"
             android:layout_width="match_parent"
@@ -336,13 +278,13 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="24dp" />
 
-        <!-- Nút Đặt hàng -->
+        <!-- Place Order Button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/placeOrderBtn"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="@drawable/orange_bg"
-            android:text="Đặt hàng ngay"
+            android:text="Place Order"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />

@@ -13,16 +13,18 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.coffeeshop.Activity.CartActivity
 import com.example.coffeeshop.Activity.LoginActivity
 import com.example.coffeeshop.Activity.VnPayWebViewActivity
 import com.example.coffeeshop.Adapter.OrderAdapter
+import com.example.coffeeshop.Domain.ItemsModel
 import com.example.coffeeshop.Model.Order
 import com.example.coffeeshop.Model.PaymentRequest
-import com.example.coffeeshop.Repository.ExchangeRateService
 import com.example.coffeeshop.Repository.OrderRepository
 import com.example.coffeeshop.Repository.VnPayApiService
 import com.example.coffeeshop.ViewModel.OrderViewModel
 import com.example.coffeeshop.databinding.FragmentOrderHistoryBinding
+import com.example.project1762.Helper.ManagmentCart
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
@@ -169,10 +171,55 @@ class OrderHistoryFragment : Fragment() {
             OrderSortType.PRICE_LOW_HIGH -> filteredByDate.sortedBy { it.totalAmount }
         }
         
-        // Truyền callback onPayNowClick vào adapter
-        binding.ordersRecyclerView.adapter = OrderAdapter(sortedOrders) { order ->
-            handlePayNow(order)
+        // Truyền callbacks vào adapter
+        binding.ordersRecyclerView.adapter = OrderAdapter(
+            orders = sortedOrders,
+            onPayNowClick = { order -> handlePayNow(order) },
+            onReorderClick = { order -> handleReorder(order) }
+        )
+    }
+
+    /**
+     * Xử lý khi user bấm "Mua lại" trên đơn hàng.
+     * 
+     * Luồng:
+     * 1. Convert OrderItem list → ItemsModel list
+     * 2. Clear giỏ hàng hiện tại
+     * 3. Thêm tất cả items vào giỏ hàng mới
+     * 4. Điều hướng tới CartActivity
+     */
+    private fun handleReorder(order: Order) {
+        val managmentCart = ManagmentCart(requireContext())
+        
+        // Convert OrderItem → ItemsModel
+        val cartItems = ArrayList<ItemsModel>()
+        for (orderItem in order.items) {
+            val picUrls = ArrayList<String>()
+            if (orderItem.imageUrl.isNotEmpty()) {
+                picUrls.add(orderItem.imageUrl)
+            }
+            val item = ItemsModel(
+                title = orderItem.title,
+                price = orderItem.price,
+                numberInCart = orderItem.quantity,
+                picUrl = picUrls,
+                selectedSize = orderItem.selectedSize.ifEmpty { "Medium" },
+                iceOption = orderItem.iceOption.ifEmpty { "Đá chung" },
+                sugarOption = orderItem.sugarOption.ifEmpty { "Bình thường" }
+            )
+            cartItems.add(item)
         }
+        
+        // Replace cart với items từ đơn cũ
+        managmentCart.replaceCart(cartItems)
+        
+        Toast.makeText(requireContext(), "Đã thêm ${order.items.size} sản phẩm vào giỏ hàng", Toast.LENGTH_SHORT).show()
+        
+        // Navigate to CartActivity
+        val intent = Intent(requireContext(), CartActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        }
+        startActivity(intent)
     }
 
     /**
@@ -192,14 +239,10 @@ class OrderHistoryFragment : Fragment() {
             try {
                 Toast.makeText(requireContext(), "Đang tạo liên kết thanh toán...", Toast.LENGTH_SHORT).show()
 
-                // Quy đổi USD → VND
-                val exchangeRate = ExchangeRateService.getUsdToVndRate()
-                val amountInVnd = order.totalAmount * exchangeRate
-
-                // Gọi API Backend lấy URL thanh toán
+                // Giá đã là VND, không cần quy đổi
                 val paymentRequest = PaymentRequest(
                     orderId = order.orderId,
-                    amount = amountInVnd
+                    amount = order.totalAmount
                 )
 
                 val response = vnPayApiService.createPaymentUrl(paymentRequest)
