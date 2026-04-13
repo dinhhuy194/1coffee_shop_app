@@ -11,13 +11,26 @@ class ManagmentCart(val context: Context) {
 
     private val tinyDB = TinyDB(context)
 
+    init {
+        // One-time migration: Xóa giỏ hàng cũ (giá USD) khi nâng cấp VND
+        val prefs = context.getSharedPreferences("cart_migration", Context.MODE_PRIVATE)
+        if (!prefs.getBoolean("vnd_migrated", false)) {
+            clearCart()
+            prefs.edit().putBoolean("vnd_migrated", true).apply()
+        }
+    }
+
     fun insertItems(item: ItemsModel) {
         var listItem = getListCart()
         val existAlready = listItem.any { it.title == item.title }
         val index = listItem.indexOfFirst { it.title == item.title }
 
         if (existAlready) {
-            listItem[index].numberInCart = item.numberInCart
+            listItem[index].numberInCart += item.numberInCart
+            listItem[index].price = item.price  // Cập nhật giá mới (VND)
+            listItem[index].selectedSize = item.selectedSize
+            listItem[index].iceOption = item.iceOption
+            listItem[index].sugarOption = item.sugarOption
         } else {
             listItem.add(item)
         }
@@ -63,5 +76,9 @@ class ManagmentCart(val context: Context) {
     
     fun clearCart() {
         tinyDB.putListObject("CartList", arrayListOf<ItemsModel>())
+    }
+
+    fun replaceCart(items: ArrayList<ItemsModel>) {
+        tinyDB.putListObject("CartList", items)
     }
 }

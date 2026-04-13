@@ -370,8 +370,14 @@ public class TinyDB {
         ArrayList<ItemsModel> playerList = new ArrayList<ItemsModel>();
 
         for (String jObjString : objStrings) {
-            ItemsModel player = gson.fromJson(jObjString, ItemsModel.class);
-            playerList.add(player);
+            try {
+                ItemsModel player = gson.fromJson(jObjString, ItemsModel.class);
+                if (player != null) {
+                    playerList.add(player);
+                }
+            } catch (Exception e) {
+                Log.w("TinyDB", "Skipping corrupt cart item: " + e.getMessage());
+            }
         }
         return playerList;
     }
