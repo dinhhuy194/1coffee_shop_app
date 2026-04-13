@@ -1,5 +1,7 @@
 package com.example.coffeeshop.Domain
 
+import java.io.Serializable
+
 /**
  * FilterOptions – Data class lưu trạng thái bộ lọc sản phẩm.
  *
@@ -12,7 +14,7 @@ data class FilterOptions(
     val categoryId: String = "",           // "" = All
     val minPrice: Double = 0.0,
     val maxPrice: Double = Double.MAX_VALUE
-) {
+) : Serializable {
     enum class SortBy {
         DEFAULT,        // Mặc định (thứ tự từ Firebase)
         PRICE_ASC,      // Giá thấp → cao

@@ -39,10 +39,7 @@ class MainActivity : AppCompatActivity() {
     // Compose state cho bong bóng
     private var bubbleData by mutableStateOf<CartBubbleData?>(null)
 
-    // Cache toàn bộ items để filter in-memory
-    private var allItemsList: List<ItemsModel> = emptyList()
     private var categoryList: List<CategoryModel> = emptyList()
-    private var currentFilter: FilterOptions = FilterOptions()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -238,13 +235,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ──────────────── All items (từ node "Items") với filter ────────────────
+    // ──────────────── All items (từ node "Items") ────────────────
     private fun initAllItems() {
         binding.progressBarAllItems.visibility = View.VISIBLE
         viewModel.loadAllItems().observe(this) { items ->
-            allItemsList = items.filter { it.picUrl.isNotEmpty() }
+            val visibleItems = items.filter { it.picUrl.isNotEmpty() }
             binding.recyclerViewAllItems.layoutManager = GridLayoutManager(this, 2)
-            applyAndRenderFilter()
+            if (visibleItems.isEmpty()) {
+                binding.recyclerViewAllItems.visibility = View.GONE
+                binding.emptyFilterLayout.visibility = View.VISIBLE
+            } else {
+                binding.emptyFilterLayout.visibility = View.GONE
+                binding.recyclerViewAllItems.visibility = View.VISIBLE
+                binding.recyclerViewAllItems.adapter = PopularAdapter(visibleItems.toMutableList())
+            }
             binding.progressBarAllItems.visibility = View.GONE
         }
     }
@@ -253,46 +257,16 @@ class MainActivity : AppCompatActivity() {
     private fun initFilter() {
         binding.imgFilter.setOnClickListener {
             FilterBottomSheet.newInstance(
-                current    = currentFilter,
+                current    = FilterOptions(), // Luôn mở filter tươi mới từ trang chủ
                 categories = categoryList
             ) { newOptions ->
-                currentFilter = newOptions
-                applyAndRenderFilter()
-                updateFilterIndicator()
+                // Chuyển sang SearchActivity với filter
+                val intent = Intent(this@MainActivity, SearchActivity::class.java)
+                intent.putExtra(SearchActivity.EXTRA_FILTER, newOptions)
+                intent.putExtra(SearchActivity.EXTRA_FILTER_ONLY, true)
+                startActivity(intent)
             }.show(supportFragmentManager, "filter")
         }
-    }
-
-    /**
-     * Áp dụng filter hiện tại lên allItemsList và render vào RecyclerView.
-     */
-    private fun applyAndRenderFilter() {
-        val filtered = viewModel.applyFilter(allItemsList, currentFilter)
-
-        if (filtered.isEmpty()) {
-            binding.recyclerViewAllItems.visibility = View.GONE
-            binding.emptyFilterLayout.visibility = View.VISIBLE
-        } else {
-            binding.emptyFilterLayout.visibility = View.GONE
-            binding.recyclerViewAllItems.visibility = View.VISIBLE
-            if (binding.recyclerViewAllItems.layoutManager == null) {
-                binding.recyclerViewAllItems.layoutManager = GridLayoutManager(this, 2)
-            }
-            binding.recyclerViewAllItems.adapter = PopularAdapter(filtered.toMutableList())
-        }
-    }
-
-    /**
-     * Highlight icon filter khi có bộ lọc đang active.
-     */
-    private fun updateFilterIndicator() {
-        binding.imgFilter.alpha = if (currentFilter.isDefault) 1.0f else 0.6f
-        // Nền icon đổi màu cam nếu filter đang active
-        val bgResId = if (currentFilter.isDefault)
-            com.example.coffeeshop.R.drawable.dark_brown_bg
-        else
-            com.example.coffeeshop.R.drawable.orange_bg
-        binding.imgFilter.setBackgroundResource(bgResId)
     }
 
     // ──────────────── Search ────────────────
@@ -302,7 +276,7 @@ class MainActivity : AppCompatActivity() {
                 val query = binding.searchBox.text.toString().trim()
                 if (query.isNotEmpty()) {
                     val intent = Intent(this@MainActivity, SearchActivity::class.java)
-                    intent.putExtra("search_query", query)
+                    intent.putExtra(SearchActivity.EXTRA_SEARCH_QUERY, query)
                     startActivity(intent)
                     // Xóa text sau khi chuyển sang SearchActivity
                     binding.searchBox.text.clear()
