@@ -172,7 +172,7 @@
             android:id="@+id/tvPriceRange"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="$0 – $50"
+            android:text="0₫ – 500.000₫"
             android:textColor="@color/darkBrown"
             android:textSize="13sp"
             android:textStyle="bold" />
@@ -185,12 +185,13 @@
         android:layout_marginHorizontal="12dp"
         android:layout_marginBottom="8dp"
         android:valueFrom="0"
-        android:valueTo="50"
+        android:valueTo="500000"
         app:values="@array/price_slider_defaults"
         app:thumbColor="@color/darkBrown"
         app:trackColorActive="@color/darkBrown"
         app:trackColorInactive="#E8DDD5"
-        app:haloColor="#336B3A2A" />
+        app:haloColor="#336B3A2A"
+        android:stepSize="10000" />
 
     <!-- ══ Tương lai ══ -->
     <View

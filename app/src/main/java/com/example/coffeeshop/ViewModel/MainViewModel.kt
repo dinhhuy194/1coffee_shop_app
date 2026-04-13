@@ -35,6 +35,10 @@ class MainViewModel : ViewModel() {
         return repository.searchItems(query)
     }
 
+    fun loadAllItemsAndPopular(): MutableLiveData<MutableList<ItemsModel>> {
+        return repository.loadAllItemsAndPopular()
+    }
+
     /**
      * Áp dụng FilterOptions lên danh sách items đã có sẵn (in-memory).
      * Không cần request Firebase thêm lần nào nữa.

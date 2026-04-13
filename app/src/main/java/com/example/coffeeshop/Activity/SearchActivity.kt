@@ -5,8 +5,16 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.coffeeshop.Adapter.PopularAdapter
 import com.example.coffeeshop.Domain.CategoryModel
@@ -14,8 +22,13 @@ import com.example.coffeeshop.Domain.FilterOptions
 import com.example.coffeeshop.Domain.ItemsModel
 import com.example.coffeeshop.Fragment.FilterBottomSheet
 import com.example.coffeeshop.Helper.BottomNavHelper
+import com.example.coffeeshop.R
 import com.example.coffeeshop.ViewModel.MainViewModel
 import com.example.coffeeshop.databinding.ActivitySearchBinding
+import com.example.coffeeshop.ui.compose.AddToCartBubble
+import com.example.coffeeshop.ui.compose.CartBubbleData
+import com.example.coffeeshop.ui.compose.CartBubbleState
+import com.example.project1762.Helper.ManagmentCart
 
 class SearchActivity : AppCompatActivity() {
 
@@ -28,16 +41,42 @@ class SearchActivity : AppCompatActivity() {
     private var categoryList: List<CategoryModel> = emptyList()
     private var searchResultsList: List<ItemsModel> = emptyList()
 
+    // Tracking LiveData để hủy observer cũ khi search lại
+    private var currentSearchLiveData: LiveData<MutableList<ItemsModel>>? = null
+    private var currentSearchObserver: Observer<MutableList<ItemsModel>>? = null
+
+    // Chế độ: true = chỉ dùng filter (không có search query)
+    private var isFilterOnlyMode: Boolean = false
+
+    // Compose state cho bong bóng
+    private var bubbleData by mutableStateOf<CartBubbleData?>(null)
+
+    companion object {
+        const val EXTRA_SEARCH_QUERY = "search_query"
+        const val EXTRA_FILTER = "filter_options"
+        const val EXTRA_FILTER_ONLY = "filter_only_mode"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        searchQuery = intent.getStringExtra("search_query") ?: ""
+        setupBubbleCompose()
+
+        // Đọc intent extras
+        searchQuery = intent.getStringExtra(EXTRA_SEARCH_QUERY) ?: ""
+        isFilterOnlyMode = intent.getBooleanExtra(EXTRA_FILTER_ONLY, false)
+
+        // Nhận filter từ intent (nếu có)
+        val intentFilter = intent.getSerializableExtra(EXTRA_FILTER) as? FilterOptions
+        if (intentFilter != null) {
+            currentFilter = intentFilter
+        }
 
         // Hiển thị query trong search box
         binding.searchBox.setText(searchQuery)
-        binding.searchQueryTxt.text = "Kết quả: \"$searchQuery\""
+        updateHeaderTitle()
 
         // Back button — chỉ cần finish() để quay lại MainActivity
         binding.backBtn.setOnClickListener { finish() }
@@ -53,15 +92,61 @@ class SearchActivity : AppCompatActivity() {
 
         // Setup bộ lọc
         initFilter()
+        updateFilterIndicator()
 
-        // Thực hiện tìm kiếm
-        performSearch()
+        // Thực hiện tìm kiếm hoặc load tất cả
+        if (isFilterOnlyMode && searchQuery.isEmpty()) {
+            loadAllAndApplyFilter()
+        } else {
+            performSearch()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         // Cập nhật lại adapter khi quay lại (ví dụ sau khi xem chi tiết sản phẩm)
         binding.searchResultsRecyclerView.adapter?.notifyDataSetChanged()
+
+        // Show cart bubble if pending
+        val pending = CartBubbleState.consume()
+        if (pending != null) {
+            bubbleData = pending
+        }
+
+        // Update cart badge
+        updateCartBadge()
+    }
+
+    // ──────────────── Bubble ────────────────
+    private fun setupBubbleCompose() {
+        binding.bubbleComposeView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AddToCartBubble(
+                    data = bubbleData,
+                    onCartClicked = {
+                        startActivity(Intent(this@SearchActivity, CartActivity::class.java))
+                    },
+                    onDismiss = {
+                        bubbleData = null
+                    }
+                )
+            }
+        }
+    }
+
+    // ──────────────── Cart Badge ────────────────
+    private fun updateCartBadge() {
+        val cartBadge = findViewById<TextView>(R.id.cartBadge) ?: return
+        val managmentCart = ManagmentCart(this)
+        val itemCount = managmentCart.getListCart().size
+
+        if (itemCount > 0) {
+            cartBadge.visibility = View.VISIBLE
+            cartBadge.text = if (itemCount > 99) "99+" else itemCount.toString()
+        } else {
+            cartBadge.visibility = View.GONE
+        }
     }
 
     /**
@@ -72,12 +157,13 @@ class SearchActivity : AppCompatActivity() {
         binding.searchBox.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = binding.searchBox.text.toString().trim()
-                if (query.isNotEmpty() && query != searchQuery) {
+                if (query.isNotEmpty()) {
                     searchQuery = query
-                    binding.searchQueryTxt.text = "Kết quả: \"$searchQuery\""
+                    isFilterOnlyMode = false
                     // Reset filter khi search mới
                     currentFilter = FilterOptions()
                     updateFilterIndicator()
+                    updateHeaderTitle()
                     performSearch()
                 }
                 // Ẩn bàn phím
@@ -116,7 +202,15 @@ class SearchActivity : AppCompatActivity() {
             ) { newOptions ->
                 currentFilter = newOptions
                 updateFilterIndicator()
-                applyAndRenderFilter()
+
+                if (searchQuery.isEmpty()) {
+                    // Chế độ filter-only: load tất cả items rồi filter
+                    isFilterOnlyMode = true
+                    loadAllAndApplyFilter()
+                } else {
+                    // Đang có query search: filter trên kết quả search hiện tại
+                    applyAndRenderFilter()
+                }
             }.show(supportFragmentManager, "filter")
         }
     }
@@ -127,10 +221,37 @@ class SearchActivity : AppCompatActivity() {
     private fun updateFilterIndicator() {
         binding.imgFilter.alpha = if (currentFilter.isDefault) 1.0f else 0.6f
         val bgResId = if (currentFilter.isDefault)
-            com.example.coffeeshop.R.drawable.dark_brown_bg
+            R.drawable.dark_brown_bg
         else
-            com.example.coffeeshop.R.drawable.orange_bg
+            R.drawable.orange_bg
         binding.imgFilter.setBackgroundResource(bgResId)
+    }
+
+    /**
+     * Cập nhật tiêu đề hiển thị.
+     */
+    private fun updateHeaderTitle() {
+        if (isFilterOnlyMode && searchQuery.isEmpty()) {
+            val filterCount = getActiveFilterCount()
+            binding.searchQueryTxt.text = if (filterCount > 0) {
+                "Kết quả lọc ($filterCount bộ lọc)"
+            } else {
+                "Tất cả sản phẩm"
+            }
+        } else {
+            binding.searchQueryTxt.text = "Kết quả: \"$searchQuery\""
+        }
+    }
+
+    /**
+     * Đếm số bộ lọc đang active.
+     */
+    private fun getActiveFilterCount(): Int {
+        var count = 0
+        if (currentFilter.categoryId.isNotEmpty()) count++
+        if (currentFilter.minPrice > 0 || currentFilter.maxPrice < Double.MAX_VALUE) count++
+        if (currentFilter.sortBy != FilterOptions.SortBy.DEFAULT) count++
+        return count
     }
 
     /**
@@ -148,6 +269,14 @@ class SearchActivity : AppCompatActivity() {
                 layoutManager = GridLayoutManager(this@SearchActivity, 2)
                 adapter = PopularAdapter(mutableListOf())
             }
+        } else if (filtered.isEmpty()) {
+            binding.noResultsTxt.visibility = View.VISIBLE
+            binding.noResultsTxt.text = "Không tìm thấy kết quả"
+            binding.popularSection.visibility = View.GONE
+            binding.searchResultsRecyclerView.apply {
+                layoutManager = GridLayoutManager(this@SearchActivity, 2)
+                adapter = PopularAdapter(mutableListOf())
+            }
         } else {
             binding.noResultsTxt.visibility = View.GONE
             binding.popularSection.visibility = View.GONE
@@ -157,21 +286,67 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        // Cập nhật tiêu đề hiển thị số kết quả
-        val countText = if (currentFilter.isDefault) {
-            "Kết quả: \"$searchQuery\""
+        // Cập nhật tiêu đề
+        if (isFilterOnlyMode && searchQuery.isEmpty()) {
+            val filterCount = getActiveFilterCount()
+            binding.searchQueryTxt.text = if (filterCount > 0) {
+                "Kết quả lọc: ${filtered.size} sản phẩm"
+            } else {
+                "Tất cả sản phẩm (${filtered.size})"
+            }
         } else {
-            "Kết quả: \"$searchQuery\" (${filtered.size})"
+            val countText = if (currentFilter.isDefault) {
+                "Kết quả: \"$searchQuery\""
+            } else {
+                "Kết quả: \"$searchQuery\" (${filtered.size})"
+            }
+            binding.searchQueryTxt.text = countText
         }
-        binding.searchQueryTxt.text = countText
     }
 
+    /**
+     * Load tất cả items (Items + Popular) rồi áp dụng filter.
+     * Dùng cho chế độ filter-only (không có search query).
+     */
+    private fun loadAllAndApplyFilter() {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.noResultsTxt.visibility = View.GONE
+        binding.popularSection.visibility = View.GONE
+
+        // Hủy observer cũ
+        currentSearchLiveData?.let { ld ->
+            currentSearchObserver?.let { obs -> ld.removeObserver(obs) }
+        }
+
+        val liveData = viewModel.loadAllItemsAndPopular()
+        val observer = Observer<MutableList<ItemsModel>> { allItems ->
+            searchResultsList = allItems
+            applyAndRenderFilter()
+            binding.progressBar.visibility = View.GONE
+        }
+
+        currentSearchLiveData = liveData
+        currentSearchObserver = observer
+        liveData.observe(this, observer)
+    }
+
+    /**
+     * Thực hiện tìm kiếm theo query (search cả Items + Popular).
+     */
     private fun performSearch() {
         binding.progressBar.visibility = View.VISIBLE
         binding.noResultsTxt.visibility = View.GONE
         binding.popularSection.visibility = View.GONE
 
-        viewModel.searchItems(searchQuery).observe(this) { searchResults ->
+        // Hủy observer cũ trước khi tạo mới (tránh nhận kết quả cũ)
+        currentSearchLiveData?.let { liveData ->
+            currentSearchObserver?.let { observer ->
+                liveData.removeObserver(observer)
+            }
+        }
+
+        val liveData = viewModel.searchItems(searchQuery)
+        val observer = Observer<MutableList<ItemsModel>> { searchResults ->
             searchResultsList = searchResults
 
             if (searchResults.isNotEmpty()) {
@@ -193,6 +368,10 @@ class SearchActivity : AppCompatActivity() {
             }
             binding.progressBar.visibility = View.GONE
         }
+
+        currentSearchLiveData = liveData
+        currentSearchObserver = observer
+        liveData.observe(this, observer)
     }
 
     private fun hideKeyboard() {

@@ -133,9 +133,9 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun restorePriceRange() {
-        val min = currentOptions.minPrice.toFloat().coerceIn(0f, 50f)
-        val max = if (currentOptions.maxPrice == Double.MAX_VALUE) 50f
-                  else currentOptions.maxPrice.toFloat().coerceIn(min, 50f)
+        val min = currentOptions.minPrice.toFloat().coerceIn(0f, 500_000f)
+        val max = if (currentOptions.maxPrice == Double.MAX_VALUE) 500_000f
+                  else currentOptions.maxPrice.toFloat().coerceIn(min, 500_000f)
         binding.priceRangeSlider.setValues(min, max)
         updatePriceLabel(min, max)
     }
@@ -162,16 +162,17 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun updatePriceLabel(min: Float, max: Float) {
-        val maxLabel = if (max >= 50f) "$50+" else "$${"%.0f".format(max)}"
-        binding.tvPriceRange.text = "$${"%.0f".format(min)} – $maxLabel"
+        val fmt = com.example.coffeeshop.Helper.CurrencyFormatter
+        val maxLabel = if (max >= 500_000f) "500.000₫+" else fmt.format(max.toDouble())
+        binding.tvPriceRange.text = "${fmt.format(min.toDouble())} – $maxLabel"
     }
 
     private fun resetAll() {
         binding.rgSortBy.check(R.id.rbDefault)
         selectedCategoryId = ""
         buildCategoryChips()  // rebuild để clear selection
-        binding.priceRangeSlider.setValues(0f, 50f)
-        updatePriceLabel(0f, 50f)
+        binding.priceRangeSlider.setValues(0f, 500_000f)
+        updatePriceLabel(0f, 500_000f)
     }
 
     // ─────────────────────────────────────────────
@@ -188,7 +189,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
 
         val sliderVals = binding.priceRangeSlider.values
         val minPrice = sliderVals[0].toDouble()
-        val maxPrice = if (sliderVals[1] >= 50f) Double.MAX_VALUE else sliderVals[1].toDouble()
+        val maxPrice = if (sliderVals[1] >= 500_000f) Double.MAX_VALUE else sliderVals[1].toDouble()
 
         return FilterOptions(
             sortBy     = sortBy,
