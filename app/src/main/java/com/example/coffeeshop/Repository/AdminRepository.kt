@@ -183,42 +183,37 @@ class AdminRepository {
         return try {
             val itemsRef = rtdb.getReference("Items")
             val snapshot = itemsRef.get().await()
-            val rawData = snapshot.value
             var updated = false
 
-            Log.d(TAG, "setItemHidden: key=$itemKey, hidden=$hidden, dataType=${rawData?.javaClass?.simpleName}")
-
-            // Nếu dữ liệu là List (array), cập nhật toàn bộ list để tránh lỗi partial update
-            val index = itemKey.toIntOrNull()
-            if (index != null && rawData is List<*>) {
-                val list = rawData.toMutableList()
-                if (index in list.indices) {
-                    val current = list[index]
-                    if (current is Map<*, *>) {
-                        val mutable = current.toMutableMap()
-                        mutable["isHidden"] = hidden
-                        list[index] = mutable
-                        itemsRef.setValue(list).await()
-                        updated = true
-                        Log.d(TAG, "setItemHidden: Updated via list setValue at index=$index")
-                    }
+            // Ưu tiên tìm theo child key thực tế trong RTDB snapshot.
+            for (child in snapshot.children) {
+                if (child.key == itemKey) {
+                    child.ref.child("isHidden").setValue(hidden).await()
+                    updated = true
+                    break
                 }
             }
 
-            // Fallback: dữ liệu dạng object (push keys)
+            // Fallback cho dữ liệu dạng list thuần + key dạng index.
             if (!updated) {
-                for (child in snapshot.children) {
-                    if (child.key == itemKey) {
-                        child.ref.child("isHidden").setValue(hidden).await()
-                        updated = true
-                        Log.d(TAG, "setItemHidden: Updated via child ref, key=${child.key}")
-                        break
+                val index = itemKey.toIntOrNull()
+                val rawData = snapshot.value
+                if (index != null && rawData is List<*>) {
+                    val list = rawData.toMutableList()
+                    if (index in list.indices) {
+                        val current = list[index]
+                        if (current is Map<*, *>) {
+                            val mutable = current.toMutableMap()
+                            mutable["isHidden"] = hidden
+                            list[index] = mutable
+                            itemsRef.setValue(list).await()
+                            updated = true
+                        }
                     }
                 }
             }
 
             if (!updated) {
-                Log.e(TAG, "setItemHidden: NOT FOUND key=$itemKey")
                 return Result.failure(Exception("Không tìm thấy sản phẩm để cập nhật (key=$itemKey)"))
             }
 
@@ -239,54 +234,18 @@ class AdminRepository {
             val categoryId = itemSnapshot.child("categoryId").value?.toString() ?: ""
             val firstPic = itemSnapshot.child("picUrl").children.firstOrNull()?.getValue(String::class.java)
 
-            val popularRef = rtdb.getReference("Popular")
-            val popularSnapshot = popularRef.get().await()
-            val rawPopular = popularSnapshot.value
+            val popularSnapshot = rtdb.getReference("Popular").get().await()
+            for (child in popularSnapshot.children) {
+                val pTitle = child.child("title").getValue(String::class.java) ?: ""
+                val pCategoryId = child.child("categoryId").value?.toString() ?: ""
+                val pFirstPic = child.child("picUrl").children.firstOrNull()?.getValue(String::class.java)
 
-            // Nếu Popular là array, phải update toàn bộ list
-            if (rawPopular is List<*>) {
-                val list = rawPopular.toMutableList()
-                var changed = false
-                for (i in list.indices) {
-                    val item = list[i]
-                    if (item is Map<*, *>) {
-                        val pTitle = item["title"]?.toString() ?: ""
-                        val pCategoryId = item["categoryId"]?.toString() ?: ""
-                        val pPicUrls = item["picUrl"]
-                        val pFirstPic = when (pPicUrls) {
-                            is List<*> -> pPicUrls.firstOrNull()?.toString()
-                            else -> null
-                        }
+                val sameIdentity = pTitle == title &&
+                    pCategoryId == categoryId &&
+                    (firstPic == null || firstPic == pFirstPic)
 
-                        val sameIdentity = pTitle == title &&
-                            pCategoryId == categoryId &&
-                            (firstPic == null || firstPic == pFirstPic)
-
-                        if (sameIdentity) {
-                            val mutable = item.toMutableMap()
-                            mutable["isHidden"] = hidden
-                            list[i] = mutable
-                            changed = true
-                        }
-                    }
-                }
-                if (changed) {
-                    popularRef.setValue(list).await()
-                }
-            } else {
-                // Dữ liệu dạng object (push keys)
-                for (child in popularSnapshot.children) {
-                    val pTitle = child.child("title").getValue(String::class.java) ?: ""
-                    val pCategoryId = child.child("categoryId").value?.toString() ?: ""
-                    val pFirstPic = child.child("picUrl").children.firstOrNull()?.getValue(String::class.java)
-
-                    val sameIdentity = pTitle == title &&
-                        pCategoryId == categoryId &&
-                        (firstPic == null || firstPic == pFirstPic)
-
-                    if (sameIdentity) {
-                        child.ref.child("isHidden").setValue(hidden).await()
-                    }
+                if (sameIdentity) {
+                    child.ref.child("isHidden").setValue(hidden).await()
                 }
             }
         } catch (e: Exception) {

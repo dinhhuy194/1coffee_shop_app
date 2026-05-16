@@ -71,27 +71,6 @@ class AdminItemsFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    // Cập nhật local state ngay lập tức để UI phản hồi nhanh
-                    allItemsRaw = allItemsRaw.map { (key, it) ->
-                        if (key == itemKey) key to ItemsModel(
-                            title = it.title,
-                            description = it.description,
-                            picUrl = it.picUrl,
-                            price = it.price,
-                            rating = it.rating,
-                            numberInCart = it.numberInCart,
-                            extra = it.extra,
-                            categoryId = it.categoryId,
-                            selectedSize = it.selectedSize,
-                            iceOption = it.iceOption,
-                            sugarOption = it.sugarOption,
-                            isFavorite = it.isFavorite,
-                            isHidden = hide
-                        )
-                        else key to it
-                    }
-                    filterAndDisplay()
-
                     if (hide) viewModel.softDeleteItem(itemKey)
                     else viewModel.restoreItem(itemKey)
                 }

@@ -184,7 +184,6 @@ class MainRepository {
     fun searchItems(query: String): MutableLiveData<MutableList<ItemsModel>> {
         val searchResultsLiveData = MutableLiveData<MutableList<ItemsModel>>()
         val itemsRef = firebaseDatabase.getReference("Items")
-        val popularRef = firebaseDatabase.getReference("Popular")
         val categoriesRef = firebaseDatabase.getReference("Category")
         
         // Load categories first to map categoryId to categoryTitle
@@ -202,81 +201,29 @@ class MainRepository {
                     }
                 }
                 
-                // Load Items node
+                // Now load and filter items
                 itemsRef.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(itemsSnapshot: DataSnapshot) {
-                        val scored = mutableListOf<Pair<ItemsModel, Int>>() // (item, score)
-                        val seen = mutableSetOf<String>() // dedup bằng title+categoryId
+                        val list = mutableListOf<ItemsModel>()
                         val lowerQuery = query.lowercase()
                         
-                        /**
-                         * Tính điểm liên quan của item với query.
-                         * Trả về 0 nếu không match, >0 nếu match (càng cao càng liên quan).
-                         *
-                         * Thứ tự ưu tiên:
-                         *  - Tên sản phẩm trùng hoàn toàn  → 100
-                         *  - Tên sản phẩm bắt đầu bằng query → 50
-                         *  - Tên sản phẩm chứa query        → 30
-                         *  - Tên danh mục chứa query         → 15
-                         *  - Mô tả chứa query                → 5
-                         */
-                        fun relevanceScore(item: ItemsModel): Int {
-                            if (item.isHidden || hiddenCategoryIds.contains(item.categoryId)) return 0
-                            var score = 0
-                            val lowerTitle = item.title.lowercase()
-
-                            // Title matching (tích lũy)
-                            when {
-                                lowerTitle == lowerQuery        -> score += 100  // exact match
-                                lowerTitle.startsWith(lowerQuery) -> score += 50   // starts with
-                                lowerTitle.contains(lowerQuery)   -> score += 30   // contains
-                            }
-
-                            // Category matching
-                            val categoryTitle = categoryMap[item.categoryId] ?: ""
-                            if (categoryTitle.contains(lowerQuery)) score += 15
-
-                            // Description matching
-                            if (item.description.lowercase().contains(lowerQuery)) score += 5
-
-                            return score
-                        }
-
-                        // Helper: tính score và thêm vào danh sách
-                        fun scoreAndAdd(item: ItemsModel) {
-                            val key = "${item.title}||${item.categoryId}"
-                            if (seen.contains(key)) return
-                            val score = relevanceScore(item)
-                            if (score > 0) {
-                                scored.add(item to score)
-                                seen.add(key)
-                            }
-                        }
-                        
-                        // Search trong Items
                         for (itemChild in itemsSnapshot.children) {
                             val item = itemChild.getValue(ItemsModel::class.java)
-                            item?.let { scoreAndAdd(it) }
-                        }
-                        
-                        // Tiếp tục search trong Popular
-                        popularRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(popularSnapshot: DataSnapshot) {
-                                for (popChild in popularSnapshot.children) {
-                                    val item = popChild.getValue(ItemsModel::class.java)
-                                    item?.let { scoreAndAdd(it) }
+                            item?.let {
+                                if (it.isHidden || hiddenCategoryIds.contains(it.categoryId)) {
+                                    return@let
                                 }
-                                // Sắp xếp theo điểm liên quan giảm dần
-                                scored.sortByDescending { it.second }
-                                searchResultsLiveData.value = scored.map { it.first }.toMutableList()
+                                val matchesTitle = it.title.lowercase().contains(lowerQuery)
+                                val matchesDescription = it.description.lowercase().contains(lowerQuery)
+                                val categoryTitle = categoryMap[it.categoryId] ?: ""
+                                val matchesCategory = categoryTitle.contains(lowerQuery)
+                                
+                                if (matchesTitle || matchesDescription || matchesCategory) {
+                                    list.add(it)
+                                }
                             }
-                            
-                            override fun onCancelled(error: DatabaseError) {
-                                Log.e("MainRepository", "searchItems popular onCancelled: " + error.message)
-                                scored.sortByDescending { it.second }
-                                searchResultsLiveData.value = scored.map { it.first }.toMutableList()
-                            }
-                        })
+                        }
+                        searchResultsLiveData.value = list
                     }
                     
                     override fun onCancelled(error: DatabaseError) {
@@ -295,63 +242,64 @@ class MainRepository {
         return searchResultsLiveData
     }
 
-    /**
-     * Load TẤT CẢ sản phẩm visible từ cả "Items" và "Popular" nodes.
-     * Dùng cho chế độ filter-only (không có search query).
-     * Deduplicate bằng title + categoryId.
-     */
     fun loadAllItemsAndPopular(): MutableLiveData<MutableList<ItemsModel>> {
-        val resultLiveData = MutableLiveData<MutableList<ItemsModel>>()
+        val listData = MutableLiveData<MutableList<ItemsModel>>()
         val itemsRef = firebaseDatabase.getReference("Items")
         val popularRef = firebaseDatabase.getReference("Popular")
         val categoryRef = firebaseDatabase.getReference("Category")
 
-        categoryRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(categorySnapshot: DataSnapshot) {
-                val hiddenCategoryIds = hiddenCategoryIdsFrom(categorySnapshot)
+        categoryRef.get().addOnSuccessListener { categorySnapshot ->
+            val hiddenCategoryIds = hiddenCategoryIdsFrom(categorySnapshot)
 
-                itemsRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(itemsSnapshot: DataSnapshot) {
-                        val list = mutableListOf<ItemsModel>()
-                        val seen = mutableSetOf<String>()
+            itemsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(itemsSnapshot: DataSnapshot) {
+                    popularRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(popularSnapshot: DataSnapshot) {
+                            val combined = mutableListOf<ItemsModel>()
+                            val seenTitles = mutableSetOf<String>()
 
-                        fun addIfVisible(item: ItemsModel) {
-                            if (item.isHidden || hiddenCategoryIds.contains(item.categoryId)) return
-                            val key = "${item.title}||${item.categoryId}"
-                            if (seen.contains(key)) return
-                            list.add(item)
-                            seen.add(key)
-                        }
-
-                        for (child in itemsSnapshot.children) {
-                            child.getValue(ItemsModel::class.java)?.let { addIfVisible(it) }
-                        }
-
-                        popularRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(popularSnapshot: DataSnapshot) {
-                                for (child in popularSnapshot.children) {
-                                    child.getValue(ItemsModel::class.java)?.let { addIfVisible(it) }
+                            // Thêm tất cả Items
+                            for (child in itemsSnapshot.children) {
+                                val item = child.getValue(ItemsModel::class.java)
+                                item?.let {
+                                    val categoryVisible = !hiddenCategoryIds.contains(it.categoryId)
+                                    if (!it.isHidden && categoryVisible && seenTitles.add(it.title)) {
+                                        combined.add(it)
+                                    }
                                 }
-                                resultLiveData.value = list
                             }
-                            override fun onCancelled(error: DatabaseError) {
-                                Log.e("MainRepository", "loadAllItemsAndPopular popular error: " + error.message)
-                                resultLiveData.value = list
-                            }
-                        })
-                    }
-                    override fun onCancelled(error: DatabaseError) {
-                        Log.e("MainRepository", "loadAllItemsAndPopular items error: " + error.message)
-                        resultLiveData.value = mutableListOf()
-                    }
-                })
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("MainRepository", "loadAllItemsAndPopular category error: " + error.message)
-                resultLiveData.value = mutableListOf()
-            }
-        })
 
-        return resultLiveData
+                            // Thêm Popular (bỏ qua nếu đã có trong Items)
+                            for (child in popularSnapshot.children) {
+                                val item = child.getValue(ItemsModel::class.java)
+                                item?.let {
+                                    val categoryVisible = !hiddenCategoryIds.contains(it.categoryId)
+                                    if (!it.isHidden && categoryVisible && seenTitles.add(it.title)) {
+                                        combined.add(it)
+                                    }
+                                }
+                            }
+
+                            listData.value = combined
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Log.e("MainRepository", "loadAllItemsAndPopular popular onCancelled: ${error.message}")
+                            listData.value = mutableListOf()
+                        }
+                    })
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("MainRepository", "loadAllItemsAndPopular items onCancelled: ${error.message}")
+                    listData.value = mutableListOf()
+                }
+            })
+        }.addOnFailureListener { e ->
+            Log.e("MainRepository", "loadAllItemsAndPopular category fetch error: ${e.message}")
+            listData.value = mutableListOf()
+        }
+
+        return listData
     }
 }
