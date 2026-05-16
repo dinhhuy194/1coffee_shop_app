@@ -55,12 +55,36 @@ class CartAdapter(
         }
 
         holder.binding.minusEachItem.setOnClickListener{
-            managmentCart.minusItem(listItemSelected,position,object :ChangeNumberItemsListener {
-                override fun onChanged() {
-                    notifyDataSetChanged()
-                    changeNumberItemsListener?.onChanged()
-                }
-            })
+            if (listItemSelected[position].numberInCart == 1) {
+                // Khi số lượng = 1, nhấn minus sẽ xóa → hiện popup xác nhận
+                val itemName = listItemSelected[position].title
+                android.app.AlertDialog.Builder(holder.itemView.context)
+                    .setTitle("Xóa sản phẩm")
+                    .setMessage("Bạn có muốn xóa \"$itemName\" khỏi giỏ hàng?")
+                    .setPositiveButton("Xóa") { _, _ ->
+                        managmentCart.minusItem(listItemSelected, position, object : ChangeNumberItemsListener {
+                            override fun onChanged() {
+                                notifyDataSetChanged()
+                                changeNumberItemsListener?.onChanged()
+                            }
+                        })
+                        com.google.android.material.snackbar.Snackbar.make(
+                            holder.itemView,
+                            "Đã xóa \"$itemName\" khỏi giỏ hàng",
+                            com.google.android.material.snackbar.Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                    .setNegativeButton("Hủy", null)
+                    .show()
+            } else {
+                // Số lượng > 1, giảm bình thường
+                managmentCart.minusItem(listItemSelected, position, object : ChangeNumberItemsListener {
+                    override fun onChanged() {
+                        notifyDataSetChanged()
+                        changeNumberItemsListener?.onChanged()
+                    }
+                })
+            }
         }
 
         holder.binding.removeItemBtn.setOnClickListener {

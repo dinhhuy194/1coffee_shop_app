@@ -174,12 +174,11 @@ class CheckoutActivity : AppCompatActivity() {
     // ─────────────────────────────────────────────────
 
     private fun displayOrderSummary() {
-        val fmt = com.example.coffeeshop.Helper.CurrencyFormatter
         binding.apply {
-            subtotalTxt.text = fmt.format(subtotal)
-            taxTxt.text = fmt.format(tax)
-            deliveryTxt.text = fmt.format(delivery)
-            totalTxt.text = fmt.format(total)
+            subtotalTxt.text = "$${String.format("%.2f", subtotal)}"
+            taxTxt.text = "$${String.format("%.2f", tax)}"
+            deliveryTxt.text = "$${String.format("%.2f", delivery)}"
+            totalTxt.text = "$${String.format("%.2f", total)}"
         }
     }
 
