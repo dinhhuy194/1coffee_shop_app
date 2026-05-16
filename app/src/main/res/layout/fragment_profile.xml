@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Guest User"
+                android:text="Khách"
                 android:textColor="@color/white"
                 android:textSize="22sp"
                 android:textStyle="bold" />
@@ -66,7 +66,7 @@
             android:layout_height="60dp"
             android:layout_margin="16dp"
             android:background="@drawable/orange_bg"
-            android:text="Login"
+            android:text="Đăng nhập"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -329,7 +329,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
-                        android:text="My Favorites"
+                        android:text="Yêu thích"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/darkBrown" />
@@ -470,7 +470,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
-                        android:text="Payment Methods"
+                        android:text="Phương thức thanh toán"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/darkBrown" />
@@ -517,7 +517,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
-                        android:text="Settings"
+                        android:text="Cài đặt"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/darkBrown" />
@@ -611,7 +611,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
-                        android:text="About Us"
+                        android:text="Về chúng tôi"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/darkBrown" />

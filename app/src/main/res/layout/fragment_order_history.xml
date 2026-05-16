@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:text="Order History"
+            android:text="Lịch sử đơn hàng"
             android:textColor="@color/darkBrown"
             android:textSize="24sp"
             android:textStyle="bold" />
