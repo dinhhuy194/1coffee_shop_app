@@ -115,23 +115,23 @@ class ProfileFragment : Fragment() {
             }
 
             paymentBtn.setOnClickListener {
-                Toast.makeText(requireContext(), "Payment Methods - Coming soon", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Phương thức thanh toán - Sắp ra mắt", Toast.LENGTH_SHORT).show()
             }
 
             settingsBtn.setOnClickListener {
-                Toast.makeText(requireContext(), "Settings - Coming soon", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Cài đặt - Sắp ra mắt", Toast.LENGTH_SHORT).show()
             }
 
             languageBtn.setOnClickListener {
-                Toast.makeText(requireContext(), "Language - Coming soon", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Ngôn ngữ - Sắp ra mắt", Toast.LENGTH_SHORT).show()
             }
 
             aboutBtn.setOnClickListener {
-                Toast.makeText(requireContext(), "About Us - Coming soon", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Về chúng tôi - Sắp ra mắt", Toast.LENGTH_SHORT).show()
             }
 
             feedbackBtn.setOnClickListener {
-                Toast.makeText(requireContext(), "Feedback - Coming soon", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Phản hồi - Sắp ra mắt", Toast.LENGTH_SHORT).show()
             }
 
             // ── Admin Panel → chỉ hiện cho admin/superadmin ──────────────
@@ -143,7 +143,7 @@ class ProfileFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.isLoggedIn.observe(viewLifecycleOwner) { isLoggedIn ->
-            binding.authBtn.text = if (isLoggedIn) "Logout" else "Login"
+            binding.authBtn.text = if (isLoggedIn) "Đăng xuất" else "Đăng nhập"
             binding.membershipCard.visibility = if (isLoggedIn) View.VISIBLE else View.GONE
         }
 
@@ -165,8 +165,8 @@ class ProfileFragment : Fragment() {
                     // Hiển thị nút Admin nếu user là admin/superadmin
                     adminPanelBtn.visibility = if (user.isAdmin()) View.VISIBLE else View.GONE
                 } else {
-                    nameTxt.text  = "Guest User"
-                    emailTxt.text = "Login to access more features"
+                    nameTxt.text  = "Khách"
+                    emailTxt.text = "Đăng nhập để truy cập thêm tính năng"
                     avatarImg.setImageResource(android.R.drawable.sym_def_app_icon)
                     membershipCard.visibility = View.GONE
                     adminPanelBtn.visibility = View.GONE
@@ -181,13 +181,13 @@ class ProfileFragment : Fragment() {
                 }
                 is ProfileViewModel.LogoutState.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show()
                 }
                 is ProfileViewModel.LogoutState.Error -> {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(
                         requireContext(),
-                        "Logout error: ${state.message}",
+                        "Lỗi đăng xuất: ${state.message}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }

@@ -85,7 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="No orders yet"
+            android:text="Chưa có đơn hàng"
             android:textSize="18sp"
             android:textColor="@color/darkBrown" />
 
@@ -93,7 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Place your first order to see it here"
+            android:text="Đặt đơn hàng đầu tiên để xem tại đây"
             android:textColor="@color/grey" />
     </LinearLayout>
 
@@ -126,7 +126,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Login Required"
+            android:text="Yêu cầu đăng nhập"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown" />
@@ -135,7 +135,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Please login to view your order history"
+            android:text="Vui lòng đăng nhập để xem lịch sử đơn hàng"
             android:textColor="@color/grey"
             android:textAlignment="center" />
 
@@ -147,7 +147,7 @@
             android:background="@drawable/orange_bg"
             android:paddingHorizontal="32dp"
             android:paddingVertical="12dp"
-            android:text="Login"
+            android:text="Đăng nhập"
             android:textColor="@color/white"
             android:textStyle="bold" />
     </LinearLayout>

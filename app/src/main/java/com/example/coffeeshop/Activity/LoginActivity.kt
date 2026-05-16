@@ -29,10 +29,10 @@ class LoginActivity : AppCompatActivity() {
             account.idToken?.let { token ->
                 viewModel.loginWithGoogle(token)
             } ?: run {
-                Toast.makeText(this, "Google Sign-In failed: No ID token", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Đăng nhập Google thất bại: Không có ID token", Toast.LENGTH_SHORT).show()
             }
         } catch (e: ApiException) {
-            Toast.makeText(this, "Google Sign-In failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Đăng nhập Google thất bại: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
     
@@ -63,10 +63,10 @@ class LoginActivity : AppCompatActivity() {
                 
                 when {
                     email.isEmpty() -> {
-                        Toast.makeText(this@LoginActivity, "Please enter email", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@LoginActivity, "Vui lòng nhập email", Toast.LENGTH_SHORT).show()
                     }
                     password.isEmpty() -> {
-                        Toast.makeText(this@LoginActivity, "Please enter password", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@LoginActivity, "Vui lòng nhập mật khẩu", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
                         viewModel.login(email, password)
@@ -96,7 +96,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 is AuthViewModel.AuthState.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(this, "Welcome ${state.user.name}!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Chào mừng ${state.user.name}!", Toast.LENGTH_SHORT).show()
                     
                     // Navigate to MainActivity
                     val intent = Intent(this, MainActivity::class.java)
@@ -106,7 +106,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 is AuthViewModel.AuthState.Error -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(this, "Error: ${state.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Lỗi: ${state.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }

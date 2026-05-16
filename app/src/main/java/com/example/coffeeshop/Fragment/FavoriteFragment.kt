@@ -48,7 +48,7 @@ class FavoriteFragment : Fragment() {
         val favoritesList = managmentFavorite.getFavoritesList()
         
         // Update count
-        binding.countTxt.text = "${favoritesList.size} items"
+        binding.countTxt.text = "${favoritesList.size} sản phẩm"
         
         // Show/hide empty state
         if (favoritesList.isEmpty()) {

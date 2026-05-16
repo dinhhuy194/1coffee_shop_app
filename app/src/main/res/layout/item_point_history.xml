@@ -29,7 +29,7 @@
             android:id="@+id/historyReason"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Order #ABC123"
+            android:text="Đơn hàng #ABC123"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown" />

@@ -32,19 +32,19 @@ class RegisterActivity : AppCompatActivity() {
                 
                 when {
                     name.isEmpty() -> {
-                        Toast.makeText(this@RegisterActivity, "Please enter name", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@RegisterActivity, "Vui lòng nhập họ tên", Toast.LENGTH_SHORT).show()
                     }
                     email.isEmpty() -> {
-                        Toast.makeText(this@RegisterActivity, "Please enter email", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@RegisterActivity, "Vui lòng nhập email", Toast.LENGTH_SHORT).show()
                     }
                     password.isEmpty() -> {
-                        Toast.makeText(this@RegisterActivity, "Please enter password", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@RegisterActivity, "Vui lòng nhập mật khẩu", Toast.LENGTH_SHORT).show()
                     }
                     password.length < 6 -> {
-                        Toast.makeText(this@RegisterActivity, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@RegisterActivity, "Mật khẩu phải có ít nhất 6 ký tự", Toast.LENGTH_SHORT).show()
                     }
                     password != confirmPassword -> {
-                        Toast.makeText(this@RegisterActivity, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@RegisterActivity, "Mật khẩu không khớp", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
                         viewModel.register(email, password, name)
@@ -69,7 +69,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 is AuthViewModel.AuthState.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(this, "Registration successful! Welcome ${state.user.name}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Đăng ký thành công! Chào mừng ${state.user.name}", Toast.LENGTH_SHORT).show()
                     
                     // Navigate to MainActivity
                     val intent = Intent(this, MainActivity::class.java)
@@ -79,7 +79,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 is AuthViewModel.AuthState.Error -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(this, "Error: ${state.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Lỗi: ${state.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }

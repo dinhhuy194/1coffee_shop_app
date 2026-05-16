@@ -35,7 +35,7 @@
                 android:id="@+id/titleTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category Name"
+                android:text="Tên danh mục"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/darkBrown" />

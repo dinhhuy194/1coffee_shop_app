@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Checkout"
+            android:text="Thanh toán"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown"
@@ -26,7 +26,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Order Summary"
+            android:text="Tóm tắt đơn hàng"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown"
@@ -49,7 +49,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Subtotal"
+                    android:text="Tạm tính"
                     android:textColor="@color/darkBrown" />
 
                 <TextView
@@ -71,7 +71,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Tax"
+                    android:text="Thuế"
                     android:textColor="@color/darkBrown" />
 
                 <TextView
@@ -93,7 +93,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Delivery"
+                    android:text="Phí giao hàng"
                     android:textColor="@color/darkBrown" />
 
                 <TextView
@@ -120,7 +120,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Total"
+                    android:text="Tổng cộng"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />
@@ -140,7 +140,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Payment Method"
+            android:text="Phương thức thanh toán"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown"
@@ -158,7 +158,7 @@
                 android:id="@+id/cashRadio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="💵 Cash on Delivery"
+                android:text="💵 Thanh toán khi nhận hàng"
                 android:textSize="16sp"
                 android:checked="true" />
 
@@ -182,7 +182,7 @@
                 android:id="@+id/cardRadio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="💳 Credit/Debit Card (Coming soon)"
+                android:text="💳 Thẻ tín dụng/Ghi nợ (Sắp ra mắt)"
                 android:textSize="16sp"
                 android:enabled="false"
                 android:layout_marginTop="8dp" />
@@ -192,7 +192,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Delivery Address"
+            android:text="Địa chỉ giao hàng"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown"
@@ -284,7 +284,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="@drawable/orange_bg"
-            android:text="Place Order"
+            android:text="Đặt hàng"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />

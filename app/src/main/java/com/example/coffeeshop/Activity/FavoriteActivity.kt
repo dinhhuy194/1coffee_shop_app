@@ -50,7 +50,7 @@ class FavoriteActivity : AppCompatActivity() {
         
         if (userId == null) {
             // User not logged in
-            binding.countTxt.text = "0 items"
+            binding.countTxt.text = "0 sản phẩm"
             binding.emptyState.visibility = View.VISIBLE
             binding.favoriteRecyclerView.visibility = View.GONE
             Toast.makeText(this, "Vui lòng đăng nhập để xem yêu thích", Toast.LENGTH_SHORT).show()
@@ -63,7 +63,7 @@ class FavoriteActivity : AppCompatActivity() {
         
         favoriteRepository.getFavorites(userId) { favoritesList ->
             // Update count
-            binding.countTxt.text = "${favoritesList.size} items"
+            binding.countTxt.text = "${favoritesList.size} sản phẩm"
             
             // Show/hide empty state
             if (favoritesList.isEmpty()) {

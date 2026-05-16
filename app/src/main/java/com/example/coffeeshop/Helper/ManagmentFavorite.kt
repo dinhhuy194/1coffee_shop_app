@@ -20,7 +20,7 @@ class ManagmentFavorite(val context: Context) {
         if (!exists) {
             favoritesList.add(item)
             tinyDB.putListObject("FavoriteList", favoritesList)
-            Toast.makeText(context, "Added to Favorites", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Đã thêm vào yêu thích", Toast.LENGTH_SHORT).show()
         }
     }
     
@@ -34,7 +34,7 @@ class ManagmentFavorite(val context: Context) {
         if (index != -1) {
             favoritesList.removeAt(index)
             tinyDB.putListObject("FavoriteList", favoritesList)
-            Toast.makeText(context, "Removed from Favorites", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Đã xóa khỏi yêu thích", Toast.LENGTH_SHORT).show()
         }
     }
     
@@ -69,7 +69,7 @@ class ManagmentFavorite(val context: Context) {
      */
     fun clearFavorites() {
         tinyDB.putListObject("FavoriteList", arrayListOf<ItemsModel>())
-        Toast.makeText(context, "All favorites cleared", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Đã xóa tất cả yêu thích", Toast.LENGTH_SHORT).show()
     }
     
     /**
